@@ -1,18 +1,9 @@
-# Future Project: Open Narrative Format (ONF)
+# Future Open Narrative Format
 
-Open Narrative Format is NOT part of OpenVN.
+Open Narrative Format is deferred.
 
-OpenVN remains focused on visual novels.
+It is not part of OpenVN 0.x development and must not expand the scope of the
+current compiler, Ren'Py backend or Amiga runtime.
 
-After OpenVN 1.0, a separate repository may define ONF,
-supporting multiple narrative game genres.
-
-Possible profiles:
-
-- Visual Novel
-- Adventure
-- Interactive Fiction
-- RPG Dialogue
-
-OpenVN may later become the reference implementation of
-the Visual Novel profile.
+ONF may be reconsidered only after OpenVN has at least two practical,
+end-to-end targets and the format has been informed by real runtime experience.

@@ -47,3 +47,20 @@ def test_compile_rejects_invalid_targets(tmp_path: Path) -> None:
 
     with pytest.raises(OpenVNError, match="unknown jump target"):
         compile_project(tmp_path)
+
+
+def test_strict_compile_rejects_unreachable_nodes(tmp_path: Path) -> None:
+    (tmp_path / "project.yaml").write_text(
+        "name: Strict\nentry: main.ink\nformat_version: '0.3'\n",
+        encoding="utf-8",
+    )
+    (tmp_path / "main.ink").write_text(
+        "=== start ===\n-> END\n=== unused ===\n-> END\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(OpenVNError) as captured:
+        compile_project(tmp_path, strict=True)
+
+    assert captured.value.diagnostic is not None
+    assert captured.value.diagnostic.code == "OVN004"
