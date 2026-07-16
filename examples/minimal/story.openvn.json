@@ -1,11 +1,25 @@
 {
   "format": "openvn-story",
-  "format_version": "0.1",
-  "project_name": "Minimal OpenVN Story",
-  "generated_at": "2026-07-16T21:25:19+00:00",
-  "source": {
-    "type": "ink",
-    "entry": "main.ink"
-  },
-  "source_text": "=== start ===\nWelcome to OpenVN.\n\n* [Continue]\n    This is the minimal compiler example.\n    -> END\n"
+  "version": "0.2",
+  "nodes": [
+    {
+      "id": "start-0001",
+      "type": "text",
+      "text": "Welcome to OpenVN."
+    },
+    {
+      "id": "start-0002",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Continue",
+          "target": "start-0003"
+        }
+      ]
+    },
+    {
+      "id": "start-0003",
+      "type": "end"
+    }
+  ]
 }

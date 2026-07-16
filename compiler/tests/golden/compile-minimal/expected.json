@@ -1,0 +1,15 @@
+{
+  "format": "openvn-story",
+  "version": "0.2",
+  "nodes": [
+    {
+      "id": "start-0001",
+      "type": "text",
+      "text": "Hello from the compiler."
+    },
+    {
+      "id": "start-0002",
+      "type": "end"
+    }
+  ]
+}

@@ -4,20 +4,19 @@ import json
 from pathlib import Path
 
 from .errors import OpenVNError
-from .ink import load_ink, validate_minimal_ink
+from .ink_parser import parse_ink_file
+from .model.validation import validate_story
 from .project import load_project
-from .story import build_story
 
 
 def compile_project(project_dir: str | Path) -> Path:
     project = load_project(project_dir)
-    source = load_ink(project.entry_path)
-    errors = validate_minimal_ink(source)
+    story = parse_ink_file(project.entry_path)
+    errors = validate_story(story)
 
     if errors:
         raise OpenVNError("\n".join(errors))
 
-    story = build_story(project, source)
     project.output_path.write_text(
         json.dumps(story.to_dict(), indent=2, ensure_ascii=False) + "\n",
         encoding="utf-8",
