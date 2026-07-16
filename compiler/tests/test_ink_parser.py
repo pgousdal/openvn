@@ -62,26 +62,44 @@ def test_direct_node_target_is_preserved() -> None:
     assert jump.target == "start-0002"
 
 
-def test_unknown_target_is_left_for_validation() -> None:
+def test_unknown_target_is_reported() -> None:
     story = parse_ink_text("-> missing\n")
-    assert "unknown jump target: missing" in validate_story(story)
+    diagnostics = validate_story(story)
+    assert diagnostics[0].code == "OVN002"
+    assert diagnostics[0].message == "unknown jump target: missing"
 
 
-def test_duplicate_knot_fails() -> None:
-    with pytest.raises(SourceError, match="duplicate knot"):
+def test_duplicate_knot_has_diagnostic() -> None:
+    with pytest.raises(SourceError) as captured:
         parse_ink_text(
             """
             === one ===
             First.
             === one ===
             Second.
-            """
+            """,
+            source_path="main.ink",
         )
+    assert captured.value.diagnostic is not None
+    assert captured.value.diagnostic.code == "OVN003"
+    assert captured.value.diagnostic.line == 4
 
 
-def test_empty_knot_name_fails() -> None:
-    with pytest.raises(SourceError, match="empty knot name"):
-        parse_ink_text("======\n")
+def test_choice_error_has_location() -> None:
+    with pytest.raises(SourceError) as captured:
+        parse_ink_text("* [Continue]\n", source_path="main.ink")
+    assert captured.value.diagnostic is not None
+    assert captured.value.diagnostic.code == "OVN001"
+    assert captured.value.diagnostic.file == "main.ink"
+    assert captured.value.diagnostic.line == 1
+    assert captured.value.diagnostic.column == 1
+
+
+def test_jump_error_has_location() -> None:
+    with pytest.raises(SourceError) as captured:
+        parse_ink_text("->\n", source_path="main.ink")
+    assert captured.value.diagnostic is not None
+    assert captured.value.diagnostic.line == 1
 
 
 def test_empty_source_fails() -> None:
@@ -89,17 +107,10 @@ def test_empty_source_fails() -> None:
         parse_ink_text("\n// only comment\n")
 
 
-def test_choice_requires_target() -> None:
-    with pytest.raises(SourceError, match="choice must use"):
-        parse_ink_text("* [Continue]\n")
-
-
-def test_jump_requires_target() -> None:
-    with pytest.raises(SourceError, match="missing jump target"):
-        parse_ink_text("->\n")
-
-
-def test_parse_file(tmp_path: Path) -> None:
+def test_parse_file_uses_source_path(tmp_path: Path) -> None:
     path = tmp_path / "main.ink"
-    path.write_text("Hello\n-> END\n", encoding="utf-8")
-    assert len(parse_ink_file(path).nodes) == 2
+    path.write_text("* [Broken]\n", encoding="utf-8")
+    with pytest.raises(SourceError) as captured:
+        parse_ink_file(path)
+    assert captured.value.diagnostic is not None
+    assert captured.value.diagnostic.file == str(path)

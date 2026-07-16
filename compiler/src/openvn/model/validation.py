@@ -2,40 +2,68 @@ from __future__ import annotations
 
 from collections import Counter
 
+from openvn.diagnostics import Diagnostic
+
 from .nodes import ChoiceNode, EndNode, JumpNode, TextNode
 from .story import Story
 
 
-def validate_story(story: Story) -> list[str]:
-    errors: list[str] = []
+def validate_story(story: Story) -> list[Diagnostic]:
+    diagnostics: list[Diagnostic] = []
     node_ids = [node.id for node in story.nodes]
     known_ids = set(node_ids)
 
     duplicates = sorted(node_id for node_id, count in Counter(node_ids).items() if count > 1)
-    errors.extend(f"duplicate node id: {node_id}" for node_id in duplicates)
+    diagnostics.extend(
+        Diagnostic("error", "OVN005", f"duplicate node id: {node_id}") for node_id in duplicates
+    )
 
     if not story.entry:
-        errors.append("story entry is missing")
+        diagnostics.append(Diagnostic("error", "OVN005", "story entry is missing"))
     elif story.entry not in known_ids:
-        errors.append(f"unknown story entry: {story.entry}")
+        diagnostics.append(Diagnostic("error", "OVN005", f"unknown story entry: {story.entry}"))
 
     for name, target in sorted(story.symbols.items()):
         if target not in known_ids:
-            errors.append(f"symbol '{name}' has unknown target: {target}")
+            diagnostics.append(
+                Diagnostic(
+                    "error",
+                    "OVN005",
+                    f"symbol '{name}' has unknown target: {target}",
+                )
+            )
 
     for node in story.nodes:
         if isinstance(node, TextNode) and node.next is not None and node.next not in known_ids:
-            errors.append(f"node '{node.id}' has unknown next target: {node.next}")
+            diagnostics.append(
+                Diagnostic(
+                    "error",
+                    "OVN002",
+                    f"node '{node.id}' has unknown next target: {node.next}",
+                )
+            )
         elif isinstance(node, JumpNode) and node.target not in known_ids:
-            errors.append(f"unknown jump target: {node.target}")
+            diagnostics.append(Diagnostic("error", "OVN002", f"unknown jump target: {node.target}"))
         elif isinstance(node, ChoiceNode):
             if not node.options:
-                errors.append(f"choice node '{node.id}' has no options")
+                diagnostics.append(
+                    Diagnostic(
+                        "error",
+                        "OVN005",
+                        f"choice node '{node.id}' has no options",
+                    )
+                )
             for option in node.options:
                 if option.target not in known_ids:
-                    errors.append(f"unknown choice target: {option.target}")
+                    diagnostics.append(
+                        Diagnostic(
+                            "error",
+                            "OVN002",
+                            f"unknown choice target: {option.target}",
+                        )
+                    )
 
-    return errors
+    return diagnostics
 
 
 def reachable_node_ids(story: Story) -> set[str]:
@@ -67,3 +95,10 @@ def reachable_node_ids(story: Story) -> set[str]:
 
 def unreachable_node_ids(story: Story) -> set[str]:
     return {node.id for node in story.nodes} - reachable_node_ids(story)
+
+
+def unreachable_diagnostics(story: Story) -> list[Diagnostic]:
+    return [
+        Diagnostic("warning", "OVN004", f"unreachable node: {node_id}")
+        for node_id in sorted(unreachable_node_ids(story))
+    ]

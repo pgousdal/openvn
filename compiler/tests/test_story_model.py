@@ -1,6 +1,7 @@
 from openvn.model import ChoiceNode, ChoiceOption, EndNode, JumpNode, Story, TextNode
 from openvn.model.validation import (
     reachable_node_ids,
+    unreachable_diagnostics,
     unreachable_node_ids,
     validate_story,
 )
@@ -43,14 +44,16 @@ def test_validation_reports_duplicate_ids() -> None:
             EndNode(id="same", type="end"),
         ],
     )
-    assert "duplicate node id: same" in validate_story(story)
+    diagnostics = validate_story(story)
+    assert diagnostics[0].code == "OVN005"
+    assert diagnostics[0].message == "duplicate node id: same"
 
 
 def test_validation_reports_invalid_entry_and_symbol() -> None:
     story = Story(entry="missing", symbols={"intro": "also-missing"})
-    errors = validate_story(story)
-    assert "unknown story entry: missing" in errors
-    assert "symbol 'intro' has unknown target: also-missing" in errors
+    messages = [diagnostic.message for diagnostic in validate_story(story)]
+    assert "unknown story entry: missing" in messages
+    assert "symbol 'intro' has unknown target: also-missing" in messages
 
 
 def test_validation_reports_all_edge_types() -> None:
@@ -66,10 +69,12 @@ def test_validation_reports_all_edge_types() -> None:
             ),
         ],
     )
-    errors = validate_story(story)
-    assert "node 'text' has unknown next target: missing-next" in errors
-    assert "unknown jump target: missing-jump" in errors
-    assert "unknown choice target: missing-choice" in errors
+    diagnostics = validate_story(story)
+    messages = [diagnostic.message for diagnostic in diagnostics]
+    assert "node 'text' has unknown next target: missing-next" in messages
+    assert "unknown jump target: missing-jump" in messages
+    assert "unknown choice target: missing-choice" in messages
+    assert all(diagnostic.code == "OVN002" for diagnostic in diagnostics)
 
 
 def test_reachability() -> None:
@@ -92,3 +97,17 @@ def test_reachability() -> None:
     )
     assert reachable_node_ids(story) == {"start", "choice", "end", "other"}
     assert unreachable_node_ids(story) == {"unused"}
+
+
+def test_unreachable_diagnostic() -> None:
+    story = Story(
+        entry="start",
+        nodes=[
+            EndNode(id="start", type="end"),
+            EndNode(id="unused", type="end"),
+        ],
+    )
+    diagnostics = unreachable_diagnostics(story)
+    assert len(diagnostics) == 1
+    assert diagnostics[0].severity == "warning"
+    assert diagnostics[0].code == "OVN004"

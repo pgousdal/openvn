@@ -12,10 +12,12 @@ from .project import load_project
 def compile_project(project_dir: str | Path) -> Path:
     project = load_project(project_dir)
     story = parse_ink_file(project.entry_path)
-    errors = validate_story(story)
+    diagnostics = validate_story(story)
 
+    errors = [diagnostic for diagnostic in diagnostics if diagnostic.severity == "error"]
     if errors:
-        raise OpenVNError("\n".join(errors))
+        first = errors[0]
+        raise OpenVNError(first.message, diagnostic=first)
 
     project.output_path.write_text(
         json.dumps(story.to_dict(), indent=2, ensure_ascii=False) + "\n",

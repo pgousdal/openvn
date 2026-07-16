@@ -31,11 +31,12 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "validate":
             result = validate_project(args.project)
+            for diagnostic in result.diagnostics:
+                stream = sys.stderr if diagnostic.severity == "error" else sys.stdout
+                print(diagnostic.format_text(), file=stream)
             if result.ok:
                 print("OpenVN project is valid.")
                 return 0
-            for error in result.errors:
-                print(f"error: {error}", file=sys.stderr)
             return 1
 
         if args.command == "compile":
@@ -59,7 +60,7 @@ def main(argv: list[str] | None = None) -> int:
             return 0
 
     except OpenVNError as exc:
-        print(f"error: {exc}", file=sys.stderr)
+        print(exc.user_message(), file=sys.stderr)
         return 1
 
     return 2
