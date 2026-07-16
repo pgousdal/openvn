@@ -1,14 +1,9 @@
+
 # Changelog
 
-## Unreleased
+## 0.2.1
 
-### Added
-
-- Python package for the OpenVN compiler.
-- `openvn validate`, `openvn compile`, and `openvn dump`.
-- Project manifest parsing and validation.
-- Minimal Ink source validation.
-- OpenVN story JSON generation.
-- Pytest and Ruff configuration.
-- GitHub Actions workflow.
-- Minimal example project.
+- Complete repository cleanup
+- Repository hygiene script
+- Documentation refresh
+- Ready for M3

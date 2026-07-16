@@ -1,7 +1,0 @@
-
-Delete these files from the repository if present:
-
-DELIVERY.md
-DELIVERY-M2-FIX.md
-README-patch.md
-VERIFICATION.md

@@ -2,7 +2,7 @@
   "format": "openvn-story",
   "format_version": "0.1",
   "project_name": "Minimal OpenVN Story",
-  "generated_at": "2026-07-16T21:07:47+00:00",
+  "generated_at": "2026-07-16T21:25:19+00:00",
   "source": {
     "type": "ink",
     "entry": "main.ink"

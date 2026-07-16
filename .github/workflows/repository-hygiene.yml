@@ -1,0 +1,14 @@
+
+name: Repository Hygiene
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: chmod +x scripts/check-repository-hygiene.sh
+      - run: ./scripts/check-repository-hygiene.sh
