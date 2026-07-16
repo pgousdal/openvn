@@ -1,0 +1,76 @@
+{
+  "format": "openvn-story",
+  "version": "0.3",
+  "entry": "start-0001",
+  "symbols": {
+    "ending_generator": "ending_generator-0001",
+    "ending_radio": "ending_radio-0001",
+    "generator": "generator-0001",
+    "radio": "radio-0001",
+    "start": "start-0001"
+  },
+  "nodes": [
+    {
+      "id": "start-0001",
+      "type": "text",
+      "text": "The storm is closing in around the lighthouse.",
+      "next": "start-0002"
+    },
+    {
+      "id": "start-0002",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Answer the radio",
+          "target": "radio-0001"
+        },
+        {
+          "text": "Inspect the generator",
+          "target": "generator-0001"
+        }
+      ]
+    },
+    {
+      "id": "radio-0001",
+      "type": "text",
+      "text": "A distress call breaks through the static.",
+      "next": "radio-0002"
+    },
+    {
+      "id": "radio-0002",
+      "type": "jump",
+      "target": "ending_radio-0001"
+    },
+    {
+      "id": "generator-0001",
+      "type": "text",
+      "text": "The emergency generator starts after a struggle.",
+      "next": "generator-0002"
+    },
+    {
+      "id": "generator-0002",
+      "type": "jump",
+      "target": "ending_generator-0001"
+    },
+    {
+      "id": "ending_radio-0001",
+      "type": "text",
+      "text": "You guide a fishing boat to safety.",
+      "next": "ending_radio-0002"
+    },
+    {
+      "id": "ending_radio-0002",
+      "type": "end"
+    },
+    {
+      "id": "ending_generator-0001",
+      "type": "text",
+      "text": "The light stays on through the night.",
+      "next": "ending_generator-0002"
+    },
+    {
+      "id": "ending_generator-0002",
+      "type": "end"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+backgrounds:
+  lighthouse_day:
+    file: backgrounds/lighthouse_day.png
+  lighthouse_storm:
+    file: backgrounds/lighthouse_storm.png
+
+characters:
+  erik:
+    neutral: characters/erik_neutral.png
+
+music:
+  storm:
+    file: music/storm.ogg
+
+sfx:
+  radio:
+    file: sfx/radio.ogg
