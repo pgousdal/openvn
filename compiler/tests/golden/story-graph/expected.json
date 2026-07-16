@@ -10,7 +10,7 @@
     {
       "id": "start-0001",
       "type": "text",
-      "text": "Welcome to OpenVN.",
+      "text": "Choose.",
       "next": "start-0002"
     },
     {
@@ -26,7 +26,7 @@
     {
       "id": "ending-0001",
       "type": "text",
-      "text": "This story was compiled into an explicit graph.",
+      "text": "Finished.",
       "next": "ending-0002"
     },
     {

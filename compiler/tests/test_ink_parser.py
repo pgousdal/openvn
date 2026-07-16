@@ -5,38 +5,83 @@ import pytest
 from openvn.errors import SourceError
 from openvn.ink_parser import parse_ink_file, parse_ink_text
 from openvn.model import ChoiceNode, EndNode, JumpNode, TextNode
+from openvn.model.validation import validate_story
 
 
-def test_parse_text_and_end() -> None:
+def test_parse_text_links_to_end() -> None:
     story = parse_ink_text("Hello.\n-> END\n")
-    assert isinstance(story.nodes[0], TextNode)
-    assert story.nodes[0].text == "Hello."
+    text = story.nodes[0]
+    assert isinstance(text, TextNode)
+    assert text.next == "start-0002"
     assert isinstance(story.nodes[1], EndNode)
+    assert story.entry == "start-0001"
+    assert story.symbols == {"start": "start-0001"}
 
 
-def test_parse_jump() -> None:
-    story = parse_ink_text("-> next\n")
-    node = story.nodes[0]
-    assert isinstance(node, JumpNode)
-    assert node.target == "next"
+def test_knot_targets_resolve_to_node_ids() -> None:
+    story = parse_ink_text(
+        """
+        === start ===
+        -> next
+        === next ===
+        Done.
+        -> END
+        """
+    )
+    jump = story.nodes[0]
+    assert isinstance(jump, JumpNode)
+    assert jump.target == "next-0001"
+    assert story.symbols["next"] == "next-0001"
+    assert validate_story(story) == []
 
 
-def test_parse_choices() -> None:
-    story = parse_ink_text("* [Left] -> left\n* [Right] -> right\n")
-    node = story.nodes[0]
-    assert isinstance(node, ChoiceNode)
-    assert [option.text for option in node.options] == ["Left", "Right"]
-    assert [option.target for option in node.options] == ["left", "right"]
+def test_choice_targets_resolve_to_node_ids() -> None:
+    story = parse_ink_text(
+        """
+        === start ===
+        * [Left] -> left
+        * [Right] -> right
+        === left ===
+        Left.
+        -> END
+        === right ===
+        Right.
+        -> END
+        """
+    )
+    choice = story.nodes[0]
+    assert isinstance(choice, ChoiceNode)
+    assert [option.target for option in choice.options] == ["left-0001", "right-0001"]
+    assert validate_story(story) == []
 
 
-def test_parse_knot_changes_node_prefix() -> None:
-    story = parse_ink_text("=== intro ===\nHello\n-> END\n")
-    assert story.nodes[0].id.startswith("intro-")
+def test_direct_node_target_is_preserved() -> None:
+    story = parse_ink_text("-> start-0002\n-> END\n")
+    jump = story.nodes[0]
+    assert isinstance(jump, JumpNode)
+    assert jump.target == "start-0002"
 
 
-def test_ignore_blank_lines_and_comments() -> None:
-    story = parse_ink_text("\n// comment\nHello\n-> END\n")
-    assert len(story.nodes) == 2
+def test_unknown_target_is_left_for_validation() -> None:
+    story = parse_ink_text("-> missing\n")
+    assert "unknown jump target: missing" in validate_story(story)
+
+
+def test_duplicate_knot_fails() -> None:
+    with pytest.raises(SourceError, match="duplicate knot"):
+        parse_ink_text(
+            """
+            === one ===
+            First.
+            === one ===
+            Second.
+            """
+        )
+
+
+def test_empty_knot_name_fails() -> None:
+    with pytest.raises(SourceError, match="empty knot name"):
+        parse_ink_text("======\n")
 
 
 def test_empty_source_fails() -> None:

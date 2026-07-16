@@ -1,11 +1,16 @@
 {
   "format": "openvn-story",
-  "version": "0.2",
+  "version": "0.3",
+  "entry": "start-0001",
+  "symbols": {
+    "start": "start-0001"
+  },
   "nodes": [
     {
       "id": "start-0001",
       "type": "text",
-      "text": "Hello from the compiler."
+      "text": "Hello from the compiler.",
+      "next": "start-0002"
     },
     {
       "id": "start-0002",

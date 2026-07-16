@@ -1,6 +1,7 @@
 === start ===
 Welcome to OpenVN.
+* [Continue] -> ending
 
-* [Continue]
-    This is the minimal compiler example.
-    -> END
+=== ending ===
+This story was compiled into an explicit graph.
+-> END

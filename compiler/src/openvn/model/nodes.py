@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 
 
@@ -10,6 +12,7 @@ class Node:
 @dataclass(frozen=True)
 class TextNode(Node):
     text: str
+    next: str | None = None
 
 
 @dataclass(frozen=True)

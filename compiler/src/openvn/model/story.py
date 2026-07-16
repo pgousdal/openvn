@@ -1,20 +1,22 @@
-from dataclasses import asdict, dataclass
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass, field
 
 from .nodes import Node
 
 
 @dataclass
 class Story:
-    version: str = "0.2"
-    nodes: list[Node] = None
+    version: str = "0.3"
+    entry: str = ""
+    symbols: dict[str, str] = field(default_factory=dict)
+    nodes: list[Node] = field(default_factory=list)
 
-    def __post_init__(self):
-        if self.nodes is None:
-            self.nodes = []
-
-    def to_dict(self):
+    def to_dict(self) -> dict[str, object]:
         return {
             "format": "openvn-story",
             "version": self.version,
-            "nodes": [asdict(n) for n in self.nodes],
+            "entry": self.entry,
+            "symbols": dict(sorted(self.symbols.items())),
+            "nodes": [asdict(node) for node in self.nodes],
         }
