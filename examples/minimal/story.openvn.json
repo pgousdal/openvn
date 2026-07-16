@@ -1,0 +1,11 @@
+{
+  "format": "openvn-story",
+  "format_version": "0.1",
+  "project_name": "Minimal OpenVN Story",
+  "generated_at": "2026-07-16T20:46:06+00:00",
+  "source": {
+    "type": "ink",
+    "entry": "main.ink"
+  },
+  "source_text": "=== start ===\nWelcome to OpenVN.\n\n* [Continue]\n    This is the minimal compiler example.\n    -> END\n"
+}

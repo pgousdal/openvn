@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://openvn.org/schemas/openvn-story-0.1.schema.json",
+  "title": "OpenVN Story 0.1",
+  "type": "object",
+  "required": [
+    "format",
+    "format_version",
+    "project_name",
+    "generated_at",
+    "source",
+    "source_text"
+  ],
+  "properties": {
+    "format": {
+      "const": "openvn-story"
+    },
+    "format_version": {
+      "const": "0.1"
+    },
+    "project_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "generated_at": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "type",
+        "entry"
+      ],
+      "properties": {
+        "type": {
+          "const": "ink"
+        },
+        "entry": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "source_text": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
