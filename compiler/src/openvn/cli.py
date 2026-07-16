@@ -32,6 +32,7 @@ def build_parser() -> argparse.ArgumentParser:
     export.add_argument("project", type=Path)
     export.add_argument("--backend", choices=["renpy"], required=True)
     export.add_argument("--output", type=Path, required=True)
+    export.add_argument("--clean", action="store_true")
 
     dump = subparsers.add_parser("dump")
     dump.add_argument("project", type=Path)
@@ -77,7 +78,11 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "export":
             story_path = compile_project(args.project, strict=True)
             if args.backend == "renpy":
-                output = export_renpy_project(story_path, args.output)
+                output = export_renpy_project(
+                    story_path,
+                    args.output,
+                    clean=args.clean,
+                )
                 print(output)
                 return 0
 

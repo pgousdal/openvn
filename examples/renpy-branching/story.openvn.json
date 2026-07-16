@@ -1,0 +1,37 @@
+{
+  "format": "openvn-story",
+  "version": "0.3",
+  "entry": "start-0001",
+  "symbols": {
+    "ending": "ending-0001",
+    "start": "start-0001"
+  },
+  "nodes": [
+    {
+      "id": "start-0001",
+      "type": "text",
+      "text": "Choose.",
+      "next": "start-0002"
+    },
+    {
+      "id": "start-0002",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Continue",
+          "target": "ending-0001"
+        }
+      ]
+    },
+    {
+      "id": "ending-0001",
+      "type": "text",
+      "text": "Finished.",
+      "next": "ending-0002"
+    },
+    {
+      "id": "ending-0002",
+      "type": "end"
+    }
+  ]
+}

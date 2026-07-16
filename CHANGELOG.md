@@ -4,15 +4,12 @@
 
 ### Added
 
-- Ren'Py backend foundation.
-- `openvn export --backend renpy`.
-- Ren'Py project generation.
-- Backend and CLI tests.
+- Asset manifest loader.
+- Background, character, music and SFX asset categories.
+- Ren'Py images and audio generation.
+- Asset copying into generated projects.
+- Asset validation tests.
 
 ## 0.3.0
 
-- Stable OpenVN Story Format 0.3.
-- Semantic story graph.
-- Structured diagnostics.
-- Strict and JSON validation.
-- Doctor command.
+- Stable compiler and Story Format 0.3.

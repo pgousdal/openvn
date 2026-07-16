@@ -1,0 +1,15 @@
+backgrounds:
+  room:
+    file: backgrounds/room.png
+
+characters:
+  alice:
+    neutral: characters/alice_neutral.png
+
+music:
+  intro:
+    file: music/intro.ogg
+
+sfx:
+  click:
+    file: sfx/click.ogg
