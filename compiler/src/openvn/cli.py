@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from .backends.renpy import export_renpy_project
 from .compiler import compile_project
 from .doctor import run_doctor
 from .errors import OpenVNError
@@ -27,16 +28,16 @@ def build_parser() -> argparse.ArgumentParser:
     compile_command.add_argument("project", type=Path)
     compile_command.add_argument("--strict", action="store_true")
 
+    export = subparsers.add_parser("export")
+    export.add_argument("project", type=Path)
+    export.add_argument("--backend", choices=["renpy"], required=True)
+    export.add_argument("--output", type=Path, required=True)
+
     dump = subparsers.add_parser("dump")
     dump.add_argument("project", type=Path)
 
     doctor = subparsers.add_parser("doctor")
-    doctor.add_argument(
-        "repository",
-        type=Path,
-        nargs="?",
-        default=Path.cwd(),
-    )
+    doctor.add_argument("repository", type=Path, nargs="?", default=Path.cwd())
     doctor.add_argument("--json", action="store_true", dest="json_output")
 
     return parser
@@ -48,7 +49,6 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.command == "validate":
             result = validate_project(args.project)
-
             if args.json_output:
                 print(
                     json.dumps(
@@ -67,13 +67,19 @@ def main(argv: list[str] | None = None) -> int:
                     print(diagnostic.format_text(), file=stream)
                 if result.ok:
                     print("OpenVN project is valid.")
-
             return 0 if result.ok else 1
 
         if args.command == "compile":
             output = compile_project(args.project, strict=args.strict)
             print(output)
             return 0
+
+        if args.command == "export":
+            story_path = compile_project(args.project, strict=True)
+            if args.backend == "renpy":
+                output = export_renpy_project(story_path, args.output)
+                print(output)
+                return 0
 
         if args.command == "dump":
             project = load_project(args.project)
@@ -114,7 +120,6 @@ def main(argv: list[str] | None = None) -> int:
                 print()
                 for check in checks:
                     print(check.format_text())
-
             return 0 if all(check.ok for check in checks[:4]) else 1
 
     except OpenVNError as exc:

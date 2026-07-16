@@ -2,36 +2,29 @@
 
 OpenVN is an open, runtime-independent visual novel toolchain.
 
-## Status
-
-- M2 Compiler Foundation: complete
-- M3 Story Graph and Diagnostics: release candidate
-- M4 Ren'Py backend: next
-- M5 Native Amiga runtime: planned
-
-## Architecture
+## Current pipeline
 
 ```text
 Ink
  ↓
 OpenVN compiler
  ↓
-OpenVN Story Format
- ├── Ren'Py backend
- └── Amiga runtime: ARexx-first + native C
+OpenVN Story Format 0.3
+ ↓
+Ren'Py backend
 ```
 
-The Amiga runtime does not depend on ACE.
-
-Open Narrative Format is deferred until OpenVN has multiple working backends.
-
-## Development
+## Export to Ren'Py
 
 ```bash
-uv sync --project compiler --extra dev
-uv run --project compiler ruff check compiler/src compiler/tests
-uv run --project compiler pytest
-uv run --project compiler openvn validate examples/minimal
-uv run --project compiler openvn compile examples/minimal --strict
-uv run --project compiler openvn doctor .
+uv run --project compiler openvn export examples/minimal   --backend renpy   --output build/renpy-minimal
 ```
+
+Open `build/renpy-minimal` in the Ren'Py launcher.
+
+## Amiga direction
+
+The Amiga runtime is planned as ARexx-first with native C only where needed.
+It does not depend on ACE.
+
+Open Narrative Format remains deferred.
