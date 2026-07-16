@@ -5,7 +5,31 @@ from pathlib import Path
 
 from .diagnostics import Diagnostic, diagnostic_file
 from .errors import SourceError
-from .model import ChoiceNode, ChoiceOption, EndNode, JumpNode, Story, TextNode
+from .model import (
+    ChoiceNode,
+    ChoiceOption,
+    EndNode,
+    HideNode,
+    JumpNode,
+    MusicNode,
+    SceneNode,
+    ShowNode,
+    SoundNode,
+    Story,
+    TextNode,
+)
+
+StoryNode = (
+    TextNode
+    | ChoiceNode
+    | JumpNode
+    | EndNode
+    | SceneNode
+    | ShowNode
+    | HideNode
+    | MusicNode
+    | SoundNode
+)
 
 
 @dataclass(frozen=True)
@@ -17,7 +41,7 @@ class ParsedLine:
 @dataclass
 class Section:
     name: str
-    nodes: list[TextNode | ChoiceNode | JumpNode | EndNode]
+    nodes: list[StoryNode]
 
 
 def _source_error(
@@ -43,11 +67,7 @@ def _node_id(section: str, index: int) -> str:
     return f"{section}-{index:04d}"
 
 
-def _choice(
-    line: ParsedLine,
-    *,
-    source_path: str | Path | None,
-) -> tuple[str, str]:
+def _choice(line: ParsedLine, *, source_path: str | Path | None) -> tuple[str, str]:
     value = line.text.strip().removeprefix("*").strip()
     if not value.startswith("[") or "]" not in value:
         raise _source_error(
@@ -61,11 +81,7 @@ def _choice(
     remainder = value[close + 1 :].strip()
 
     if not text:
-        raise _source_error(
-            "empty choice text",
-            source_path=source_path,
-            line=line.number,
-        )
+        raise _source_error("empty choice text", source_path=source_path, line=line.number)
     if not remainder.startswith("->") or not remainder.removeprefix("->").strip():
         raise _source_error(
             "choice must use '* [Text] -> target'",
@@ -76,6 +92,45 @@ def _choice(
     return text, remainder.removeprefix("->").strip()
 
 
+def _presentation_node(
+    command: str,
+    *,
+    section: str,
+    index: int,
+    source_path: str | Path | None,
+    line: int,
+) -> StoryNode:
+    parts = command.split()
+    if not parts:
+        raise _source_error("empty OpenVN command", source_path=source_path, line=line)
+
+    name = parts[0]
+    node_id = _node_id(section, index)
+
+    if name == "scene" and len(parts) == 2:
+        return SceneNode(id=node_id, type="scene", background=parts[1])
+    if name == "show" and len(parts) == 3:
+        return ShowNode(
+            id=node_id,
+            type="show",
+            character=parts[1],
+            pose=parts[2],
+        )
+    if name == "hide" and len(parts) == 2:
+        return HideNode(id=node_id, type="hide", character=parts[1])
+    if name == "music" and len(parts) == 2:
+        track = None if parts[1] == "stop" else parts[1]
+        return MusicNode(id=node_id, type="music", track=track)
+    if name == "sound" and len(parts) == 2:
+        return SoundNode(id=node_id, type="sound", sound=parts[1])
+
+    raise _source_error(
+        f"invalid OpenVN command: {command}",
+        source_path=source_path,
+        line=line,
+    )
+
+
 def _resolve_target(reference: str, symbols: dict[str, str], node_ids: set[str]) -> str:
     if reference in symbols:
         return symbols[reference]
@@ -84,15 +139,16 @@ def _resolve_target(reference: str, symbols: dict[str, str], node_ids: set[str])
     return reference
 
 
-def _link_text_nodes(
-    sections: list[Section],
-) -> list[TextNode | ChoiceNode | JumpNode | EndNode]:
-    linked: list[TextNode | ChoiceNode | JumpNode | EndNode] = []
+def _link_linear_nodes(sections: list[Section]) -> list[StoryNode]:
+    linked: list[StoryNode] = []
 
     for section in sections:
         for index, node in enumerate(section.nodes):
-            if isinstance(node, TextNode):
-                next_id = section.nodes[index + 1].id if index + 1 < len(section.nodes) else None
+            next_id = section.nodes[index + 1].id if index + 1 < len(section.nodes) else None
+            if isinstance(
+                node,
+                (TextNode, SceneNode, ShowNode, HideNode, MusicNode, SoundNode),
+            ):
                 linked.append(replace(node, next=next_id))
             else:
                 linked.append(node)
@@ -110,6 +166,7 @@ def parse_ink_text(
     current = sections[0]
     node_index = 1
     i = 0
+    uses_presentation = False
 
     while i < len(lines):
         line = lines[i]
@@ -122,11 +179,7 @@ def parse_ink_text(
         if stripped.startswith("===") and stripped.endswith("==="):
             name = stripped.removeprefix("===").removesuffix("===").strip()
             if not name:
-                raise _source_error(
-                    "empty knot name",
-                    source_path=source_path,
-                    line=line.number,
-                )
+                raise _source_error("empty knot name", source_path=source_path, line=line.number)
 
             duplicate = any(
                 section.name == name for section in sections if section.nodes or name != "start"
@@ -145,6 +198,21 @@ def parse_ink_text(
                 current = Section(name=name, nodes=[])
                 sections.append(current)
             node_index = 1
+            i += 1
+            continue
+
+        if stripped.startswith("#openvn "):
+            uses_presentation = True
+            current.nodes.append(
+                _presentation_node(
+                    stripped.removeprefix("#openvn ").strip(),
+                    section=current.name,
+                    index=node_index,
+                    source_path=source_path,
+                    line=line.number,
+                )
+            )
+            node_index += 1
             i += 1
             continue
 
@@ -175,7 +243,6 @@ def parse_ink_text(
                 choice_text, target = _choice(lines[i], source_path=source_path)
                 options.append(ChoiceOption(text=choice_text, target=target))
                 i += 1
-
             current.nodes.append(
                 ChoiceNode(
                     id=_node_id(current.name, node_index),
@@ -198,22 +265,12 @@ def parse_ink_text(
 
     non_empty_sections = [section for section in sections if section.nodes]
     if not non_empty_sections:
-        raise _source_error(
-            "Ink source produced no story nodes",
-            source_path=source_path,
-        )
+        raise _source_error("Ink source produced no story nodes", source_path=source_path)
 
     symbols = {section.name: section.nodes[0].id for section in non_empty_sections}
-    if len(symbols) != len(non_empty_sections):
-        raise _source_error(
-            "duplicate knot name",
-            source_path=source_path,
-            code="OVN003",
-        )
-
-    nodes = _link_text_nodes(non_empty_sections)
+    nodes = _link_linear_nodes(non_empty_sections)
     node_ids = {node.id for node in nodes}
-    resolved_nodes: list[TextNode | ChoiceNode | JumpNode | EndNode] = []
+    resolved_nodes: list[StoryNode] = []
 
     for node in nodes:
         if isinstance(node, JumpNode):
@@ -238,7 +295,7 @@ def parse_ink_text(
 
     first_section = non_empty_sections[0]
     return Story(
-        version="0.3",
+        version="0.4" if uses_presentation else "0.3",
         entry=first_section.nodes[0].id,
         symbols=symbols,
         nodes=resolved_nodes,

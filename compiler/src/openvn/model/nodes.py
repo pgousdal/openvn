@@ -34,3 +34,34 @@ class JumpNode(Node):
 @dataclass(frozen=True)
 class EndNode(Node):
     pass
+
+
+@dataclass(frozen=True)
+class SceneNode(Node):
+    background: str
+    next: str | None = None
+
+
+@dataclass(frozen=True)
+class ShowNode(Node):
+    character: str
+    pose: str
+    next: str | None = None
+
+
+@dataclass(frozen=True)
+class HideNode(Node):
+    character: str
+    next: str | None = None
+
+
+@dataclass(frozen=True)
+class MusicNode(Node):
+    track: str | None
+    next: str | None = None
+
+
+@dataclass(frozen=True)
+class SoundNode(Node):
+    sound: str
+    next: str | None = None

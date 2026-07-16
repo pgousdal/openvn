@@ -10,8 +10,8 @@ from .project import load_project
 from .schema_validation import validate_document
 
 
-def _schema_path(project_root: Path) -> Path:
-    return project_root.parents[1] / "schemas" / "openvn-story-0.3.schema.json"
+def _schema_path(project_root: Path, version: str) -> Path:
+    return project_root.parents[1] / "schemas" / f"openvn-story-{version}.schema.json"
 
 
 def compile_project(project_dir: str | Path, *, strict: bool = False) -> Path:
@@ -23,7 +23,7 @@ def compile_project(project_dir: str | Path, *, strict: bool = False) -> Path:
         diagnostics.extend(unreachable_diagnostics(story))
 
     document = story.to_dict()
-    schema_path = _schema_path(project.root)
+    schema_path = _schema_path(project.root, story.version)
     if schema_path.is_file():
         diagnostics.extend(validate_document(document, schema_path=schema_path))
 

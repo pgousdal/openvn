@@ -4,8 +4,26 @@ from collections import Counter
 
 from openvn.diagnostics import Diagnostic
 
-from .nodes import ChoiceNode, EndNode, JumpNode, TextNode
+from .nodes import (
+    ChoiceNode,
+    EndNode,
+    HideNode,
+    JumpNode,
+    MusicNode,
+    SceneNode,
+    ShowNode,
+    SoundNode,
+    TextNode,
+)
 from .story import Story
+
+_LINEAR_NODES = (TextNode, SceneNode, ShowNode, HideNode, MusicNode, SoundNode)
+
+
+def _next_target(node: object) -> str | None:
+    if isinstance(node, _LINEAR_NODES):
+        return node.next
+    return None
 
 
 def validate_story(story: Story) -> list[Diagnostic]:
@@ -34,12 +52,13 @@ def validate_story(story: Story) -> list[Diagnostic]:
             )
 
     for node in story.nodes:
-        if isinstance(node, TextNode) and node.next is not None and node.next not in known_ids:
+        target = _next_target(node)
+        if target is not None and target not in known_ids:
             diagnostics.append(
                 Diagnostic(
                     "error",
                     "OVN002",
-                    f"node '{node.id}' has unknown next target: {node.next}",
+                    f"node '{node.id}' has unknown next target: {target}",
                 )
             )
         elif isinstance(node, JumpNode) and node.target not in known_ids:
@@ -81,8 +100,9 @@ def reachable_node_ids(story: Story) -> set[str]:
         reachable.add(node_id)
         node = nodes[node_id]
 
-        if isinstance(node, TextNode) and node.next is not None:
-            pending.append(node.next)
+        target = _next_target(node)
+        if target is not None:
+            pending.append(target)
         elif isinstance(node, JumpNode):
             pending.append(node.target)
         elif isinstance(node, ChoiceNode):

@@ -1,6 +1,6 @@
 {
   "format": "openvn-story",
-  "version": "0.3",
+  "version": "0.4",
   "entry": "start-0001",
   "symbols": {
     "ending_generator": "ending_generator-0001",
@@ -12,12 +12,31 @@
   "nodes": [
     {
       "id": "start-0001",
-      "type": "text",
-      "text": "The storm is closing in around the lighthouse.",
+      "type": "scene",
+      "background": "lighthouse_storm",
       "next": "start-0002"
     },
     {
       "id": "start-0002",
+      "type": "music",
+      "track": "storm",
+      "next": "start-0003"
+    },
+    {
+      "id": "start-0003",
+      "type": "text",
+      "text": "The storm is closing in around the lighthouse.",
+      "next": "start-0004"
+    },
+    {
+      "id": "start-0004",
+      "type": "show",
+      "character": "erik",
+      "pose": "neutral",
+      "next": "start-0005"
+    },
+    {
+      "id": "start-0005",
       "type": "choice",
       "options": [
         {
@@ -32,12 +51,24 @@
     },
     {
       "id": "radio-0001",
-      "type": "text",
-      "text": "A distress call breaks through the static.",
+      "type": "sound",
+      "sound": "radio",
       "next": "radio-0002"
     },
     {
       "id": "radio-0002",
+      "type": "text",
+      "text": "A distress call breaks through the static.",
+      "next": "radio-0003"
+    },
+    {
+      "id": "radio-0003",
+      "type": "hide",
+      "character": "erik",
+      "next": "radio-0004"
+    },
+    {
+      "id": "radio-0004",
       "type": "jump",
       "target": "ending_radio-0001"
     },
@@ -49,6 +80,12 @@
     },
     {
       "id": "generator-0002",
+      "type": "music",
+      "track": null,
+      "next": "generator-0003"
+    },
+    {
+      "id": "generator-0003",
       "type": "jump",
       "target": "ending_generator-0001"
     },
