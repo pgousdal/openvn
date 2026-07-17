@@ -7,6 +7,7 @@ int main(void) {
     OpenVNMODModule module;
     OpenVNMODNote notes[OPENVN_MOD_CHANNELS];
     OpenVNPaulaMixer mixer;
+    OpenVNMODChannelState state;
     const OpenVNPaulaVoice *voice;
     unsigned char sample_data[16];
     unsigned int channel;
@@ -14,6 +15,7 @@ int main(void) {
     memset(&module, 0, sizeof(module));
     memset(notes, 0, sizeof(notes));
     memset(sample_data, 0, sizeof(sample_data));
+    memset(&state, 0, sizeof(state));
     openvn_paula_reset(&mixer);
 
     module.samples[0].data = sample_data;
@@ -51,6 +53,14 @@ int main(void) {
     voice = openvn_paula_voice(&mixer, 0U);
     assert(voice->generation == 2UL);
     assert(voice->period == 214U);
+
+    state.period = 320U;
+    state.volume = 24U;
+    assert(openvn_paula_apply_channel_state(&mixer, 0U, &state));
+    voice = openvn_paula_voice(&mixer, 0U);
+    assert(voice->period == 320U);
+    assert(voice->volume == 24U);
+    assert(voice->generation == 2UL);
 
     assert(!openvn_paula_trigger_note(
         &mixer,

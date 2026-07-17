@@ -100,6 +100,8 @@ add_executable(test-openvn-mod-player tests/test_mod_player.c)
 target_link_libraries(test-openvn-mod-player PRIVATE openvn_dispatch)
 
 add_executable(test-openvn-paula tests/test_paula.c)
+add_executable(test-openvn-mod-effects tests/test_mod_effects.c)
+target_link_libraries(test-openvn-mod-effects PRIVATE openvn_dispatch)
 target_link_libraries(test-openvn-paula PRIVATE openvn_dispatch)
 
 enable_testing()
@@ -139,6 +141,7 @@ add_test(
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures/storm.mod
 )
 add_test(NAME paula COMMAND test-openvn-paula)
+add_test(NAME mod-effects COMMAND test-openvn-mod-effects)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "AmigaOS")
     target_sources(

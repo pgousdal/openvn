@@ -2,6 +2,7 @@
 #define OPENVN_PAULA_H
 
 #include "openvn_mod.h"
+#include "openvn_mod_player.h"
 
 typedef struct OpenVNPaulaVoice {
     const unsigned char *data;
@@ -25,6 +26,12 @@ int openvn_paula_trigger_note(
     unsigned int channel,
     const OpenVNMODModule *module,
     const OpenVNMODNote *note
+);
+
+int openvn_paula_apply_channel_state(
+    OpenVNPaulaMixer *mixer,
+    unsigned int channel,
+    const OpenVNMODChannelState *state
 );
 
 const OpenVNPaulaVoice *openvn_paula_voice(

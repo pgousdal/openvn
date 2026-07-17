@@ -48,6 +48,29 @@ int openvn_paula_trigger_note(
     return 1;
 }
 
+int openvn_paula_apply_channel_state(
+    OpenVNPaulaMixer *mixer,
+    unsigned int channel,
+    const OpenVNMODChannelState *state
+) {
+    OpenVNPaulaVoice *voice;
+
+    if (mixer == 0 || state == 0 || channel >= OPENVN_MOD_CHANNELS) {
+        return 0;
+    }
+
+    voice = &mixer->voices[channel];
+    if (!voice->active) {
+        return 0;
+    }
+
+    if (state->period > 0U) {
+        voice->period = state->period;
+    }
+    voice->volume = state->volume > 64U ? 64U : state->volume;
+    return 1;
+}
+
 const OpenVNPaulaVoice *openvn_paula_voice(
     const OpenVNPaulaMixer *mixer,
     unsigned int channel
