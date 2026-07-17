@@ -7,7 +7,7 @@ from pathlib import Path
 from ...assets import load_asset_manifest
 from ...errors import OpenVNError
 from .assets_codegen import write_generated_assets
-from .conversion import build_shared_palette, convert_asset
+from .conversion import convert_asset
 from .profiles import AmigaProfile
 from .story_codegen import write_generated_story
 
@@ -52,19 +52,6 @@ def export_amiga_package(
     )
 
     music_files = _music_paths(manifest)
-    shared_palette = None
-    if profile.id != "amiga-rtg":
-        png_files = [
-            source
-            for source in manifest.all_files()
-            if source.suffix.lower() == ".png"
-        ]
-        if png_files:
-            colors = profile.graphics.get("colors")
-            if not isinstance(colors, int) or isinstance(colors, bool):
-                raise OpenVNError("Amiga graphics profile field 'colors' must be an integer")
-            shared_palette = build_shared_palette(png_files, colors=colors)
-
     assets = []
     packaged_paths: dict[Path, Path] = {}
 
@@ -76,7 +63,6 @@ def export_amiga_package(
             relative=relative,
             profile=profile,
             is_music=source in music_files,
-            shared_palette=shared_palette,
         )
         packaged_relative = destination.relative_to(output)
         packaged_paths[source] = packaged_relative
@@ -120,10 +106,6 @@ def export_amiga_package(
             "static_asset_tables": True,
         },
         "assets": sorted(assets, key=lambda item: item["source"]),
-        "palette": {
-            "mode": "shared" if shared_palette is not None else "per-asset",
-            "transparent_index": 0 if shared_palette is not None else None,
-        },
     }
 
     (output / "manifest.json").write_text(

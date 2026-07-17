@@ -6,8 +6,6 @@ graphics:
   width: 320
   height: 256
   fit: cover
-  character_max_width: 192
-  character_max_height: 220
   datatype_fallback: false
 audio:
   sfx_format: 8svx
