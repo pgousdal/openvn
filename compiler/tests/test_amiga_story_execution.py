@@ -9,7 +9,6 @@ import pytest
 
 REPOSITORY = Path(__file__).parents[2]
 RUNTIME = REPOSITORY / "runtimes" / "amiga-native"
-STORY = RUNTIME / "tests" / "minimal-story.json"
 
 
 def _compiler() -> str:
@@ -49,10 +48,11 @@ def _build(tmp_path: Path) -> Path:
     return build
 
 
-def test_story_core_contract_files_exist() -> None:
+def test_generated_story_runtime_files_exist() -> None:
     assert (RUNTIME / "include/openvn_story.h").is_file()
     assert (RUNTIME / "src/story.c").is_file()
-    assert STORY.is_file()
+    assert (RUNTIME / "tests/story.generated.c").is_file()
+    assert (RUNTIME / "tests/story.generated.h").is_file()
 
 
 def test_story_core_ctest(tmp_path: Path) -> None:
@@ -67,7 +67,7 @@ def test_host_story_protocol(tmp_path: Path) -> None:
     build = _build(tmp_path)
     process = subprocess.run(
         [str(build / "openvn-player-host")],
-        input=(f"LOAD {STORY}\nRUN\nSTEP\nCHOOSE 0\nSTEP\nSTEP\nSTATUS\nQUIT\n"),
+        input=("LOAD static\nRUN\nSTEP\nCHOOSE 0\nSTEP\nSTEP\nSTATUS\nQUIT\n"),
         text=True,
         capture_output=True,
         check=True,

@@ -5,15 +5,15 @@
 
 extern void openvn_state_reset(void);
 extern int openvn_dispatch_request(const OpenVNRequest *request);
-extern const OpenVNStory *openvn_state_story(void);
+extern const OpenVNStoryState *openvn_state_story(void);
 
 static void print_current(void) {
-    const OpenVNStory *story = openvn_state_story();
-    const OpenVNStoryNode *node = openvn_story_current(story);
+    const OpenVNStoryState *state = openvn_state_story();
+    const OpenVNGeneratedNode *node = openvn_story_current(state);
     size_t index;
 
-    printf("STATUS %s\n", openvn_story_status(story));
-    if (node == NULL || story->ended) {
+    printf("STATUS %s\n", openvn_story_status(state));
+    if (node == 0 || state->ended) {
         return;
     }
 
@@ -21,7 +21,11 @@ static void print_current(void) {
         printf("TEXT %s\n", node->text);
     } else if (node->type == OPENVN_NODE_CHOICE) {
         for (index = 0U; index < node->option_count; index++) {
-            printf("CHOICE %lu %s\n", (unsigned long)index, node->options[index].text);
+            printf(
+                "CHOICE %lu %s\n",
+                (unsigned long)index,
+                node->options[index].text
+            );
         }
     } else if (node->type == OPENVN_NODE_SCENE) {
         printf("SCENE %s\n", node->argument1);
@@ -42,7 +46,7 @@ int main(void) {
 
     openvn_state_reset();
 
-    while (fgets(line, sizeof(line), stdin) != NULL) {
+    while (fgets(line, sizeof(line), stdin) != 0) {
         if (!openvn_parse_request(line, &request)) {
             puts("ERROR INVALID");
             continue;

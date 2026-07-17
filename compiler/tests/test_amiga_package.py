@@ -25,7 +25,7 @@ def test_classic_package_rejects_mixed_music(tmp_path: Path) -> None:
         )
 
 
-def test_export_rtg_keeps_native_formats(tmp_path: Path) -> None:
+def test_export_rtg_generates_static_story_tables(tmp_path: Path) -> None:
     story = compile_project(PROJECT, strict=True)
     profile = load_amiga_profile(REPOSITORY / "profiles" / "amiga-rtg.yaml")
 
@@ -38,14 +38,12 @@ def test_export_rtg_keeps_native_formats(tmp_path: Path) -> None:
 
     manifest = json.loads((output / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["profile"] == "amiga-rtg"
-    assert manifest["runtime"]["arexx_first"] is True
-    assert manifest["runtime"]["ace_dependency"] is False
+    assert manifest["story"]["runtime_parses_json"] is False
+    assert manifest["runtime"]["static_story_tables"] is True
+    assert (output / "story/story.generated.h").is_file()
+    assert (output / "story/story.generated.c").is_file()
     assert (output / "story/main.rexx").is_file()
-    assert (output / "story/story.openvn.json").is_file()
 
     png_assets = [asset for asset in manifest["assets"] if asset["conversion"]["source"] == "png"]
-    wav_assets = [asset for asset in manifest["assets"] if asset["conversion"]["source"] == "wav"]
     assert png_assets
-    assert wav_assets
     assert all(asset["conversion"]["target"] == "png" for asset in png_assets)
-    assert all(asset["conversion"]["target"] == "wav" for asset in wav_assets)

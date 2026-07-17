@@ -1,0 +1,33 @@
+Start testing: Jul 17 03:18 CEST
+----------------------------------------------------------
+1/2 Testing: dispatch
+1/2 Test: dispatch
+Command: "/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/test-openvn-dispatch"
+Directory: /home/pgo/Projects/openvn/runtimes/amiga-native/build-host
+"dispatch" start time: Jul 17 03:18 CEST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"dispatch" end time: Jul 17 03:18 CEST
+"dispatch" time elapsed: 00:00:00
+----------------------------------------------------------
+
+2/2 Testing: story
+2/2 Test: story
+Command: "/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/test-openvn-story"
+Directory: /home/pgo/Projects/openvn/runtimes/amiga-native/build-host
+"story" start time: Jul 17 03:18 CEST
+Output:
+----------------------------------------------------------
+<end of output>
+Test time =   0.02 sec
+----------------------------------------------------------
+Test Passed.
+"story" end time: Jul 17 03:18 CEST
+"story" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Jul 17 03:18 CEST

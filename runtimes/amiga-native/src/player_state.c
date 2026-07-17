@@ -1,17 +1,16 @@
 #include "openvn_dispatch.h"
 #include "openvn_story.h"
+#include "story.generated.h"
 
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
-static OpenVNStory g_story;
+static OpenVNStoryState g_story;
 
 void openvn_state_reset(void) {
-    openvn_story_reset(&g_story);
+    openvn_story_attach(&g_story, &OPENVN_GENERATED_STORY);
 }
 
-const OpenVNStory *openvn_state_story(void) {
+const OpenVNStoryState *openvn_state_story(void) {
     return &g_story;
 }
 
@@ -19,13 +18,13 @@ int openvn_dispatch_request(const OpenVNRequest *request) {
     char *end;
     long index;
 
-    if (request == NULL) {
+    if (request == 0) {
         return 0;
     }
 
     switch (request->command) {
         case OPENVN_CMD_LOAD:
-            return openvn_story_load_file(&g_story, request->argument1);
+            return openvn_story_attach(&g_story, &OPENVN_GENERATED_STORY);
         case OPENVN_CMD_RUN:
             return openvn_story_start(&g_story);
         case OPENVN_CMD_STEP:
@@ -37,7 +36,7 @@ int openvn_dispatch_request(const OpenVNRequest *request) {
             }
             return openvn_story_choose(&g_story, (size_t)index);
         case OPENVN_CMD_STATUS:
-            return g_story.loaded;
+            return g_story.story != 0;
         case OPENVN_CMD_SCENE:
         case OPENVN_CMD_SHOW:
         case OPENVN_CMD_HIDE:

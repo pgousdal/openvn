@@ -106,5 +106,7 @@ def test_host_player_protocol(tmp_path: Path) -> None:
         "OK MUSIC",
         "OK SOUND",
         "OK RUN",
+        "STATUS TEXT",
+        "TEXT Hello from OpenVN.",
         "OK QUIT",
     ]

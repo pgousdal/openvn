@@ -8,16 +8,11 @@ from ...assets import load_asset_manifest
 from ...errors import OpenVNError
 from .conversion import convert_asset
 from .profiles import AmigaProfile
+from .story_codegen import write_generated_story
 
 
 def render_arexx_bootstrap() -> str:
-    return (
-        "/* OpenVN Amiga bootstrap */\n"
-        "ADDRESS 'OPENVNPLAYER'\n"
-        "'LOAD story/story.openvn.json'\n"
-        "'RUN'\n"
-        "EXIT\n"
-    )
+    return "/* OpenVN Amiga bootstrap */\nADDRESS 'OPENVNPLAYER'\n'RUN'\nEXIT\n"
 
 
 def _music_paths(manifest) -> set[Path]:
@@ -47,7 +42,10 @@ def export_amiga_package(
     (output / "assets").mkdir(parents=True, exist_ok=True)
     (output / "runtime").mkdir(parents=True, exist_ok=True)
 
+    # Keep JSON for debugging/tooling, but runtime consumes generated C tables.
     shutil.copy2(story, output / "story" / "story.openvn.json")
+    write_generated_story(story, output / "story")
+
     (output / "story" / "main.rexx").write_text(
         render_arexx_bootstrap(),
         encoding="utf-8",
@@ -74,9 +72,14 @@ def export_amiga_package(
 
     package_manifest = {
         "format": "openvn-amiga-package",
-        "version": "0.2",
+        "version": "0.3",
         "profile": profile.id,
-        "story": "story/story.openvn.json",
+        "story": {
+            "debug_json": "story/story.openvn.json",
+            "generated_header": "story/story.generated.h",
+            "generated_source": "story/story.generated.c",
+            "runtime_parses_json": False,
+        },
         "bootstrap": "story/main.rexx",
         "runtime": {
             "player": "runtime/openvn-player",
@@ -84,6 +87,7 @@ def export_amiga_package(
             "native_c": True,
             "ace_dependency": False,
             "system_friendly": True,
+            "static_story_tables": True,
         },
         "assets": sorted(assets, key=lambda item: item["source"]),
     }
@@ -93,8 +97,8 @@ def export_amiga_package(
         encoding="utf-8",
     )
     (output / "runtime" / "README.txt").write_text(
-        "OpenVN native AmigaOS player will be added in M5 PR3.\n"
-        "The player must use ARexx and direct AmigaOS APIs without ACE.\n",
+        "Build openvn-player with story/story.generated.c.\n"
+        "The runtime uses static generated tables and does not parse JSON.\n",
         encoding="utf-8",
     )
 

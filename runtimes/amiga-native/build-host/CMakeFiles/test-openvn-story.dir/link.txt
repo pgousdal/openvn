@@ -1,0 +1,1 @@
+/usr/bin/gcc -Wl,--dependency-file=CMakeFiles/test-openvn-story.dir/link.d "CMakeFiles/test-openvn-story.dir/tests/test_story.c.o" -o test-openvn-story  libopenvn_dispatch.a

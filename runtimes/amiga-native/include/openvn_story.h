@@ -3,11 +3,6 @@
 
 #include <stddef.h>
 
-#define OPENVN_MAX_NODES 512
-#define OPENVN_MAX_OPTIONS 16
-#define OPENVN_MAX_TEXT 1024
-#define OPENVN_MAX_ID 128
-
 typedef enum OpenVNNodeType {
     OPENVN_NODE_INVALID = 0,
     OPENVN_NODE_TEXT,
@@ -21,40 +16,52 @@ typedef enum OpenVNNodeType {
     OPENVN_NODE_SOUND
 } OpenVNNodeType;
 
-typedef struct OpenVNChoiceOption {
-    char text[OPENVN_MAX_TEXT];
-    char target[OPENVN_MAX_ID];
-} OpenVNChoiceOption;
+typedef struct OpenVNGeneratedChoice {
+    const char *text;
+    const char *target;
+} OpenVNGeneratedChoice;
 
-typedef struct OpenVNStoryNode {
-    char id[OPENVN_MAX_ID];
+typedef struct OpenVNGeneratedNode {
+    const char *id;
     OpenVNNodeType type;
-    char text[OPENVN_MAX_TEXT];
-    char next[OPENVN_MAX_ID];
-    char target[OPENVN_MAX_ID];
-    char argument1[OPENVN_MAX_ID];
-    char argument2[OPENVN_MAX_ID];
-    OpenVNChoiceOption options[OPENVN_MAX_OPTIONS];
+    const char *text;
+    const char *next;
+    const char *target;
+    const char *argument1;
+    const char *argument2;
+    const OpenVNGeneratedChoice *options;
     size_t option_count;
-} OpenVNStoryNode;
+} OpenVNGeneratedNode;
 
-typedef struct OpenVNStory {
-    char version[16];
-    char entry[OPENVN_MAX_ID];
-    OpenVNStoryNode nodes[OPENVN_MAX_NODES];
+typedef struct OpenVNGeneratedStory {
+    const char *version;
+    const char *entry;
+    const OpenVNGeneratedNode *nodes;
     size_t node_count;
-    size_t current_index;
-    int loaded;
-    int ended;
-} OpenVNStory;
+} OpenVNGeneratedStory;
 
-void openvn_story_reset(OpenVNStory *story);
-int openvn_story_load_file(OpenVNStory *story, const char *path);
-int openvn_story_find_node(const OpenVNStory *story, const char *id);
-const OpenVNStoryNode *openvn_story_current(const OpenVNStory *story);
-int openvn_story_start(OpenVNStory *story);
-int openvn_story_step(OpenVNStory *story);
-int openvn_story_choose(OpenVNStory *story, size_t index);
-const char *openvn_story_status(const OpenVNStory *story);
+typedef struct OpenVNStoryState {
+    const OpenVNGeneratedStory *story;
+    size_t current_index;
+    int started;
+    int ended;
+} OpenVNStoryState;
+
+void openvn_story_reset(OpenVNStoryState *state);
+int openvn_story_attach(
+    OpenVNStoryState *state,
+    const OpenVNGeneratedStory *story
+);
+int openvn_story_find_node(
+    const OpenVNGeneratedStory *story,
+    const char *id
+);
+const OpenVNGeneratedNode *openvn_story_current(
+    const OpenVNStoryState *state
+);
+int openvn_story_start(OpenVNStoryState *state);
+int openvn_story_step(OpenVNStoryState *state);
+int openvn_story_choose(OpenVNStoryState *state, size_t index);
+const char *openvn_story_status(const OpenVNStoryState *state);
 
 #endif

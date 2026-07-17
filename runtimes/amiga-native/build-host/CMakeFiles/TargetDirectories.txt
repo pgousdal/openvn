@@ -1,0 +1,7 @@
+/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles/openvn_dispatch.dir
+/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles/openvn-player-host.dir
+/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles/test-openvn-dispatch.dir
+/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles/test-openvn-story.dir
+/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles/test.dir
+/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles/edit_cache.dir
+/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles/rebuild_cache.dir
