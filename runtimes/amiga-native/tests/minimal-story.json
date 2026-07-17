@@ -1,0 +1,32 @@
+{
+  "format": "openvn-story",
+  "version": "0.4",
+  "entry": "start",
+  "symbols": {"start": "start"},
+  "nodes": [
+    {
+      "id": "start",
+      "type": "text",
+      "text": "Hello from OpenVN.",
+      "next": "choice"
+    },
+    {
+      "id": "choice",
+      "type": "choice",
+      "options": [
+        {"text": "Continue", "target": "scene"},
+        {"text": "Finish", "target": "end"}
+      ]
+    },
+    {
+      "id": "scene",
+      "type": "scene",
+      "background": "lighthouse_storm",
+      "next": "end"
+    },
+    {
+      "id": "end",
+      "type": "end"
+    }
+  ]
+}
