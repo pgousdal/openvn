@@ -1,19 +1,118 @@
 {
   "format": "openvn-story",
-  "version": "0.3",
+  "version": "0.4",
   "entry": "start-0001",
   "symbols": {
+    "hopeful": "hopeful-0001",
+    "quiet": "quiet-0001",
     "start": "start-0001"
   },
   "nodes": [
     {
       "id": "start-0001",
-      "type": "text",
-      "text": "Asset pipeline demo.",
+      "type": "scene",
+      "background": "room",
       "next": "start-0002"
     },
     {
       "id": "start-0002",
+      "type": "music",
+      "track": "intro",
+      "next": "start-0003"
+    },
+    {
+      "id": "start-0003",
+      "type": "show",
+      "character": "alice",
+      "pose": "neutral",
+      "next": "start-0004"
+    },
+    {
+      "id": "start-0004",
+      "type": "text",
+      "text": "Alice switches on the old terminal. The OpenVN demo is running on one shared story.",
+      "next": "start-0005"
+    },
+    {
+      "id": "start-0005",
+      "type": "sound",
+      "sound": "click",
+      "next": "start-0006"
+    },
+    {
+      "id": "start-0006",
+      "type": "text",
+      "text": "The screen asks which path to demonstrate.",
+      "next": "start-0007"
+    },
+    {
+      "id": "start-0007",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Show the hopeful ending",
+          "target": "hopeful-0001"
+        },
+        {
+          "text": "Show the quiet ending",
+          "target": "quiet-0001"
+        }
+      ]
+    },
+    {
+      "id": "hopeful-0001",
+      "type": "text",
+      "text": "Alice smiles as the scene, portrait, choice, music, and sound complete one vertical slice.",
+      "next": "hopeful-0002"
+    },
+    {
+      "id": "hopeful-0002",
+      "type": "hide",
+      "character": "alice",
+      "next": "hopeful-0003"
+    },
+    {
+      "id": "hopeful-0003",
+      "type": "music",
+      "track": null,
+      "next": "hopeful-0004"
+    },
+    {
+      "id": "hopeful-0004",
+      "type": "text",
+      "text": "ENDING: A New Story",
+      "next": "hopeful-0005"
+    },
+    {
+      "id": "hopeful-0005",
+      "type": "end"
+    },
+    {
+      "id": "quiet-0001",
+      "type": "text",
+      "text": "Alice lets the music play for one final moment before closing the terminal.",
+      "next": "quiet-0002"
+    },
+    {
+      "id": "quiet-0002",
+      "type": "hide",
+      "character": "alice",
+      "next": "quiet-0003"
+    },
+    {
+      "id": "quiet-0003",
+      "type": "music",
+      "track": null,
+      "next": "quiet-0004"
+    },
+    {
+      "id": "quiet-0004",
+      "type": "text",
+      "text": "ENDING: The Last Note",
+      "next": "quiet-0005"
+    },
+    {
+      "id": "quiet-0005",
       "type": "end"
     }
   ]

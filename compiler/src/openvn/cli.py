@@ -29,6 +29,11 @@ def build_parser() -> argparse.ArgumentParser:
     compile_command.add_argument("project", type=Path)
     compile_command.add_argument("--strict", action="store_true")
 
+    build = subparsers.add_parser("build")
+    build.add_argument("project", type=Path)
+    build.add_argument("--output", type=Path)
+    build.add_argument("--clean", action="store_true")
+
     export = subparsers.add_parser("export")
     export.add_argument("project", type=Path)
     export.add_argument("--backend", choices=["renpy", "amiga"], required=True)
@@ -82,6 +87,42 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.command == "compile":
             output = compile_project(args.project, strict=args.strict)
+            print(output)
+            return 0
+
+        if args.command == "build":
+            repository = _repository_root(args.project)
+            project = load_project(args.project)
+            output = (args.output or (project.root / "dist")).resolve()
+            if args.clean and output.exists():
+                import shutil
+
+                shutil.rmtree(output)
+
+            story_path = compile_project(project.root, strict=True)
+            output.mkdir(parents=True, exist_ok=True)
+            export_renpy_project(story_path, output / "renpy", clean=True)
+            profile = load_amiga_profile(repository / "profiles" / "amiga-ocs.yaml")
+            export_amiga_package(
+                project_root=project.root,
+                story_path=story_path,
+                output_dir=output / "amiga-ocs",
+                profile=profile,
+                clean=True,
+            )
+            summary = {
+                "format": "openvn-build",
+                "version": "0.1",
+                "project": project.name,
+                "story": str(story_path.relative_to(project.root)),
+                "targets": {
+                    "renpy": "renpy",
+                    "amiga-ocs": "amiga-ocs",
+                },
+            }
+            (output / "build.json").write_text(
+                json.dumps(summary, indent=2) + "\n", encoding="utf-8"
+            )
             print(output)
             return 0
 

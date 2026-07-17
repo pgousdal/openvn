@@ -8,8 +8,8 @@ characters:
 
 music:
   intro:
-    file: music/intro.ogg
+    file: music/intro.mod
 
 sfx:
   click:
-    file: sfx/click.ogg
+    file: sfx/click.wav
