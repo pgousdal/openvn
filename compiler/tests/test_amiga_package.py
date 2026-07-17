@@ -25,7 +25,7 @@ def test_classic_package_rejects_mixed_music(tmp_path: Path) -> None:
         )
 
 
-def test_export_rtg_generates_static_story_tables(tmp_path: Path) -> None:
+def test_export_rtg_generates_story_and_asset_tables(tmp_path: Path) -> None:
     story = compile_project(PROJECT, strict=True)
     profile = load_amiga_profile(REPOSITORY / "profiles" / "amiga-rtg.yaml")
 
@@ -40,10 +40,13 @@ def test_export_rtg_generates_static_story_tables(tmp_path: Path) -> None:
     assert manifest["profile"] == "amiga-rtg"
     assert manifest["story"]["runtime_parses_json"] is False
     assert manifest["runtime"]["static_story_tables"] is True
+    assert manifest["runtime"]["static_asset_tables"] is True
     assert (output / "story/story.generated.h").is_file()
     assert (output / "story/story.generated.c").is_file()
+    assert (output / "story/assets.generated.h").is_file()
+    assert (output / "story/assets.generated.c").is_file()
     assert (output / "story/main.rexx").is_file()
 
-    png_assets = [asset for asset in manifest["assets"] if asset["conversion"]["source"] == "png"]
-    assert png_assets
-    assert all(asset["conversion"]["target"] == "png" for asset in png_assets)
+    asset_source = (output / "story/assets.generated.c").read_text(encoding="utf-8")
+    assert "assets/backgrounds/lighthouse_storm.png" in asset_source
+    assert "assets/characters/erik_neutral.png" in asset_source

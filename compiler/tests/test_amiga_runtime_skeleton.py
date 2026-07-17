@@ -100,13 +100,21 @@ def test_host_player_protocol(tmp_path: Path) -> None:
     )
 
     assert process.stdout.splitlines() == [
+        "GRAPHICS OPEN 640 256 8 DATATYPES",
         "OK LOAD",
+        "GRAPHICS LOAD DATATYPE tests/fixtures/lighthouse_storm.iff",
+        "GRAPHICS SCENE lighthouse_storm",
+        "GRAPHICS PRESENT 1",
         "OK SCENE",
+        "GRAPHICS LOAD DATATYPE tests/fixtures/erik_neutral.iff",
+        "GRAPHICS SHOW erik neutral",
+        "GRAPHICS PRESENT 2",
         "OK SHOW",
         "OK MUSIC",
         "OK SOUND",
         "OK RUN",
         "STATUS TEXT",
         "TEXT Hello from OpenVN.",
+        "GRAPHICS CLOSE",
         "OK QUIT",
     ]

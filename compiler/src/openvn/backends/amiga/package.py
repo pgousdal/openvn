@@ -6,6 +6,7 @@ from pathlib import Path
 
 from ...assets import load_asset_manifest
 from ...errors import OpenVNError
+from .assets_codegen import write_generated_assets
 from .conversion import convert_asset
 from .profiles import AmigaProfile
 from .story_codegen import write_generated_story
@@ -42,7 +43,6 @@ def export_amiga_package(
     (output / "assets").mkdir(parents=True, exist_ok=True)
     (output / "runtime").mkdir(parents=True, exist_ok=True)
 
-    # Keep JSON for debugging/tooling, but runtime consumes generated C tables.
     shutil.copy2(story, output / "story" / "story.openvn.json")
     write_generated_story(story, output / "story")
 
@@ -53,6 +53,8 @@ def export_amiga_package(
 
     music_files = _music_paths(manifest)
     assets = []
+    packaged_paths: dict[Path, Path] = {}
+
     for source in manifest.all_files():
         relative = source.relative_to(manifest.root)
         destination, conversion = convert_asset(
@@ -62,6 +64,9 @@ def export_amiga_package(
             profile=profile,
             is_music=source in music_files,
         )
+        packaged_relative = destination.relative_to(output)
+        packaged_paths[source] = packaged_relative
+
         assets.append(
             {
                 "source": str(relative),
@@ -70,15 +75,25 @@ def export_amiga_package(
             }
         )
 
+    write_generated_assets(
+        manifest,
+        packaged_paths,
+        output / "story",
+    )
+
     package_manifest = {
         "format": "openvn-amiga-package",
-        "version": "0.3",
+        "version": "0.4",
         "profile": profile.id,
         "story": {
             "debug_json": "story/story.openvn.json",
             "generated_header": "story/story.generated.h",
             "generated_source": "story/story.generated.c",
             "runtime_parses_json": False,
+        },
+        "asset_table": {
+            "generated_header": "story/assets.generated.h",
+            "generated_source": "story/assets.generated.c",
         },
         "bootstrap": "story/main.rexx",
         "runtime": {
@@ -88,6 +103,7 @@ def export_amiga_package(
             "ace_dependency": False,
             "system_friendly": True,
             "static_story_tables": True,
+            "static_asset_tables": True,
         },
         "assets": sorted(assets, key=lambda item: item["source"]),
     }
@@ -97,8 +113,7 @@ def export_amiga_package(
         encoding="utf-8",
     )
     (output / "runtime" / "README.txt").write_text(
-        "Build openvn-player with story/story.generated.c.\n"
-        "The runtime uses static generated tables and does not parse JSON.\n",
+        "Build openvn-player with story/story.generated.c and story/assets.generated.c.\n",
         encoding="utf-8",
     )
 

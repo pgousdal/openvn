@@ -1,10 +1,16 @@
 CMakeFiles/openvn_dispatch.dir/src/player_state.c.o: \
  /home/pgo/Projects/openvn/runtimes/amiga-native/src/player_state.c \
  /usr/include/stdc-predef.h \
- /home/pgo/Projects/openvn/runtimes/amiga-native/include/openvn_dispatch.h \
+ /home/pgo/Projects/openvn/runtimes/amiga-native/tests/assets.generated.h \
+ /home/pgo/Projects/openvn/runtimes/amiga-native/include/openvn_assets_runtime.h \
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h \
+ /home/pgo/Projects/openvn/runtimes/amiga-native/include/openvn_dispatch.h \
+ /home/pgo/Projects/openvn/runtimes/amiga-native/include/openvn_graphics_host.h \
+ /home/pgo/Projects/openvn/runtimes/amiga-native/include/openvn_graphics.h \
+ /home/pgo/Projects/openvn/runtimes/amiga-native/include/openvn_assets_runtime.h \
+ /home/pgo/Projects/openvn/runtimes/amiga-native/include/openvn_image.h \
+ /home/pgo/Projects/openvn/runtimes/amiga-native/include/openvn_player.h \
  /home/pgo/Projects/openvn/runtimes/amiga-native/include/openvn_story.h \
- /home/pgo/Projects/openvn/runtimes/amiga-native/tests/story.generated.h \
  /usr/include/stdlib.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/features.h /usr/include/features-time64.h \

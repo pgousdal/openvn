@@ -1,15 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://openvn.org/schemas/openvn-story-0.4.schema.json",
-  "title": "OpenVN Story 0.4",
+  "title": "OpenVN Story Format 0.4",
   "type": "object",
-  "required": [
-    "format",
-    "version",
-    "entry",
-    "symbols",
-    "nodes"
-  ],
+  "additionalProperties": false,
+  "required": ["format", "version", "entry", "symbols", "nodes"],
   "properties": {
     "format": {
       "const": "openvn-story"
@@ -24,13 +19,330 @@
     "symbols": {
       "type": "object",
       "additionalProperties": {
-        "type": "string"
+        "type": "string",
+        "minLength": 1
       }
     },
     "nodes": {
       "type": "array",
-      "minItems": 1
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
     }
   },
-  "additionalProperties": false
+  "$defs": {
+    "nodeId": {
+      "type": "string",
+      "minLength": 1
+    },
+    "nullableTarget": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/nodeId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "baseNode": {
+      "type": "object",
+      "required": ["id", "type"],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/nodeId"
+        },
+        "type": {
+          "type": "string"
+        }
+      }
+    },
+    "choiceOption": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "target"],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "target": {
+          "$ref": "#/$defs/nodeId"
+        }
+      }
+    },
+    "textNode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseNode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "text", "next"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/nodeId"
+            },
+            "type": {
+              "const": "text"
+            },
+            "text": {
+              "type": "string"
+            },
+            "next": {
+              "$ref": "#/$defs/nullableTarget"
+            }
+          }
+        }
+      ]
+    },
+    "choiceNode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseNode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "options"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/nodeId"
+            },
+            "type": {
+              "const": "choice"
+            },
+            "options": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "$ref": "#/$defs/choiceOption"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "jumpNode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseNode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "target"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/nodeId"
+            },
+            "type": {
+              "const": "jump"
+            },
+            "target": {
+              "$ref": "#/$defs/nodeId"
+            }
+          }
+        }
+      ]
+    },
+    "endNode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseNode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/nodeId"
+            },
+            "type": {
+              "const": "end"
+            }
+          }
+        }
+      ]
+    },
+    "sceneNode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseNode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "background", "next"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/nodeId"
+            },
+            "type": {
+              "const": "scene"
+            },
+            "background": {
+              "type": "string",
+              "minLength": 1
+            },
+            "next": {
+              "$ref": "#/$defs/nullableTarget"
+            }
+          }
+        }
+      ]
+    },
+    "showNode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseNode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "character", "pose", "next"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/nodeId"
+            },
+            "type": {
+              "const": "show"
+            },
+            "character": {
+              "type": "string",
+              "minLength": 1
+            },
+            "pose": {
+              "type": "string",
+              "minLength": 1
+            },
+            "next": {
+              "$ref": "#/$defs/nullableTarget"
+            }
+          }
+        }
+      ]
+    },
+    "hideNode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseNode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "character", "next"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/nodeId"
+            },
+            "type": {
+              "const": "hide"
+            },
+            "character": {
+              "type": "string",
+              "minLength": 1
+            },
+            "next": {
+              "$ref": "#/$defs/nullableTarget"
+            }
+          }
+        }
+      ]
+    },
+    "musicNode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseNode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "track", "next"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/nodeId"
+            },
+            "type": {
+              "const": "music"
+            },
+            "track": {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "next": {
+              "$ref": "#/$defs/nullableTarget"
+            }
+          }
+        }
+      ]
+    },
+    "soundNode": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/baseNode"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "sound", "next"],
+          "properties": {
+            "id": {
+              "$ref": "#/$defs/nodeId"
+            },
+            "type": {
+              "const": "sound"
+            },
+            "sound": {
+              "type": "string",
+              "minLength": 1
+            },
+            "next": {
+              "$ref": "#/$defs/nullableTarget"
+            }
+          }
+        }
+      ]
+    },
+    "node": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/textNode"
+        },
+        {
+          "$ref": "#/$defs/choiceNode"
+        },
+        {
+          "$ref": "#/$defs/jumpNode"
+        },
+        {
+          "$ref": "#/$defs/endNode"
+        },
+        {
+          "$ref": "#/$defs/sceneNode"
+        },
+        {
+          "$ref": "#/$defs/showNode"
+        },
+        {
+          "$ref": "#/$defs/hideNode"
+        },
+        {
+          "$ref": "#/$defs/musicNode"
+        },
+        {
+          "$ref": "#/$defs/soundNode"
+        }
+      ]
+    }
+  }
 }

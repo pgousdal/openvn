@@ -72,10 +72,24 @@ include CMakeFiles/openvn_dispatch.dir/flags.make
 CMakeFiles/openvn_dispatch.dir/codegen:
 .PHONY : CMakeFiles/openvn_dispatch.dir/codegen
 
+CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
+CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/src/assets_runtime.c
+CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o -MF CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o.d -o CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/src/assets_runtime.c
+
+CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.i"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/pgo/Projects/openvn/runtimes/amiga-native/src/assets_runtime.c > CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.i
+
+CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.s"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/pgo/Projects/openvn/runtimes/amiga-native/src/assets_runtime.c -o CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.s
+
 CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
 CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/src/dispatch.c
 CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o -MF CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o.d -o CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/src/dispatch.c
 
 CMakeFiles/openvn_dispatch.dir/src/dispatch.c.i: cmake_force
@@ -86,10 +100,66 @@ CMakeFiles/openvn_dispatch.dir/src/dispatch.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/openvn_dispatch.dir/src/dispatch.c.s"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/pgo/Projects/openvn/runtimes/amiga-native/src/dispatch.c -o CMakeFiles/openvn_dispatch.dir/src/dispatch.c.s
 
+CMakeFiles/openvn_dispatch.dir/src/graphics.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
+CMakeFiles/openvn_dispatch.dir/src/graphics.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/src/graphics.c
+CMakeFiles/openvn_dispatch.dir/src/graphics.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/openvn_dispatch.dir/src/graphics.c.o"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/src/graphics.c.o -MF CMakeFiles/openvn_dispatch.dir/src/graphics.c.o.d -o CMakeFiles/openvn_dispatch.dir/src/graphics.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/src/graphics.c
+
+CMakeFiles/openvn_dispatch.dir/src/graphics.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/openvn_dispatch.dir/src/graphics.c.i"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/pgo/Projects/openvn/runtimes/amiga-native/src/graphics.c > CMakeFiles/openvn_dispatch.dir/src/graphics.c.i
+
+CMakeFiles/openvn_dispatch.dir/src/graphics.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/openvn_dispatch.dir/src/graphics.c.s"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/pgo/Projects/openvn/runtimes/amiga-native/src/graphics.c -o CMakeFiles/openvn_dispatch.dir/src/graphics.c.s
+
+CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
+CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/src/graphics_host.c
+CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o -MF CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o.d -o CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/src/graphics_host.c
+
+CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.i"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/pgo/Projects/openvn/runtimes/amiga-native/src/graphics_host.c > CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.i
+
+CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.s"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/pgo/Projects/openvn/runtimes/amiga-native/src/graphics_host.c -o CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.s
+
+CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
+CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/src/image_ilbm.c
+CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o -MF CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o.d -o CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/src/image_ilbm.c
+
+CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.i"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/pgo/Projects/openvn/runtimes/amiga-native/src/image_ilbm.c > CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.i
+
+CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.s"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/pgo/Projects/openvn/runtimes/amiga-native/src/image_ilbm.c -o CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.s
+
+CMakeFiles/openvn_dispatch.dir/src/player.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
+CMakeFiles/openvn_dispatch.dir/src/player.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/src/player.c
+CMakeFiles/openvn_dispatch.dir/src/player.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building C object CMakeFiles/openvn_dispatch.dir/src/player.c.o"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/src/player.c.o -MF CMakeFiles/openvn_dispatch.dir/src/player.c.o.d -o CMakeFiles/openvn_dispatch.dir/src/player.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/src/player.c
+
+CMakeFiles/openvn_dispatch.dir/src/player.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/openvn_dispatch.dir/src/player.c.i"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/pgo/Projects/openvn/runtimes/amiga-native/src/player.c > CMakeFiles/openvn_dispatch.dir/src/player.c.i
+
+CMakeFiles/openvn_dispatch.dir/src/player.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/openvn_dispatch.dir/src/player.c.s"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/pgo/Projects/openvn/runtimes/amiga-native/src/player.c -o CMakeFiles/openvn_dispatch.dir/src/player.c.s
+
 CMakeFiles/openvn_dispatch.dir/src/player_state.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
 CMakeFiles/openvn_dispatch.dir/src/player_state.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/src/player_state.c
 CMakeFiles/openvn_dispatch.dir/src/player_state.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/openvn_dispatch.dir/src/player_state.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building C object CMakeFiles/openvn_dispatch.dir/src/player_state.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/src/player_state.c.o -MF CMakeFiles/openvn_dispatch.dir/src/player_state.c.o.d -o CMakeFiles/openvn_dispatch.dir/src/player_state.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/src/player_state.c
 
 CMakeFiles/openvn_dispatch.dir/src/player_state.c.i: cmake_force
@@ -103,7 +173,7 @@ CMakeFiles/openvn_dispatch.dir/src/player_state.c.s: cmake_force
 CMakeFiles/openvn_dispatch.dir/src/story.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
 CMakeFiles/openvn_dispatch.dir/src/story.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/src/story.c
 CMakeFiles/openvn_dispatch.dir/src/story.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/openvn_dispatch.dir/src/story.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building C object CMakeFiles/openvn_dispatch.dir/src/story.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/src/story.c.o -MF CMakeFiles/openvn_dispatch.dir/src/story.c.o.d -o CMakeFiles/openvn_dispatch.dir/src/story.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/src/story.c
 
 CMakeFiles/openvn_dispatch.dir/src/story.c.i: cmake_force
@@ -117,7 +187,7 @@ CMakeFiles/openvn_dispatch.dir/src/story.c.s: cmake_force
 CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
 CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/tests/story.generated.c
 CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building C object CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o -MF CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o.d -o CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/tests/story.generated.c
 
 CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.i: cmake_force
@@ -128,23 +198,49 @@ CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.s"
 	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/pgo/Projects/openvn/runtimes/amiga-native/tests/story.generated.c -o CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.s
 
+CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o: CMakeFiles/openvn_dispatch.dir/flags.make
+CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o: /home/pgo/Projects/openvn/runtimes/amiga-native/tests/assets.generated.c
+CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o: CMakeFiles/openvn_dispatch.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building C object CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -MD -MT CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o -MF CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o.d -o CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o -c /home/pgo/Projects/openvn/runtimes/amiga-native/tests/assets.generated.c
+
+CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing C source to CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.i"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/pgo/Projects/openvn/runtimes/amiga-native/tests/assets.generated.c > CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.i
+
+CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling C source to assembly CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.s"
+	/usr/bin/gcc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/pgo/Projects/openvn/runtimes/amiga-native/tests/assets.generated.c -o CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.s
+
 # Object files for target openvn_dispatch
 openvn_dispatch_OBJECTS = \
+"CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o" \
 "CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o" \
+"CMakeFiles/openvn_dispatch.dir/src/graphics.c.o" \
+"CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o" \
+"CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o" \
+"CMakeFiles/openvn_dispatch.dir/src/player.c.o" \
 "CMakeFiles/openvn_dispatch.dir/src/player_state.c.o" \
 "CMakeFiles/openvn_dispatch.dir/src/story.c.o" \
-"CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o"
+"CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o" \
+"CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o"
 
 # External object files for target openvn_dispatch
 openvn_dispatch_EXTERNAL_OBJECTS =
 
+libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o
 libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/src/dispatch.c.o
+libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/src/graphics.c.o
+libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o
+libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o
+libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/src/player.c.o
 libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/src/player_state.c.o
 libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/src/story.c.o
 libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.o
+libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o
 libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/build.make
 libopenvn_dispatch.a: CMakeFiles/openvn_dispatch.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Linking C static library libopenvn_dispatch.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking C static library libopenvn_dispatch.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/openvn_dispatch.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/openvn_dispatch.dir/link.txt --verbose=$(VERBOSE)
 

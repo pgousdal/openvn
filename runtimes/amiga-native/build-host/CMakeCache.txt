@@ -189,6 +189,9 @@ CMAKE_TAPI:FILEPATH=CMAKE_TAPI-NOTFOUND
 // Studio IDE projects all commands are done without /nologo.
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
+//Generated OpenVN asset table source
+OPENVN_GENERATED_ASSETS_SOURCE:FILEPATH=/home/pgo/Projects/openvn/runtimes/amiga-native/tests/assets.generated.c
+
 //Generated OpenVN story source
 OPENVN_GENERATED_STORY_SOURCE:FILEPATH=/home/pgo/Projects/openvn/runtimes/amiga-native/tests/story.generated.c
 

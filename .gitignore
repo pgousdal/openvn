@@ -6,3 +6,7 @@ __pycache__/
 dist/
 build/
 *.egg-info/
+
+# Native runtime build output
+runtimes/amiga-native/build-host/
+runtimes/amiga-native/build-*/

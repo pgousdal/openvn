@@ -178,6 +178,69 @@ test-openvn-story/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-story.dir/build.make CMakeFiles/test-openvn-story.dir/build
 .PHONY : test-openvn-story/fast
 
+#=============================================================================
+# Target rules for targets named test-openvn-graphics
+
+# Build rule for target.
+test-openvn-graphics: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-openvn-graphics
+.PHONY : test-openvn-graphics
+
+# fast build rule for target.
+test-openvn-graphics/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-graphics.dir/build.make CMakeFiles/test-openvn-graphics.dir/build
+.PHONY : test-openvn-graphics/fast
+
+#=============================================================================
+# Target rules for targets named test-openvn-image
+
+# Build rule for target.
+test-openvn-image: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-openvn-image
+.PHONY : test-openvn-image
+
+# fast build rule for target.
+test-openvn-image/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-image.dir/build.make CMakeFiles/test-openvn-image.dir/build
+.PHONY : test-openvn-image/fast
+
+#=============================================================================
+# Target rules for targets named test-openvn-assets-runtime
+
+# Build rule for target.
+test-openvn-assets-runtime: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 test-openvn-assets-runtime
+.PHONY : test-openvn-assets-runtime
+
+# fast build rule for target.
+test-openvn-assets-runtime/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-assets-runtime.dir/build.make CMakeFiles/test-openvn-assets-runtime.dir/build
+.PHONY : test-openvn-assets-runtime/fast
+
+src/assets_runtime.o: src/assets_runtime.c.o
+.PHONY : src/assets_runtime.o
+
+# target to build an object file
+src/assets_runtime.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.o
+.PHONY : src/assets_runtime.c.o
+
+src/assets_runtime.i: src/assets_runtime.c.i
+.PHONY : src/assets_runtime.i
+
+# target to preprocess a source file
+src/assets_runtime.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.i
+.PHONY : src/assets_runtime.c.i
+
+src/assets_runtime.s: src/assets_runtime.c.s
+.PHONY : src/assets_runtime.s
+
+# target to generate assembly for a file
+src/assets_runtime.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/assets_runtime.c.s
+.PHONY : src/assets_runtime.c.s
+
 src/dispatch.o: src/dispatch.c.o
 .PHONY : src/dispatch.o
 
@@ -202,6 +265,78 @@ src/dispatch.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/dispatch.c.s
 .PHONY : src/dispatch.c.s
 
+src/graphics.o: src/graphics.c.o
+.PHONY : src/graphics.o
+
+# target to build an object file
+src/graphics.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/graphics.c.o
+.PHONY : src/graphics.c.o
+
+src/graphics.i: src/graphics.c.i
+.PHONY : src/graphics.i
+
+# target to preprocess a source file
+src/graphics.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/graphics.c.i
+.PHONY : src/graphics.c.i
+
+src/graphics.s: src/graphics.c.s
+.PHONY : src/graphics.s
+
+# target to generate assembly for a file
+src/graphics.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/graphics.c.s
+.PHONY : src/graphics.c.s
+
+src/graphics_host.o: src/graphics_host.c.o
+.PHONY : src/graphics_host.o
+
+# target to build an object file
+src/graphics_host.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.o
+.PHONY : src/graphics_host.c.o
+
+src/graphics_host.i: src/graphics_host.c.i
+.PHONY : src/graphics_host.i
+
+# target to preprocess a source file
+src/graphics_host.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.i
+.PHONY : src/graphics_host.c.i
+
+src/graphics_host.s: src/graphics_host.c.s
+.PHONY : src/graphics_host.s
+
+# target to generate assembly for a file
+src/graphics_host.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/graphics_host.c.s
+.PHONY : src/graphics_host.c.s
+
+src/image_ilbm.o: src/image_ilbm.c.o
+.PHONY : src/image_ilbm.o
+
+# target to build an object file
+src/image_ilbm.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.o
+.PHONY : src/image_ilbm.c.o
+
+src/image_ilbm.i: src/image_ilbm.c.i
+.PHONY : src/image_ilbm.i
+
+# target to preprocess a source file
+src/image_ilbm.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.i
+.PHONY : src/image_ilbm.c.i
+
+src/image_ilbm.s: src/image_ilbm.c.s
+.PHONY : src/image_ilbm.s
+
+# target to generate assembly for a file
+src/image_ilbm.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/image_ilbm.c.s
+.PHONY : src/image_ilbm.c.s
+
 src/main_host.o: src/main_host.c.o
 .PHONY : src/main_host.o
 
@@ -225,6 +360,30 @@ src/main_host.s: src/main_host.c.s
 src/main_host.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn-player-host.dir/build.make CMakeFiles/openvn-player-host.dir/src/main_host.c.s
 .PHONY : src/main_host.c.s
+
+src/player.o: src/player.c.o
+.PHONY : src/player.o
+
+# target to build an object file
+src/player.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/player.c.o
+.PHONY : src/player.c.o
+
+src/player.i: src/player.c.i
+.PHONY : src/player.i
+
+# target to preprocess a source file
+src/player.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/player.c.i
+.PHONY : src/player.c.i
+
+src/player.s: src/player.c.s
+.PHONY : src/player.s
+
+# target to generate assembly for a file
+src/player.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/player.c.s
+.PHONY : src/player.c.s
 
 src/player_state.o: src/player_state.c.o
 .PHONY : src/player_state.o
@@ -274,6 +433,30 @@ src/story.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/src/story.c.s
 .PHONY : src/story.c.s
 
+tests/assets.generated.o: tests/assets.generated.c.o
+.PHONY : tests/assets.generated.o
+
+# target to build an object file
+tests/assets.generated.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.o
+.PHONY : tests/assets.generated.c.o
+
+tests/assets.generated.i: tests/assets.generated.c.i
+.PHONY : tests/assets.generated.i
+
+# target to preprocess a source file
+tests/assets.generated.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.i
+.PHONY : tests/assets.generated.c.i
+
+tests/assets.generated.s: tests/assets.generated.c.s
+.PHONY : tests/assets.generated.s
+
+# target to generate assembly for a file
+tests/assets.generated.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/tests/assets.generated.c.s
+.PHONY : tests/assets.generated.c.s
+
 tests/story.generated.o: tests/story.generated.c.o
 .PHONY : tests/story.generated.o
 
@@ -298,6 +481,30 @@ tests/story.generated.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/openvn_dispatch.dir/build.make CMakeFiles/openvn_dispatch.dir/tests/story.generated.c.s
 .PHONY : tests/story.generated.c.s
 
+tests/test_assets_runtime.o: tests/test_assets_runtime.c.o
+.PHONY : tests/test_assets_runtime.o
+
+# target to build an object file
+tests/test_assets_runtime.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-assets-runtime.dir/build.make CMakeFiles/test-openvn-assets-runtime.dir/tests/test_assets_runtime.c.o
+.PHONY : tests/test_assets_runtime.c.o
+
+tests/test_assets_runtime.i: tests/test_assets_runtime.c.i
+.PHONY : tests/test_assets_runtime.i
+
+# target to preprocess a source file
+tests/test_assets_runtime.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-assets-runtime.dir/build.make CMakeFiles/test-openvn-assets-runtime.dir/tests/test_assets_runtime.c.i
+.PHONY : tests/test_assets_runtime.c.i
+
+tests/test_assets_runtime.s: tests/test_assets_runtime.c.s
+.PHONY : tests/test_assets_runtime.s
+
+# target to generate assembly for a file
+tests/test_assets_runtime.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-assets-runtime.dir/build.make CMakeFiles/test-openvn-assets-runtime.dir/tests/test_assets_runtime.c.s
+.PHONY : tests/test_assets_runtime.c.s
+
 tests/test_dispatch.o: tests/test_dispatch.c.o
 .PHONY : tests/test_dispatch.o
 
@@ -321,6 +528,54 @@ tests/test_dispatch.s: tests/test_dispatch.c.s
 tests/test_dispatch.c.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-dispatch.dir/build.make CMakeFiles/test-openvn-dispatch.dir/tests/test_dispatch.c.s
 .PHONY : tests/test_dispatch.c.s
+
+tests/test_graphics.o: tests/test_graphics.c.o
+.PHONY : tests/test_graphics.o
+
+# target to build an object file
+tests/test_graphics.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-graphics.dir/build.make CMakeFiles/test-openvn-graphics.dir/tests/test_graphics.c.o
+.PHONY : tests/test_graphics.c.o
+
+tests/test_graphics.i: tests/test_graphics.c.i
+.PHONY : tests/test_graphics.i
+
+# target to preprocess a source file
+tests/test_graphics.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-graphics.dir/build.make CMakeFiles/test-openvn-graphics.dir/tests/test_graphics.c.i
+.PHONY : tests/test_graphics.c.i
+
+tests/test_graphics.s: tests/test_graphics.c.s
+.PHONY : tests/test_graphics.s
+
+# target to generate assembly for a file
+tests/test_graphics.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-graphics.dir/build.make CMakeFiles/test-openvn-graphics.dir/tests/test_graphics.c.s
+.PHONY : tests/test_graphics.c.s
+
+tests/test_image.o: tests/test_image.c.o
+.PHONY : tests/test_image.o
+
+# target to build an object file
+tests/test_image.c.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-image.dir/build.make CMakeFiles/test-openvn-image.dir/tests/test_image.c.o
+.PHONY : tests/test_image.c.o
+
+tests/test_image.i: tests/test_image.c.i
+.PHONY : tests/test_image.i
+
+# target to preprocess a source file
+tests/test_image.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-image.dir/build.make CMakeFiles/test-openvn-image.dir/tests/test_image.c.i
+.PHONY : tests/test_image.c.i
+
+tests/test_image.s: tests/test_image.c.s
+.PHONY : tests/test_image.s
+
+# target to generate assembly for a file
+tests/test_image.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/test-openvn-image.dir/build.make CMakeFiles/test-openvn-image.dir/tests/test_image.c.s
+.PHONY : tests/test_image.c.s
 
 tests/test_story.o: tests/test_story.c.o
 .PHONY : tests/test_story.o
@@ -357,26 +612,56 @@ help:
 	@echo "... test"
 	@echo "... openvn-player-host"
 	@echo "... openvn_dispatch"
+	@echo "... test-openvn-assets-runtime"
 	@echo "... test-openvn-dispatch"
+	@echo "... test-openvn-graphics"
+	@echo "... test-openvn-image"
 	@echo "... test-openvn-story"
+	@echo "... src/assets_runtime.o"
+	@echo "... src/assets_runtime.i"
+	@echo "... src/assets_runtime.s"
 	@echo "... src/dispatch.o"
 	@echo "... src/dispatch.i"
 	@echo "... src/dispatch.s"
+	@echo "... src/graphics.o"
+	@echo "... src/graphics.i"
+	@echo "... src/graphics.s"
+	@echo "... src/graphics_host.o"
+	@echo "... src/graphics_host.i"
+	@echo "... src/graphics_host.s"
+	@echo "... src/image_ilbm.o"
+	@echo "... src/image_ilbm.i"
+	@echo "... src/image_ilbm.s"
 	@echo "... src/main_host.o"
 	@echo "... src/main_host.i"
 	@echo "... src/main_host.s"
+	@echo "... src/player.o"
+	@echo "... src/player.i"
+	@echo "... src/player.s"
 	@echo "... src/player_state.o"
 	@echo "... src/player_state.i"
 	@echo "... src/player_state.s"
 	@echo "... src/story.o"
 	@echo "... src/story.i"
 	@echo "... src/story.s"
+	@echo "... tests/assets.generated.o"
+	@echo "... tests/assets.generated.i"
+	@echo "... tests/assets.generated.s"
 	@echo "... tests/story.generated.o"
 	@echo "... tests/story.generated.i"
 	@echo "... tests/story.generated.s"
+	@echo "... tests/test_assets_runtime.o"
+	@echo "... tests/test_assets_runtime.i"
+	@echo "... tests/test_assets_runtime.s"
 	@echo "... tests/test_dispatch.o"
 	@echo "... tests/test_dispatch.i"
 	@echo "... tests/test_dispatch.s"
+	@echo "... tests/test_graphics.o"
+	@echo "... tests/test_graphics.i"
+	@echo "... tests/test_graphics.s"
+	@echo "... tests/test_image.o"
+	@echo "... tests/test_image.i"
+	@echo "... tests/test_image.s"
 	@echo "... tests/test_story.o"
 	@echo "... tests/test_story.i"
 	@echo "... tests/test_story.s"

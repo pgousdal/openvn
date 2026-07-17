@@ -116,4 +116,7 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/openvn-player-host.dir/DependInfo.cmake"
   "CMakeFiles/test-openvn-dispatch.dir/DependInfo.cmake"
   "CMakeFiles/test-openvn-story.dir/DependInfo.cmake"
+  "CMakeFiles/test-openvn-graphics.dir/DependInfo.cmake"
+  "CMakeFiles/test-openvn-image.dir/DependInfo.cmake"
+  "CMakeFiles/test-openvn-assets-runtime.dir/DependInfo.cmake"
   )
