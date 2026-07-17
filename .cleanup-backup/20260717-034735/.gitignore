@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.py[cod]
+dist/
+build/
+*.egg-info/
+
+# Native runtime build output
+runtimes/amiga-native/build-host/
+runtimes/amiga-native/build-*/

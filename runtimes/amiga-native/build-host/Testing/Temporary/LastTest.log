@@ -1,17 +1,17 @@
-Start testing: Jul 17 03:49 CEST
+Start testing: Jul 17 03:58 CEST
 ----------------------------------------------------------
 1/5 Testing: dispatch
 1/5 Test: dispatch
 Command: "/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/test-openvn-dispatch"
 Directory: /home/pgo/Projects/openvn/runtimes/amiga-native/build-host
-"dispatch" start time: Jul 17 03:49 CEST
+"dispatch" start time: Jul 17 03:58 CEST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"dispatch" end time: Jul 17 03:49 CEST
+"dispatch" end time: Jul 17 03:58 CEST
 "dispatch" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -19,14 +19,14 @@ Test Passed.
 2/5 Test: story
 Command: "/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/test-openvn-story"
 Directory: /home/pgo/Projects/openvn/runtimes/amiga-native/build-host
-"story" start time: Jul 17 03:49 CEST
+"story" start time: Jul 17 03:58 CEST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"story" end time: Jul 17 03:49 CEST
+"story" end time: Jul 17 03:58 CEST
 "story" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -34,7 +34,7 @@ Test Passed.
 3/5 Test: graphics
 Command: "/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/test-openvn-graphics"
 Directory: /home/pgo/Projects/openvn/runtimes/amiga-native
-"graphics" start time: Jul 17 03:49 CEST
+"graphics" start time: Jul 17 03:58 CEST
 Output:
 ----------------------------------------------------------
 GRAPHICS OPEN 320 256 5 NATIVE
@@ -49,7 +49,7 @@ GRAPHICS CLOSE
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"graphics" end time: Jul 17 03:49 CEST
+"graphics" end time: Jul 17 03:58 CEST
 "graphics" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -57,14 +57,14 @@ Test Passed.
 4/5 Test: image
 Command: "/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/test-openvn-image" "/home/pgo/Projects/openvn/runtimes/amiga-native/tests/fixtures/lighthouse_storm.iff"
 Directory: /home/pgo/Projects/openvn/runtimes/amiga-native/build-host
-"image" start time: Jul 17 03:49 CEST
+"image" start time: Jul 17 03:58 CEST
 Output:
 ----------------------------------------------------------
 <end of output>
-Test time =   0.01 sec
+Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"image" end time: Jul 17 03:49 CEST
+"image" end time: Jul 17 03:58 CEST
 "image" time elapsed: 00:00:00
 ----------------------------------------------------------
 
@@ -72,15 +72,15 @@ Test Passed.
 5/5 Test: assets-runtime
 Command: "/home/pgo/Projects/openvn/runtimes/amiga-native/build-host/test-openvn-assets-runtime"
 Directory: /home/pgo/Projects/openvn/runtimes/amiga-native/build-host
-"assets-runtime" start time: Jul 17 03:49 CEST
+"assets-runtime" start time: Jul 17 03:58 CEST
 Output:
 ----------------------------------------------------------
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
 Test Passed.
-"assets-runtime" end time: Jul 17 03:49 CEST
+"assets-runtime" end time: Jul 17 03:58 CEST
 "assets-runtime" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Jul 17 03:49 CEST
+End testing: Jul 17 03:58 CEST
