@@ -1,0 +1,18 @@
+id: amiga-rtg
+display_name: Amiga RTG
+graphics:
+  runtime_format: datatype
+  preferred_format: png
+  colors: truecolor
+  datatype_fallback: required
+audio:
+  sfx_format: datatype
+  preferred_sfx_format: wav
+  music_format: datatype
+  preferred_music_format: ogg
+  ogg_optional: true
+runtime:
+  arexx: required
+  native_c: required
+  ace: forbidden
+  system_friendly: true

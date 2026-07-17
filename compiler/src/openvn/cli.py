@@ -5,6 +5,7 @@ import json
 import sys
 from pathlib import Path
 
+from .backends.amiga import export_amiga_package, load_amiga_profile
 from .backends.renpy import export_renpy_project
 from .compiler import compile_project
 from .doctor import run_doctor
@@ -30,7 +31,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     export = subparsers.add_parser("export")
     export.add_argument("project", type=Path)
-    export.add_argument("--backend", choices=["renpy"], required=True)
+    export.add_argument("--backend", choices=["renpy", "amiga"], required=True)
+    export.add_argument("--profile")
     export.add_argument("--output", type=Path, required=True)
     export.add_argument("--clean", action="store_true")
 
@@ -42,6 +44,14 @@ def build_parser() -> argparse.ArgumentParser:
     doctor.add_argument("--json", action="store_true", dest="json_output")
 
     return parser
+
+
+def _repository_root(project: Path) -> Path:
+    resolved = project.resolve()
+    for parent in (resolved, *resolved.parents):
+        if (parent / "profiles").is_dir() and (parent / "compiler").is_dir():
+            return parent
+    raise OpenVNError("could not locate OpenVN repository root")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -81,6 +91,22 @@ def main(argv: list[str] | None = None) -> int:
                 output = export_renpy_project(
                     story_path,
                     args.output,
+                    clean=args.clean,
+                )
+                print(output)
+                return 0
+
+            if args.backend == "amiga":
+                if not args.profile:
+                    raise OpenVNError("--profile is required for Amiga export")
+                repository = _repository_root(args.project)
+                profile_path = repository / "profiles" / f"{args.profile}.yaml"
+                profile = load_amiga_profile(profile_path)
+                output = export_amiga_package(
+                    project_root=args.project,
+                    story_path=story_path,
+                    output_dir=args.output,
+                    profile=profile,
                     clean=args.clean,
                 )
                 print(output)

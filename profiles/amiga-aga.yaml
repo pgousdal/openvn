@@ -1,0 +1,17 @@
+id: amiga-aga
+display_name: Amiga AGA
+graphics:
+  runtime_format: ilbm
+  colors: 256
+  width: 640
+  height: 256
+  datatype_fallback: optional
+audio:
+  sfx_format: 8svx
+  music_format: mod
+  ogg_optional: true
+runtime:
+  arexx: required
+  native_c: required
+  ace: forbidden
+  system_friendly: true

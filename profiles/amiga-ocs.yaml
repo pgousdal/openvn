@@ -1,0 +1,17 @@
+id: amiga-ocs
+display_name: Amiga OCS/ECS
+graphics:
+  runtime_format: ilbm
+  colors: 32
+  width: 320
+  height: 256
+  datatype_fallback: false
+audio:
+  sfx_format: 8svx
+  music_format: mod
+  ogg_optional: false
+runtime:
+  arexx: required
+  native_c: required
+  ace: forbidden
+  system_friendly: true
