@@ -125,5 +125,75 @@ int main(void) {
     assert(player.row == 12U);
     openvn_mod_player_free(&player);
 
+
+    prepare(&player);
+    note = note_at(&player, 0U, 0U, 0U);
+    note->sample = 1U; note->period = 428U;
+    note_at(&player, 0U, 1U, 0U)->period = 320U;
+    note_at(&player, 0U, 1U, 0U)->effect = 0x03U;
+    note_at(&player, 0U, 1U, 0U)->parameter = 8U;
+    assert(openvn_mod_player_start(&player, 0));
+    run_ticks(&player, 8U);
+    state = openvn_mod_player_channel_state(&player, 0U);
+    assert(state->period == 420U);
+    openvn_mod_player_free(&player);
+
+    prepare(&player);
+    note = note_at(&player, 0U, 0U, 0U);
+    note->sample = 1U; note->period = 428U; note->effect = 0x04U; note->parameter = 0x47U;
+    assert(openvn_mod_player_start(&player, 0));
+    run_ticks(&player, 3U);
+    state = openvn_mod_player_channel_state(&player, 0U);
+    assert(state->period != 428U);
+    openvn_mod_player_free(&player);
+
+    prepare(&player);
+    note = note_at(&player, 0U, 0U, 0U);
+    note->sample = 1U; note->period = 428U; note->effect = 0x09U; note->parameter = 2U;
+    assert(openvn_mod_player_start(&player, 0));
+    run_ticks(&player, 1U);
+    state = openvn_mod_player_channel_state(&player, 0U);
+    assert(state->sample_offset == 512U);
+    openvn_mod_player_free(&player);
+
+    prepare(&player);
+    note = note_at(&player, 0U, 0U, 0U);
+    note->sample = 1U; note->period = 428U; note->effect = 0x0EU; note->parameter = 0xD3U;
+    assert(openvn_mod_player_start(&player, 0));
+    run_ticks(&player, 1U);
+    state = openvn_mod_player_channel_state(&player, 0U);
+    assert(!state->triggered);
+    run_ticks(&player, 3U);
+    assert(state->triggered);
+    openvn_mod_player_free(&player);
+
+    prepare(&player);
+    note = note_at(&player, 0U, 0U, 0U);
+    note->sample = 1U; note->period = 428U; note->effect = 0x0EU; note->parameter = 0xC2U;
+    assert(openvn_mod_player_start(&player, 0));
+    run_ticks(&player, 3U);
+    state = openvn_mod_player_channel_state(&player, 0U);
+    assert(state->volume == 0U);
+    openvn_mod_player_free(&player);
+
+    prepare(&player);
+    note = note_at(&player, 0U, 0U, 0U);
+    note->sample = 1U; note->period = 428U; note->effect = 0x0EU; note->parameter = 0x93U;
+    assert(openvn_mod_player_start(&player, 0));
+    run_ticks(&player, 4U);
+    state = openvn_mod_player_channel_state(&player, 0U);
+    assert(state->triggered);
+    openvn_mod_player_free(&player);
+
+    prepare(&player);
+    note = note_at(&player, 0U, 0U, 0U);
+    note->effect = 0x0EU; note->parameter = 0xE2U;
+    assert(openvn_mod_player_start(&player, 0));
+    run_ticks(&player, 6U);
+    assert(player.row == 0U);
+    run_ticks(&player, 6U);
+    assert(player.row == 1U);
+    openvn_mod_player_free(&player);
+
     return 0;
 }
