@@ -175,7 +175,9 @@ def export_renpy_project(
     (game / "images.rpy").write_text(render_images(manifest), encoding="utf-8")
     (game / "audio.rpy").write_text(render_audio(manifest), encoding="utf-8")
     (game / "options.rpy").write_text(
-        'define config.name = _("OpenVN Export")\ndefine build.name = "openvn_export"\n',
+        'define config.name = _("OpenVN Export")\n'
+        'define build.name = "openvn_export"\n'
+        "define config.check_conflicting_properties = True\n",
         encoding="utf-8",
     )
     copy_assets(manifest, game)

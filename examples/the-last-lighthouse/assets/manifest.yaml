@@ -1,17 +1,43 @@
 backgrounds:
-  lighthouse_day:
-    file: backgrounds/lighthouse_day.png
   lighthouse_storm:
     file: backgrounds/lighthouse_storm.png
+  radio_room:
+    file: backgrounds/radio_room.png
+  generator_room:
+    file: backgrounds/generator_room.png
+  dawn:
+    file: backgrounds/dawn.png
+  harbour_dawn:
+    file: backgrounds/harbour_dawn.png
+  cliff:
+    file: backgrounds/cliff.png
+  lighthouse_dawn:
+    file: backgrounds/lighthouse_dawn.png
 
 characters:
   erik:
     neutral: characters/erik_neutral.png
+  anna:
+    radio: characters/anna_radio.png
+  jonas:
+    radio: characters/jonas_radio.png
+  mina:
+    radio: characters/mina_radio.png
 
 music:
   storm:
-    file: music/storm.ogg
+    file: music/storm.wav
+  tension:
+    file: music/tension.wav
+  dawn:
+    file: music/dawn.wav
 
 sfx:
   radio:
-    file: sfx/radio.ogg
+    file: sfx/radio.wav
+  thunder:
+    file: sfx/thunder.wav
+  generator:
+    file: sfx/generator.wav
+  beacon:
+    file: sfx/beacon.wav

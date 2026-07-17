@@ -3,10 +3,20 @@
   "version": "0.4",
   "entry": "start-0001",
   "symbols": {
-    "ending_generator": "ending_generator-0001",
-    "ending_radio": "ending_radio-0001",
-    "generator": "generator-0001",
-    "radio": "radio-0001",
+    "ending_all": "ending_all-0001",
+    "ending_jonas": "ending_jonas-0001",
+    "ending_light": "ending_light-0001",
+    "ending_mina": "ending_mina-0001",
+    "ending_sacrifice": "ending_sacrifice-0001",
+    "generator_repaired": "generator_repaired-0001",
+    "generator_room": "generator_room-0001",
+    "help_jonas": "help_jonas-0001",
+    "help_mina": "help_mina-0001",
+    "manual_lamp": "manual_lamp-0001",
+    "radio_room": "radio_room-0001",
+    "relay_plan": "relay_plan-0001",
+    "relay_success": "relay_success-0001",
+    "short_power": "short_power-0001",
     "start": "start-0001"
   },
   "nodes": [
@@ -24,89 +34,646 @@
     },
     {
       "id": "start-0003",
-      "type": "text",
-      "text": "The storm is closing in around the lighthouse.",
+      "type": "sound",
+      "sound": "thunder",
       "next": "start-0004"
     },
     {
       "id": "start-0004",
-      "type": "show",
-      "character": "erik",
-      "pose": "neutral",
+      "type": "text",
+      "text": "The windows tremble as the storm reaches the lighthouse.",
       "next": "start-0005"
     },
     {
       "id": "start-0005",
+      "type": "text",
+      "text": "Erik has kept this light for twenty-seven years. Tonight, every ship in the channel depends on it.",
+      "next": "start-0006"
+    },
+    {
+      "id": "start-0006",
+      "type": "show",
+      "character": "erik",
+      "pose": "neutral",
+      "next": "start-0007"
+    },
+    {
+      "id": "start-0007",
+      "type": "text",
+      "text": "The radio crackles. At the same moment, the generator coughs and the beam fades.",
+      "next": "start-0008"
+    },
+    {
+      "id": "start-0008",
       "type": "choice",
       "options": [
         {
-          "text": "Answer the radio",
-          "target": "radio-0001"
+          "text": "Answer the radio first",
+          "target": "radio_room-0001"
         },
         {
-          "text": "Inspect the generator",
-          "target": "generator-0001"
+          "text": "Run to the generator",
+          "target": "generator_room-0001"
         }
       ]
     },
     {
-      "id": "radio-0001",
+      "id": "radio_room-0001",
+      "type": "scene",
+      "background": "radio_room",
+      "next": "radio_room-0002"
+    },
+    {
+      "id": "radio_room-0002",
       "type": "sound",
       "sound": "radio",
-      "next": "radio-0002"
+      "next": "radio_room-0003"
     },
     {
-      "id": "radio-0002",
+      "id": "radio_room-0003",
       "type": "text",
-      "text": "A distress call breaks through the static.",
-      "next": "radio-0003"
+      "text": "Anna's voice breaks through the static from the rescue station.",
+      "next": "radio_room-0004"
     },
     {
-      "id": "radio-0003",
-      "type": "hide",
-      "character": "erik",
-      "next": "radio-0004"
-    },
-    {
-      "id": "radio-0004",
-      "type": "jump",
-      "target": "ending_radio-0001"
-    },
-    {
-      "id": "generator-0001",
+      "id": "radio_room-0004",
       "type": "text",
-      "text": "The emergency generator starts after a struggle.",
-      "next": "generator-0002"
+      "text": "\"Erik, we have three calls. Jonas is taking water. Mina is trapped above the north cliff. The supply boat has lost the channel.\"",
+      "next": "radio_room-0005"
     },
     {
-      "id": "generator-0002",
+      "id": "radio_room-0005",
+      "type": "text",
+      "text": "The signal is weak, and the lighthouse battery will not last through the night.",
+      "next": "radio_room-0006"
+    },
+    {
+      "id": "radio_room-0006",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Guide Jonas toward the harbour",
+          "target": "help_jonas-0001"
+        },
+        {
+          "text": "Guide Mina down from the cliff",
+          "target": "help_mina-0001"
+        },
+        {
+          "text": "Use the beacon to relay all three positions",
+          "target": "relay_plan-0001"
+        }
+      ]
+    },
+    {
+      "id": "help_jonas-0001",
+      "type": "show",
+      "character": "jonas",
+      "pose": "radio",
+      "next": "help_jonas-0002"
+    },
+    {
+      "id": "help_jonas-0002",
+      "type": "text",
+      "text": "Jonas answers between bursts of static. His engine is dead and the sea is pushing him toward the reef.",
+      "next": "help_jonas-0003"
+    },
+    {
+      "id": "help_jonas-0003",
+      "type": "text",
+      "text": "Erik gives him the old bearing used before the modern buoy was installed.",
+      "next": "help_jonas-0004"
+    },
+    {
+      "id": "help_jonas-0004",
+      "type": "sound",
+      "sound": "beacon",
+      "next": "help_jonas-0005"
+    },
+    {
+      "id": "help_jonas-0005",
+      "type": "text",
+      "text": "The lighthouse beam returns for one slow sweep, enough for Jonas to see the harbour mouth.",
+      "next": "help_jonas-0006"
+    },
+    {
+      "id": "help_jonas-0006",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Keep the beam on Jonas until he is safe",
+          "target": "ending_jonas-0001"
+        },
+        {
+          "text": "Cut the beam and save the remaining power",
+          "target": "ending_light-0001"
+        }
+      ]
+    },
+    {
+      "id": "help_mina-0001",
+      "type": "show",
+      "character": "mina",
+      "pose": "radio",
+      "next": "help_mina-0002"
+    },
+    {
+      "id": "help_mina-0002",
+      "type": "text",
+      "text": "Mina is sheltering beside an abandoned signal hut. The path below her has collapsed.",
+      "next": "help_mina-0003"
+    },
+    {
+      "id": "help_mina-0003",
+      "type": "text",
+      "text": "Erik remembers a wartime stair carved into the eastern rock.",
+      "next": "help_mina-0004"
+    },
+    {
+      "id": "help_mina-0004",
+      "type": "sound",
+      "sound": "thunder",
+      "next": "help_mina-0005"
+    },
+    {
+      "id": "help_mina-0005",
+      "type": "text",
+      "text": "Another strike hits close enough to turn the radio white with noise.",
+      "next": "help_mina-0006"
+    },
+    {
+      "id": "help_mina-0006",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Talk Mina down the hidden stair",
+          "target": "ending_mina-0001"
+        },
+        {
+          "text": "Leave the lighthouse and cross the cliff yourself",
+          "target": "ending_sacrifice-0001"
+        }
+      ]
+    },
+    {
+      "id": "relay_plan-0001",
+      "type": "music",
+      "track": "tension",
+      "next": "relay_plan-0002"
+    },
+    {
+      "id": "relay_plan-0002",
+      "type": "text",
+      "text": "Erik connects the emergency transmitter directly to the beacon controller.",
+      "next": "relay_plan-0003"
+    },
+    {
+      "id": "relay_plan-0003",
+      "type": "text",
+      "text": "The old system was never designed for this. If it works, every receiver in the channel will hear the same bearings.",
+      "next": "relay_plan-0004"
+    },
+    {
+      "id": "relay_plan-0004",
+      "type": "show",
+      "character": "anna",
+      "pose": "radio",
+      "next": "relay_plan-0005"
+    },
+    {
+      "id": "relay_plan-0005",
+      "type": "text",
+      "text": "Anna warns him that the relay may drain the battery and burn out the lamp motor.",
+      "next": "relay_plan-0006"
+    },
+    {
+      "id": "relay_plan-0006",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Transmit the three positions and trust Anna",
+          "target": "relay_success-0001"
+        },
+        {
+          "text": "Abort and preserve the lighthouse",
+          "target": "ending_light-0001"
+        }
+      ]
+    },
+    {
+      "id": "relay_success-0001",
+      "type": "sound",
+      "sound": "beacon",
+      "next": "relay_success-0002"
+    },
+    {
+      "id": "relay_success-0002",
+      "type": "text",
+      "text": "The transmitter carries Jonas, Mina, and the supply boat on one narrow pulse.",
+      "next": "relay_success-0003"
+    },
+    {
+      "id": "relay_success-0003",
+      "type": "text",
+      "text": "Anna repeats each bearing. The rescue crew divides without hesitation.",
+      "next": "relay_success-0004"
+    },
+    {
+      "id": "relay_success-0004",
+      "type": "text",
+      "text": "The beacon motor begins to smoke.",
+      "next": "relay_success-0005"
+    },
+    {
+      "id": "relay_success-0005",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Shut the system down before it burns",
+          "target": "ending_all-0001"
+        },
+        {
+          "text": "Hold the transmission until every rescue confirms",
+          "target": "ending_sacrifice-0001"
+        }
+      ]
+    },
+    {
+      "id": "generator_room-0001",
+      "type": "scene",
+      "background": "generator_room",
+      "next": "generator_room-0002"
+    },
+    {
+      "id": "generator_room-0002",
+      "type": "sound",
+      "sound": "generator",
+      "next": "generator_room-0003"
+    },
+    {
+      "id": "generator_room-0003",
+      "type": "text",
+      "text": "The generator room smells of oil and hot copper.",
+      "next": "generator_room-0004"
+    },
+    {
+      "id": "generator_room-0004",
+      "type": "text",
+      "text": "One fuel line has split. Erik can bypass it, but the repair will take most of the emergency reserve.",
+      "next": "generator_room-0005"
+    },
+    {
+      "id": "generator_room-0005",
+      "type": "text",
+      "text": "The radio calls continue upstairs.",
+      "next": "generator_room-0006"
+    },
+    {
+      "id": "generator_room-0006",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Repair the generator completely",
+          "target": "generator_repaired-0001"
+        },
+        {
+          "text": "Start it briefly and return to the radio",
+          "target": "short_power-0001"
+        },
+        {
+          "text": "Abandon the machine and light the manual lamp",
+          "target": "manual_lamp-0001"
+        }
+      ]
+    },
+    {
+      "id": "generator_repaired-0001",
+      "type": "music",
+      "track": "tension",
+      "next": "generator_repaired-0002"
+    },
+    {
+      "id": "generator_repaired-0002",
+      "type": "text",
+      "text": "The generator catches and the great lens turns again.",
+      "next": "generator_repaired-0003"
+    },
+    {
+      "id": "generator_repaired-0003",
+      "type": "text",
+      "text": "For the first time all night, the lighthouse has full power—but the radio has gone silent.",
+      "next": "generator_repaired-0004"
+    },
+    {
+      "id": "generator_repaired-0004",
+      "type": "text",
+      "text": "Erik searches the channel and sees one small light near the reef.",
+      "next": "generator_repaired-0005"
+    },
+    {
+      "id": "generator_repaired-0005",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Use the beam to guide the fishing boat",
+          "target": "ending_jonas-0001"
+        },
+        {
+          "text": "Sweep the north cliff for Mina",
+          "target": "ending_mina-0001"
+        }
+      ]
+    },
+    {
+      "id": "short_power-0001",
+      "type": "scene",
+      "background": "radio_room",
+      "next": "short_power-0002"
+    },
+    {
+      "id": "short_power-0002",
+      "type": "sound",
+      "sound": "radio",
+      "next": "short_power-0003"
+    },
+    {
+      "id": "short_power-0003",
+      "type": "text",
+      "text": "Erik gives the generator five minutes, then returns to the radio.",
+      "next": "short_power-0004"
+    },
+    {
+      "id": "short_power-0004",
+      "type": "text",
+      "text": "Anna has enough power to hear him, but not enough time to dispatch two crews.",
+      "next": "short_power-0005"
+    },
+    {
+      "id": "short_power-0005",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Send Anna to Jonas",
+          "target": "ending_jonas-0001"
+        },
+        {
+          "text": "Send Anna to Mina",
+          "target": "ending_mina-0001"
+        },
+        {
+          "text": "Ask Anna to trust an improvised relay",
+          "target": "relay_success-0001"
+        }
+      ]
+    },
+    {
+      "id": "manual_lamp-0001",
+      "type": "scene",
+      "background": "lighthouse_storm",
+      "next": "manual_lamp-0002"
+    },
+    {
+      "id": "manual_lamp-0002",
       "type": "music",
       "track": null,
-      "next": "generator-0003"
+      "next": "manual_lamp-0003"
     },
     {
-      "id": "generator-0003",
-      "type": "jump",
-      "target": "ending_generator-0001"
-    },
-    {
-      "id": "ending_radio-0001",
+      "id": "manual_lamp-0003",
       "type": "text",
-      "text": "You guide a fishing boat to safety.",
-      "next": "ending_radio-0002"
+      "text": "Erik climbs into the lantern room with the old paraffin reserve.",
+      "next": "manual_lamp-0004"
     },
     {
-      "id": "ending_radio-0002",
+      "id": "manual_lamp-0004",
+      "type": "text",
+      "text": "The manual lamp is small, but its light is steady.",
+      "next": "manual_lamp-0005"
+    },
+    {
+      "id": "manual_lamp-0005",
+      "type": "text",
+      "text": "Outside, the storm swallows every sound except the sea.",
+      "next": "manual_lamp-0006"
+    },
+    {
+      "id": "manual_lamp-0006",
+      "type": "choice",
+      "options": [
+        {
+          "text": "Stay with the lamp until dawn",
+          "target": "ending_light-0001"
+        },
+        {
+          "text": "Carry the lamp to the cliff path",
+          "target": "ending_sacrifice-0001"
+        }
+      ]
+    },
+    {
+      "id": "ending_all-0001",
+      "type": "scene",
+      "background": "dawn",
+      "next": "ending_all-0002"
+    },
+    {
+      "id": "ending_all-0002",
+      "type": "music",
+      "track": "dawn",
+      "next": "ending_all-0003"
+    },
+    {
+      "id": "ending_all-0003",
+      "type": "hide",
+      "character": "erik",
+      "next": "ending_all-0004"
+    },
+    {
+      "id": "ending_all-0004",
+      "type": "text",
+      "text": "At dawn, three signals arrive in succession.",
+      "next": "ending_all-0005"
+    },
+    {
+      "id": "ending_all-0005",
+      "type": "text",
+      "text": "Jonas is inside the harbour. Mina is aboard Anna's rescue boat. The supply vessel has found the channel.",
+      "next": "ending_all-0006"
+    },
+    {
+      "id": "ending_all-0006",
+      "type": "text",
+      "text": "The lighthouse is dark, but everyone who followed its final message is alive.",
+      "next": "ending_all-0007"
+    },
+    {
+      "id": "ending_all-0007",
+      "type": "text",
+      "text": "ENDING: The Last Signal",
+      "next": "ending_all-0008"
+    },
+    {
+      "id": "ending_all-0008",
       "type": "end"
     },
     {
-      "id": "ending_generator-0001",
-      "type": "text",
-      "text": "The light stays on through the night.",
-      "next": "ending_generator-0002"
+      "id": "ending_jonas-0001",
+      "type": "scene",
+      "background": "harbour_dawn",
+      "next": "ending_jonas-0002"
     },
     {
-      "id": "ending_generator-0002",
+      "id": "ending_jonas-0002",
+      "type": "music",
+      "track": "dawn",
+      "next": "ending_jonas-0003"
+    },
+    {
+      "id": "ending_jonas-0003",
+      "type": "text",
+      "text": "Jonas reaches the harbour moments before the generator fails.",
+      "next": "ending_jonas-0004"
+    },
+    {
+      "id": "ending_jonas-0004",
+      "type": "text",
+      "text": "Mina is rescued later by the cliff team, but the supply boat turns back to sea.",
+      "next": "ending_jonas-0005"
+    },
+    {
+      "id": "ending_jonas-0005",
+      "type": "text",
+      "text": "Erik watches the fishing boat tie up beneath the first grey light.",
+      "next": "ending_jonas-0006"
+    },
+    {
+      "id": "ending_jonas-0006",
+      "type": "text",
+      "text": "ENDING: Safe Harbour",
+      "next": "ending_jonas-0007"
+    },
+    {
+      "id": "ending_jonas-0007",
+      "type": "end"
+    },
+    {
+      "id": "ending_mina-0001",
+      "type": "scene",
+      "background": "cliff",
+      "next": "ending_mina-0002"
+    },
+    {
+      "id": "ending_mina-0002",
+      "type": "music",
+      "track": "dawn",
+      "next": "ending_mina-0003"
+    },
+    {
+      "id": "ending_mina-0003",
+      "type": "text",
+      "text": "Mina reaches the eastern stair and meets Anna's crew below the cliff.",
+      "next": "ending_mina-0004"
+    },
+    {
+      "id": "ending_mina-0004",
+      "type": "text",
+      "text": "Jonas loses his boat on the reef, but he is found alive at sunrise.",
+      "next": "ending_mina-0005"
+    },
+    {
+      "id": "ending_mina-0005",
+      "type": "text",
+      "text": "The lighthouse beam remains dark for the rest of the night.",
+      "next": "ending_mina-0006"
+    },
+    {
+      "id": "ending_mina-0006",
+      "type": "text",
+      "text": "ENDING: The Hidden Stair",
+      "next": "ending_mina-0007"
+    },
+    {
+      "id": "ending_mina-0007",
+      "type": "end"
+    },
+    {
+      "id": "ending_light-0001",
+      "type": "scene",
+      "background": "lighthouse_dawn",
+      "next": "ending_light-0002"
+    },
+    {
+      "id": "ending_light-0002",
+      "type": "music",
+      "track": "dawn",
+      "next": "ending_light-0003"
+    },
+    {
+      "id": "ending_light-0003",
+      "type": "text",
+      "text": "Erik protects the remaining power and keeps the beacon turning until morning.",
+      "next": "ending_light-0004"
+    },
+    {
+      "id": "ending_light-0004",
+      "type": "text",
+      "text": "Ships beyond the channel see the light and wait offshore.",
+      "next": "ending_light-0005"
+    },
+    {
+      "id": "ending_light-0005",
+      "type": "text",
+      "text": "Not every distress call is answered, but no vessel strikes the reef.",
+      "next": "ending_light-0006"
+    },
+    {
+      "id": "ending_light-0006",
+      "type": "text",
+      "text": "ENDING: The Light Endures",
+      "next": "ending_light-0007"
+    },
+    {
+      "id": "ending_light-0007",
+      "type": "end"
+    },
+    {
+      "id": "ending_sacrifice-0001",
+      "type": "scene",
+      "background": "cliff",
+      "next": "ending_sacrifice-0002"
+    },
+    {
+      "id": "ending_sacrifice-0002",
+      "type": "music",
+      "track": "dawn",
+      "next": "ending_sacrifice-0003"
+    },
+    {
+      "id": "ending_sacrifice-0003",
+      "type": "text",
+      "text": "Erik leaves the safety of the tower and disappears into the storm.",
+      "next": "ending_sacrifice-0004"
+    },
+    {
+      "id": "ending_sacrifice-0004",
+      "type": "text",
+      "text": "His final transmission gives Anna the bearings she needs.",
+      "next": "ending_sacrifice-0005"
+    },
+    {
+      "id": "ending_sacrifice-0005",
+      "type": "text",
+      "text": "By morning, the others are safe. Erik's coat is found beside the old cliff stair.",
+      "next": "ending_sacrifice-0006"
+    },
+    {
+      "id": "ending_sacrifice-0006",
+      "type": "text",
+      "text": "ENDING: Keeper of the Storm",
+      "next": "ending_sacrifice-0007"
+    },
+    {
+      "id": "ending_sacrifice-0007",
       "type": "end"
     }
   ]

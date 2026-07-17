@@ -1,27 +1,20 @@
 # Native Amiga Runtime Direction
 
-The OpenVN Amiga runtime will not depend on ACE.
+The OpenVN Amiga runtime is ARexx-first and does not depend on ACE.
 
-## ARexx-first
+The native C component must also be system-friendly. It should use
+AmigaOS facilities directly instead of bypassing the operating system or
+recreating an unrelated engine abstraction.
 
-ARexx owns all practical high-level behavior:
+Preferred services include:
 
-- story flow
-- choices
-- variables and conditions when introduced
-- scene orchestration
-- save/load orchestration
+- `exec.library` for tasks, messages and memory
+- `dos.library` for files and processes
+- `intuition.library` for windows and user interaction
+- `graphics.library` and `layers.library` for display operations
+- `asl.library`, `iffparse.library` and `datatypes.library` where useful
+- devices such as `timer.device`, `audio.device` and `input.device`
 
-## Native C
-
-Plain native Amiga C is used only where ARexx is unsuitable:
-
-- graphics
-- audio
-- input
-- file access
-- memory management
-- performance-critical decoding or rendering
-
-The C layer should expose a small ARexx command surface rather than becoming a
-general-purpose game engine.
+ARexx owns practical story orchestration. Native C supplies the small set of
+low-level services that require performance, hardware access or direct OS
+integration.
