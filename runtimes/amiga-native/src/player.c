@@ -11,7 +11,10 @@ static int apply_current(OpenVNPlayer *player) {
 
     switch (node->type) {
         case OPENVN_NODE_SCENE:
-            return openvn_graphics_scene(player->graphics, node->argument1) &&
+            return openvn_graphics_scene(
+                       player->graphics,
+                       node->argument1
+                   ) &&
                    openvn_graphics_present(player->graphics);
         case OPENVN_NODE_SHOW:
             return openvn_graphics_show(
@@ -21,8 +24,18 @@ static int apply_current(OpenVNPlayer *player) {
                    ) &&
                    openvn_graphics_present(player->graphics);
         case OPENVN_NODE_HIDE:
-            return openvn_graphics_hide(player->graphics, node->argument1) &&
+            return openvn_graphics_hide(
+                       player->graphics,
+                       node->argument1
+                   ) &&
                    openvn_graphics_present(player->graphics);
+        case OPENVN_NODE_MUSIC:
+            if (node->argument1[0] == '\0') {
+                return openvn_audio_stop_music(player->audio);
+            }
+            return openvn_audio_music(player->audio, node->argument1);
+        case OPENVN_NODE_SOUND:
+            return openvn_audio_sound(player->audio, node->argument1);
         default:
             return 1;
     }
@@ -30,7 +43,8 @@ static int apply_current(OpenVNPlayer *player) {
 
 void openvn_player_init(
     OpenVNPlayer *player,
-    OpenVNGraphicsService *graphics
+    OpenVNGraphicsService *graphics,
+    OpenVNAudioService *audio
 ) {
     if (player == 0) {
         return;
@@ -38,6 +52,7 @@ void openvn_player_init(
 
     openvn_story_attach(&player->story, &OPENVN_GENERATED_STORY);
     player->graphics = graphics;
+    player->audio = audio;
 }
 
 int openvn_player_start(OpenVNPlayer *player) {

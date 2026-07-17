@@ -19,3 +19,5 @@ def test_render_asset_table() -> None:
     assert "OPENVN_GENERATED_ASSETS" in source
     assert '{"lighthouse_storm",' in source
     assert '{"erik.neutral",' in source
+    assert '{"storm",' in source
+    assert '{"thunder",' in source

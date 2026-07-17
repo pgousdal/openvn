@@ -1,1 +1,0 @@
-/usr/bin/gcc -Wl,--dependency-file=CMakeFiles/openvn-player-host.dir/link.d "CMakeFiles/openvn-player-host.dir/src/main_host.c.o" -o openvn-player-host  libopenvn_dispatch.a

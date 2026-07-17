@@ -3,10 +3,7 @@
 #ifdef __AMIGA__
 
 #include <datatypes/datatypes.h>
-#include <intuition/intuition.h>
 #include <proto/datatypes.h>
-#include <proto/graphics.h>
-#include <proto/intuition.h>
 
 #include <string.h>
 
@@ -15,6 +12,23 @@ static void dispose_object(struct Object **object) {
         DisposeDTObject(*object);
         *object = 0;
     }
+}
+
+static void free_classic_background(
+    OpenVNAmigaGraphicsContext *context
+) {
+    openvn_amiga_bitmap_free(&context->background_bitmap);
+    openvn_planar_free(&context->background_planar);
+    openvn_ilbm_free(&context->background_ilbm);
+    openvn_palette_reset(&context->background_palette);
+}
+
+static void free_classic_character(
+    OpenVNAmigaGraphicsContext *context
+) {
+    openvn_amiga_bitmap_free(&context->character_bitmap);
+    openvn_planar_free(&context->character_planar);
+    openvn_ilbm_free(&context->character_ilbm);
 }
 
 static int amiga_open(
@@ -31,48 +45,24 @@ static int amiga_open(
     memset(context, 0, sizeof(*context));
     context->use_datatypes = config->use_datatypes;
     context->assets = config->assets;
+
+    openvn_amiga_display_reset(&context->display);
+    openvn_palette_reset(&context->background_palette);
     openvn_ilbm_reset(&context->background_ilbm);
     openvn_ilbm_reset(&context->character_ilbm);
+    openvn_planar_reset(&context->background_planar);
+    openvn_planar_reset(&context->character_planar);
+    openvn_amiga_bitmap_reset(&context->background_bitmap);
+    openvn_amiga_bitmap_reset(&context->character_bitmap);
 
-    context->screen = OpenScreenTags(
-        0,
-        SA_Width,
-        config->width,
-        SA_Height,
-        config->height,
-        SA_Depth,
-        config->depth,
-        SA_Title,
-        (ULONG)"OpenVN",
-        TAG_DONE
-    );
-
-    if (context->screen == 0) {
-        return 0;
-    }
-
-    context->window = OpenWindowTags(
-        0,
-        WA_CustomScreen,
-        (ULONG)context->screen,
-        WA_Left,
-        0,
-        WA_Top,
-        0,
-        WA_Width,
-        config->width,
-        WA_Height,
-        config->height,
-        WA_Borderless,
-        TRUE,
-        WA_Activate,
-        TRUE,
-        TAG_DONE
-    );
-
-    if (context->window == 0) {
-        CloseScreen(context->screen);
-        context->screen = 0;
+    if (!openvn_amiga_display_open(
+            &context->display,
+            config->width,
+            config->height,
+            config->depth,
+            config->fullscreen,
+            1
+        )) {
         return 0;
     }
 
@@ -90,19 +80,9 @@ static void amiga_close(OpenVNGraphicsService *service) {
 
     dispose_object(&context->background_datatype);
     dispose_object(&context->character_datatype);
-    openvn_ilbm_free(&context->background_ilbm);
-    openvn_ilbm_free(&context->character_ilbm);
-
-    if (context->window != 0) {
-        CloseWindow(context->window);
-        context->window = 0;
-    }
-
-    if (context->screen != 0) {
-        CloseScreen(context->screen);
-        context->screen = 0;
-    }
-
+    free_classic_background(context);
+    free_classic_character(context);
+    openvn_amiga_display_close(&context->display);
     context->opened = 0;
 }
 
@@ -126,6 +106,40 @@ static int load_datatype(
     return *destination != 0;
 }
 
+static int load_classic_bitmap(
+    const char *path,
+    OpenVNILBMImage *image,
+    OpenVNPlanarBitmap *planar,
+    OpenVNAmigaBitmap *bitmap,
+    int masked
+) {
+    openvn_amiga_bitmap_free(bitmap);
+    openvn_planar_free(planar);
+    openvn_ilbm_free(image);
+
+    if (!openvn_ilbm_load_file(image, path)) {
+        return 0;
+    }
+
+    if (!openvn_planar_from_chunky(
+            planar,
+            image,
+            masked,
+            0U
+        )) {
+        openvn_ilbm_free(image);
+        return 0;
+    }
+
+    if (!openvn_amiga_bitmap_from_planar(bitmap, planar)) {
+        openvn_planar_free(planar);
+        openvn_ilbm_free(image);
+        return 0;
+    }
+
+    return 1;
+}
+
 static int amiga_scene(
     OpenVNGraphicsService *service,
     const char *background
@@ -147,8 +161,28 @@ static int amiga_scene(
         return load_datatype(&context->background_datatype, path);
     }
 
-    openvn_ilbm_free(&context->background_ilbm);
-    return openvn_ilbm_load_file(&context->background_ilbm, path);
+    if (!load_classic_bitmap(
+            path,
+            &context->background_ilbm,
+            &context->background_planar,
+            &context->background_bitmap,
+            0
+        )) {
+        return 0;
+    }
+
+    if (!openvn_palette_from_ilbm(
+            &context->background_palette,
+            context->background_ilbm.palette,
+            context->background_ilbm.palette_size
+        )) {
+        return 0;
+    }
+
+    return openvn_amiga_display_load_palette(
+        &context->display,
+        context->background_palette.colors
+    );
 }
 
 static int amiga_show(
@@ -173,12 +207,19 @@ static int amiga_show(
         return 0;
     }
 
+    context->character_visible = 1;
+
     if (context->use_datatypes) {
         return load_datatype(&context->character_datatype, path);
     }
 
-    openvn_ilbm_free(&context->character_ilbm);
-    return openvn_ilbm_load_file(&context->character_ilbm, path);
+    return load_classic_bitmap(
+        path,
+        &context->character_ilbm,
+        &context->character_planar,
+        &context->character_bitmap,
+        1
+    );
 }
 
 static int amiga_hide(
@@ -195,58 +236,118 @@ static int amiga_hide(
     }
 
     dispose_object(&context->character_datatype);
-    openvn_ilbm_free(&context->character_ilbm);
+    free_classic_character(context);
+    context->character_visible = 0;
     return 1;
+}
+
+static int present_datatypes(
+    OpenVNAmigaGraphicsContext *context
+) {
+    struct RastPort *rastport;
+
+    rastport = openvn_amiga_display_draw_rastport(
+        &context->display
+    );
+    if (rastport == 0) {
+        return 0;
+    }
+
+    if (context->background_datatype != 0) {
+        DrawDTObject(
+            rastport,
+            context->background_datatype,
+            0,
+            0,
+            context->display.window->Width,
+            context->display.window->Height,
+            0,
+            0,
+            0
+        );
+    }
+
+    if (context->character_visible &&
+        context->character_datatype != 0) {
+        DrawDTObject(
+            rastport,
+            context->character_datatype,
+            0,
+            0,
+            context->display.window->Width,
+            context->display.window->Height,
+            0,
+            0,
+            0
+        );
+    }
+
+    return openvn_amiga_display_present(&context->display);
+}
+
+static int present_classic(
+    OpenVNAmigaGraphicsContext *context
+) {
+    struct RastPort *rastport;
+    int x;
+    int y;
+
+    rastport = openvn_amiga_display_draw_rastport(
+        &context->display
+    );
+    if (rastport == 0) {
+        return 0;
+    }
+
+    if (!openvn_amiga_bitmap_blit(
+            &context->background_bitmap,
+            rastport,
+            0,
+            0,
+            0
+        )) {
+        return 0;
+    }
+
+    if (context->character_visible &&
+        context->character_bitmap.bitmap != 0) {
+        x = (
+            (int)context->display.window->Width -
+            (int)context->character_bitmap.width
+        ) / 2;
+        y = (
+            (int)context->display.window->Height -
+            (int)context->character_bitmap.height
+        );
+
+        if (!openvn_amiga_bitmap_blit(
+                &context->character_bitmap,
+                rastport,
+                x,
+                y,
+                1
+            )) {
+            return 0;
+        }
+    }
+
+    return openvn_amiga_display_present(&context->display);
 }
 
 static int amiga_present(OpenVNGraphicsService *service) {
     OpenVNAmigaGraphicsContext *context;
-    struct RastPort *rastport;
 
     context = (OpenVNAmigaGraphicsContext *)service->context;
-    if (context == 0 || !context->opened || context->window == 0) {
+    if (context == 0 || !context->opened ||
+        context->display.window == 0) {
         return 0;
     }
 
-    rastport = context->window->RPort;
-
     if (context->use_datatypes) {
-        if (context->background_datatype != 0) {
-            DrawDTObject(
-                rastport,
-                context->background_datatype,
-                0,
-                0,
-                context->window->Width,
-                context->window->Height,
-                0,
-                0,
-                0
-            );
-        }
-
-        if (context->character_datatype != 0) {
-            DrawDTObject(
-                rastport,
-                context->character_datatype,
-                0,
-                0,
-                context->window->Width,
-                context->window->Height,
-                0,
-                0,
-                0
-            );
-        }
-
-        return 1;
+        return present_datatypes(context);
     }
 
-    /*
-     * Classic ILBM data is loaded and validated here. Converting BODY
-     * bytes into native planar BitMaps and blitting them is M5 PR5.2.
-     */
-    return context->background_ilbm.body != 0;
+    return present_classic(context);
 }
 
 static const OpenVNGraphicsVTable AMIGA_VTABLE = {

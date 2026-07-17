@@ -22,11 +22,11 @@ int main(void) {
     assert(character != 0);
     assert(strcmp(
         background,
-        "tests/fixtures/lighthouse_storm.iff"
+        "runtimes/amiga-native/tests/fixtures/lighthouse_storm.iff"
     ) == 0);
     assert(strcmp(
         character,
-        "tests/fixtures/erik_neutral.iff"
+        "runtimes/amiga-native/tests/fixtures/erik_neutral.iff"
     ) == 0);
 
     return 0;

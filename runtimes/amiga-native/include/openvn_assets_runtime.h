@@ -13,6 +13,10 @@ typedef struct OpenVNAssetTable {
     size_t background_count;
     const OpenVNAssetEntry *characters;
     size_t character_count;
+    const OpenVNAssetEntry *music;
+    size_t music_count;
+    const OpenVNAssetEntry *sounds;
+    size_t sound_count;
 } OpenVNAssetTable;
 
 const char *openvn_asset_find_background(
@@ -24,6 +28,16 @@ const char *openvn_asset_find_character(
     const OpenVNAssetTable *table,
     const char *character,
     const char *pose
+);
+
+const char *openvn_asset_find_music(
+    const OpenVNAssetTable *table,
+    const char *id
+);
+
+const char *openvn_asset_find_sound(
+    const OpenVNAssetTable *table,
+    const char *id
 );
 
 #endif

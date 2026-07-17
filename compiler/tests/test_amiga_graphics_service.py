@@ -20,11 +20,13 @@ def test_graphics_service_contract_files_exist() -> None:
 
 
 def test_amiga_graphics_adapter_uses_os_services() -> None:
-    source = (RUNTIME / "src/graphics_amiga.c").read_text(encoding="utf-8")
+    graphics_source = (RUNTIME / "src/graphics_amiga.c").read_text(encoding="utf-8")
+    display_source = (RUNTIME / "src/display_amiga.c").read_text(encoding="utf-8")
 
-    assert "OpenScreenTags" in source
-    assert "OpenWindowTags" in source
-    assert "DisposeDTObject" in source
-    assert "CloseWindow" in source
-    assert "CloseScreen" in source
-    assert "ACE" not in source
+    assert "DisposeDTObject" in graphics_source
+    assert "OpenScreenTags" in display_source
+    assert "OpenWindowTags" in display_source
+    assert "CloseWindow" in display_source
+    assert "CloseScreen" in display_source
+    assert "ACE" not in graphics_source
+    assert "ACE" not in display_source
