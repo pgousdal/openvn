@@ -37,6 +37,7 @@ add_library(openvn_dispatch STATIC
     src/audio_host.c
     src/audio_mod.c
     src/audio_mod_player.c
+    src/audio_paula.c
     src/dispatch.c
     src/graphics.c
     src/graphics_host.c
@@ -98,6 +99,9 @@ target_link_libraries(test-openvn-mod PRIVATE openvn_dispatch)
 add_executable(test-openvn-mod-player tests/test_mod_player.c)
 target_link_libraries(test-openvn-mod-player PRIVATE openvn_dispatch)
 
+add_executable(test-openvn-paula tests/test_paula.c)
+target_link_libraries(test-openvn-paula PRIVATE openvn_dispatch)
+
 enable_testing()
 add_test(NAME dispatch COMMAND test-openvn-dispatch)
 add_test(NAME story COMMAND test-openvn-story)
@@ -134,6 +138,7 @@ add_test(
     COMMAND test-openvn-mod-player
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/fixtures/storm.mod
 )
+add_test(NAME paula COMMAND test-openvn-paula)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "AmigaOS")
     target_sources(
