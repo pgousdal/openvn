@@ -103,7 +103,6 @@ static int amiga_open(
     openvn_planar_reset(&context->character_planar);
     openvn_amiga_bitmap_reset(&context->background_bitmap);
     openvn_amiga_bitmap_reset(&context->character_bitmap);
-    context->character_anchor = OPENVN_ANCHOR_CENTER;
 
     trace_message("OPEN display open");
     if (!openvn_amiga_display_open(
@@ -259,7 +258,6 @@ static int amiga_show(
     }
 
     context->character_visible = 1;
-    context->character_anchor = OPENVN_ANCHOR_CENTER;
     if (!load_classic_bitmap(
             path,
             &context->character_ilbm,
@@ -270,9 +268,6 @@ static int amiga_show(
         trace_message("SHOW failed: bitmap load");
         return 0;
     }
-
-    context->character_origin_x = context->character_bitmap.width / 2U;
-    context->character_origin_y = context->character_bitmap.height;
 
     trace_message("SHOW ok");
     return 1;
@@ -300,7 +295,8 @@ static int amiga_hide(
 static int amiga_present(OpenVNGraphicsService *service) {
     OpenVNAmigaGraphicsContext *context;
     struct RastPort *rastport;
-    OpenVNScenePosition position;
+    int x;
+    int y;
 
     trace_message("PRESENT begin");
     context = (OpenVNAmigaGraphicsContext *)service->context;
@@ -330,22 +326,17 @@ static int amiga_present(OpenVNGraphicsService *service) {
 
     if (context->character_visible &&
         context->character_bitmap.bitmap != 0) {
-        position = openvn_scene_character_position(
-            (unsigned int)context->display.window->Width,
-            (unsigned int)context->display.window->Height,
-            context->character_bitmap.width,
-            context->character_bitmap.height,
-            context->character_origin_x,
-            context->character_origin_y,
-            context->character_anchor
-        );
+        x = ((int)context->display.window->Width -
+             (int)context->character_bitmap.width) / 2;
+        y = ((int)context->display.window->Height -
+             (int)context->character_bitmap.height);
 
         trace_message("PRESENT character blit begin");
         if (!openvn_amiga_bitmap_blit(
                 &context->character_bitmap,
                 rastport,
-                position.x,
-                position.y,
+                x,
+                y,
                 1
             )) {
             trace_message("PRESENT failed: character blit");

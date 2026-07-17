@@ -7,7 +7,6 @@
 #include "openvn_image.h"
 #include "openvn_palette.h"
 #include "openvn_planar.h"
-#include "openvn_scene_layout.h"
 
 #ifdef __AMIGA__
 
@@ -26,9 +25,6 @@ typedef struct OpenVNAmigaGraphicsContext {
 
     int opened;
     int character_visible;
-    OpenVNCharacterAnchor character_anchor;
-    unsigned int character_origin_x;
-    unsigned int character_origin_y;
 } OpenVNAmigaGraphicsContext;
 
 void openvn_graphics_amiga_init(

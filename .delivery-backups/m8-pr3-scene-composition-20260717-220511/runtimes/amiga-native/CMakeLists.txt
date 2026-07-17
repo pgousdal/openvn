@@ -44,7 +44,6 @@ add_library(openvn_dispatch STATIC
     src/planar.c
     src/player.c
     src/player_state.c
-    src/scene_layout.c
     src/story.c
     "${OPENVN_GENERATED_STORY_SOURCE}"
     "${OPENVN_GENERATED_ASSETS_SOURCE}"
@@ -89,9 +88,6 @@ target_link_libraries(test-openvn-story PRIVATE openvn_dispatch)
 add_executable(test-openvn-graphics tests/test_graphics.c)
 target_link_libraries(test-openvn-graphics PRIVATE openvn_dispatch)
 
-add_executable(test-openvn-scene-layout tests/test_scene_layout.c)
-target_link_libraries(test-openvn-scene-layout PRIVATE openvn_dispatch)
-
 add_executable(test-openvn-image tests/test_image.c)
 target_link_libraries(test-openvn-image PRIVATE openvn_dispatch)
 
@@ -131,7 +127,6 @@ enable_testing()
 add_test(NAME dispatch COMMAND test-openvn-dispatch)
 add_test(NAME story COMMAND test-openvn-story)
 add_test(NAME graphics COMMAND test-openvn-graphics)
-add_test(NAME scene-layout COMMAND test-openvn-scene-layout)
 set_tests_properties(
     graphics
     PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../..
