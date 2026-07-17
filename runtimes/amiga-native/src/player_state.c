@@ -62,6 +62,21 @@ void openvn_state_reset(void) {
     ensure_initialized();
 }
 
+
+int openvn_state_update(void) {
+    if (!ensure_initialized()) {
+        return 0;
+    }
+    return openvn_player_update(&g_player);
+}
+
+unsigned long openvn_state_signal_mask(void) {
+    if (!ensure_initialized()) {
+        return 0UL;
+    }
+    return openvn_player_signal_mask(&g_player);
+}
+
 const OpenVNStoryState *openvn_state_story(void) {
     return &g_player.story;
 }

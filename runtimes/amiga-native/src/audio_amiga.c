@@ -408,13 +408,25 @@ static int amiga_update(OpenVNAudioService *service) {
     return 1;
 }
 
+static unsigned long amiga_signal_mask(OpenVNAudioService *service) {
+    OpenVNAmigaAudioContext *context;
+
+    context = (OpenVNAmigaAudioContext *)service->context;
+    if (context == 0 || context->timer_port == 0) {
+        return 0UL;
+    }
+
+    return 1UL << context->timer_port->mp_SigBit;
+}
+
 static const OpenVNAudioVTable AMIGA_VTABLE = {
     amiga_open,
     amiga_close,
     amiga_music,
     amiga_sound,
     amiga_stop_music,
-    amiga_update
+    amiga_update,
+    amiga_signal_mask
 };
 
 void openvn_audio_amiga_init(

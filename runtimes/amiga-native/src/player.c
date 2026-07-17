@@ -86,3 +86,19 @@ const char *openvn_player_status(const OpenVNPlayer *player) {
 
     return openvn_story_status(&player->story);
 }
+
+int openvn_player_update(OpenVNPlayer *player) {
+    if (player == 0 || player->audio == 0) {
+        return 0;
+    }
+
+    return openvn_audio_update(player->audio);
+}
+
+unsigned long openvn_player_signal_mask(const OpenVNPlayer *player) {
+    if (player == 0 || player->audio == 0) {
+        return 0UL;
+    }
+
+    return openvn_audio_signal_mask(player->audio);
+}

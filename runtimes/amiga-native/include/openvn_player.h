@@ -19,6 +19,8 @@ void openvn_player_init(
 int openvn_player_start(OpenVNPlayer *player);
 int openvn_player_step(OpenVNPlayer *player);
 int openvn_player_choose(OpenVNPlayer *player, size_t index);
+int openvn_player_update(OpenVNPlayer *player);
+unsigned long openvn_player_signal_mask(const OpenVNPlayer *player);
 const char *openvn_player_status(const OpenVNPlayer *player);
 
 #endif

@@ -60,3 +60,12 @@ int openvn_audio_update(OpenVNAudioService *service) {
 
     return service->vtable->update(service);
 }
+
+unsigned long openvn_audio_signal_mask(OpenVNAudioService *service) {
+    if (service == 0 || service->vtable == 0 ||
+        service->vtable->signal_mask == 0) {
+        return 0UL;
+    }
+
+    return service->vtable->signal_mask(service);
+}

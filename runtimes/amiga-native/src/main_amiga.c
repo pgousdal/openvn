@@ -16,6 +16,8 @@
 
 extern void openvn_state_reset(void);
 extern int openvn_dispatch_request(const OpenVNRequest *request);
+extern int openvn_state_update(void);
+extern unsigned long openvn_state_signal_mask(void);
 
 static const char *PORT_NAME = "OPENVNPLAYER";
 
@@ -46,7 +48,17 @@ int main(void) {
     PutStr("OpenVN native player skeleton started.\n");
 
     while (running) {
-        WaitPort(port);
+        ULONG rexx_mask = 1UL << port->mp_SigBit;
+        ULONG wait_mask = rexx_mask | openvn_state_signal_mask();
+        ULONG signals = Wait(wait_mask);
+
+        if ((signals & openvn_state_signal_mask()) != 0UL) {
+            openvn_state_update();
+        }
+
+        if ((signals & rexx_mask) == 0UL) {
+            continue;
+        }
 
         while ((message = (struct RexxMsg *)GetMsg(port)) != NULL) {
             OpenVNRequest request;

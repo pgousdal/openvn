@@ -90,6 +90,9 @@ target_link_libraries(test-openvn-palette PRIVATE openvn_dispatch)
 add_executable(test-openvn-audio tests/test_audio.c)
 target_link_libraries(test-openvn-audio PRIVATE openvn_dispatch)
 
+add_executable(test-openvn-player-audio tests/test_player_audio.c)
+target_link_libraries(test-openvn-player-audio PRIVATE openvn_dispatch)
+
 add_executable(test-openvn-8svx tests/test_8svx.c)
 target_link_libraries(test-openvn-8svx PRIVATE openvn_dispatch)
 
@@ -121,6 +124,7 @@ add_test(NAME assets-runtime COMMAND test-openvn-assets-runtime)
 add_test(NAME planar COMMAND test-openvn-planar)
 add_test(NAME palette COMMAND test-openvn-palette)
 add_test(NAME audio COMMAND test-openvn-audio)
+add_test(NAME player-audio COMMAND test-openvn-player-audio)
 set_tests_properties(
     audio
     PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../..

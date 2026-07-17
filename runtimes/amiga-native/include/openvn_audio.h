@@ -29,6 +29,7 @@ typedef struct OpenVNAudioVTable {
     );
     int (*stop_music)(OpenVNAudioService *service);
     int (*update)(OpenVNAudioService *service);
+    unsigned long (*signal_mask)(OpenVNAudioService *service);
 } OpenVNAudioVTable;
 
 struct OpenVNAudioService {
@@ -51,5 +52,6 @@ int openvn_audio_sound(
 );
 int openvn_audio_stop_music(OpenVNAudioService *service);
 int openvn_audio_update(OpenVNAudioService *service);
+unsigned long openvn_audio_signal_mask(OpenVNAudioService *service);
 
 #endif

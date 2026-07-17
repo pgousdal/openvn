@@ -6,6 +6,7 @@
 extern void openvn_state_reset(void);
 extern int openvn_dispatch_request(const OpenVNRequest *request);
 extern const OpenVNStoryState *openvn_state_story(void);
+extern int openvn_state_update(void);
 
 static void print_current(void) {
     const OpenVNStoryState *state = openvn_state_story();
@@ -54,6 +55,11 @@ int main(void) {
 
         if (!openvn_dispatch_request(&request)) {
             puts("ERROR FAILED");
+            continue;
+        }
+
+        if (request.command != OPENVN_CMD_QUIT && !openvn_state_update()) {
+            puts("ERROR AUDIO UPDATE");
             continue;
         }
 

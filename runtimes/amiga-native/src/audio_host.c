@@ -139,13 +139,19 @@ static int host_update(OpenVNAudioService *service) {
     return 1;
 }
 
+static unsigned long host_signal_mask(OpenVNAudioService *service) {
+    (void)service;
+    return 0UL;
+}
+
 static const OpenVNAudioVTable HOST_VTABLE = {
     host_open,
     host_close,
     host_music,
     host_sound,
     host_stop_music,
-    host_update
+    host_update,
+    host_signal_mask
 };
 
 void openvn_audio_host_init(

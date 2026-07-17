@@ -29,6 +29,7 @@ int main(void) {
     assert(context.sample.sample_rate == 8000U);
     assert(context.sample.data_size == 32U);
 
+    assert(openvn_audio_signal_mask(&service) == 0UL);
     assert(openvn_audio_update(&service));
     assert(context.update_count == 1U);
 
