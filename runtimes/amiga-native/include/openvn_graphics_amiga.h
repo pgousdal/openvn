@@ -10,12 +10,9 @@
 
 #ifdef __AMIGA__
 
-struct Object;
 
 typedef struct OpenVNAmigaGraphicsContext {
     OpenVNAmigaDisplay display;
-    struct Object *background_datatype;
-    struct Object *character_datatype;
     const OpenVNAssetTable *assets;
 
     OpenVNILBMImage background_ilbm;
@@ -27,7 +24,6 @@ typedef struct OpenVNAmigaGraphicsContext {
     OpenVNPalette background_palette;
 
     int opened;
-    int use_datatypes;
     int character_visible;
 } OpenVNAmigaGraphicsContext;
 

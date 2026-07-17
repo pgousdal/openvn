@@ -3,6 +3,7 @@ from __future__ import annotations
 import struct
 import wave
 from pathlib import Path
+from typing import Any
 
 from PIL import Image
 
@@ -10,26 +11,95 @@ from ...errors import OpenVNError
 from .profiles import AmigaProfile
 
 
+def _positive_int(graphics: dict[str, Any], key: str) -> int:
+    value = graphics.get(key)
+    if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+        raise OpenVNError(f"Amiga graphics profile field '{key}' must be a positive integer")
+    return value
+
+
+def _resampling_lanczos() -> Image.Resampling:
+    return Image.Resampling.LANCZOS
+
+
+def prepare_image_for_profile(source: str | Path, profile: AmigaProfile) -> Image.Image:
+    """Return an RGB image with the exact geometry required by an Amiga profile.
+
+    Classic full-screen backgrounds use a centre-cropped ``cover`` transform by
+    default. This avoids letterboxing and guarantees that the runtime never has
+    to scale or clip oversized source artwork.
+    """
+
+    width = _positive_int(profile.graphics, "width")
+    height = _positive_int(profile.graphics, "height")
+    fit = str(profile.graphics.get("fit", "cover"))
+
+    with Image.open(source) as opened:
+        image = opened.convert("RGB")
+
+    if fit == "stretch":
+        return image.resize((width, height), _resampling_lanczos())
+
+    if fit != "cover":
+        raise OpenVNError(f"unsupported Amiga graphics fit mode: {fit}")
+
+    source_width, source_height = image.size
+    scale = max(width / source_width, height / source_height)
+    resized_width = max(width, round(source_width * scale))
+    resized_height = max(height, round(source_height * scale))
+    resized = image.resize((resized_width, resized_height), _resampling_lanczos())
+
+    left = (resized_width - width) // 2
+    top = (resized_height - height) // 2
+    return resized.crop((left, top, left + width, top + height))
+
+
 def convert_png_to_ilbm(
     source: str | Path,
     destination: str | Path,
     *,
     colors: int,
+    width: int | None = None,
+    height: int | None = None,
+    fit: str = "cover",
 ) -> Path:
     src = Path(source)
     dst = Path(destination)
     dst.parent.mkdir(parents=True, exist_ok=True)
 
-    image = Image.open(src).convert("P", palette=Image.Palette.ADAPTIVE, colors=colors)
-    width, height = image.size
+    with Image.open(src) as opened:
+        image = opened.convert("RGB")
+
+    if (width is None) != (height is None):
+        raise OpenVNError("ILBM conversion requires both width and height")
+
+    if width is not None and height is not None:
+        if width <= 0 or height <= 0:
+            raise OpenVNError("ILBM dimensions must be positive")
+        if fit == "stretch":
+            image = image.resize((width, height), _resampling_lanczos())
+        elif fit == "cover":
+            source_width, source_height = image.size
+            scale = max(width / source_width, height / source_height)
+            resized_width = max(width, round(source_width * scale))
+            resized_height = max(height, round(source_height * scale))
+            image = image.resize((resized_width, resized_height), _resampling_lanczos())
+            left = (resized_width - width) // 2
+            top = (resized_height - height) // 2
+            image = image.crop((left, top, left + width, top + height))
+        else:
+            raise OpenVNError(f"unsupported Amiga graphics fit mode: {fit}")
+
+    image = image.quantize(colors=colors, method=Image.Quantize.MEDIANCUT)
+    image_width, image_height = image.size
     palette = image.getpalette()[: colors * 3]
     palette += [0] * (colors * 3 - len(palette))
     pixels = image.tobytes()
 
     bmhd = struct.pack(
         ">HHhhBBBBHBBhh",
-        width,
-        height,
+        image_width,
+        image_height,
         0,
         0,
         (colors - 1).bit_length(),
@@ -39,8 +109,8 @@ def convert_png_to_ilbm(
         0,
         10,
         11,
-        width,
-        height,
+        image_width,
+        image_height,
     )
     cmap = bytes(palette)
     body = pixels
@@ -93,7 +163,7 @@ def convert_asset(
     relative: Path,
     profile: AmigaProfile,
     is_music: bool,
-) -> tuple[Path, dict[str, str]]:
+) -> tuple[Path, dict[str, str | int]]:
     suffix = source.suffix.lower()
 
     if profile.id == "amiga-rtg":
@@ -105,9 +175,26 @@ def convert_asset(
 
     if suffix == ".png":
         destination = (destination_root / relative).with_suffix(".iff")
-        colors = int(profile.graphics.get("colors", 32))
-        convert_png_to_ilbm(source, destination, colors=colors)
-        return destination, {"source": "png", "target": "ilbm"}
+        colors = _positive_int(profile.graphics, "colors")
+        width = _positive_int(profile.graphics, "width")
+        height = _positive_int(profile.graphics, "height")
+        fit = str(profile.graphics.get("fit", "cover"))
+        convert_png_to_ilbm(
+            source,
+            destination,
+            colors=colors,
+            width=width,
+            height=height,
+            fit=fit,
+        )
+        return destination, {
+            "source": "png",
+            "target": "ilbm",
+            "width": width,
+            "height": height,
+            "colors": colors,
+            "fit": fit,
+        }
 
     if suffix == ".wav" and not is_music:
         destination = (destination_root / relative).with_suffix(".8svx")

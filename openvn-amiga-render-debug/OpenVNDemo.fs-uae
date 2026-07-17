@@ -1,0 +1,9 @@
+[fs-uae]
+amiga_model = A500
+chip_memory = 1024
+slow_memory = 1792
+hard_drive_0 = harddrive
+hard_drive_0_label = DH0
+automatic_input_grab = 0
+window_width = 960
+window_height = 768

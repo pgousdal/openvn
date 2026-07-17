@@ -1,16 +1,62 @@
 #include "openvn_graphics_amiga.h"
+#include <stddef.h>
 
 #ifdef __AMIGA__
 
-#include <datatypes/datatypes.h>
-#include <proto/datatypes.h>
-
+#include <stdio.h>
 #include <string.h>
 
-static void dispose_object(struct Object **object) {
-    if (object != 0 && *object != 0) {
-        DisposeDTObject(*object);
-        *object = 0;
+#include <intuition/intuition.h>
+
+#define OPENVN_RENDER_LOG "openvn-render.log"
+
+static void trace_reset(void) {
+    FILE *file;
+
+    file = fopen(OPENVN_RENDER_LOG, "w");
+    if (file != 0) {
+        fputs("OpenVN Amiga render diagnostics\n", file);
+        fclose(file);
+    }
+}
+
+static void trace_message(const char *message) {
+    FILE *file;
+
+    file = fopen(OPENVN_RENDER_LOG, "a");
+    if (file != 0) {
+        fputs(message, file);
+        fputc('\n', file);
+        fclose(file);
+    }
+}
+
+static void trace_value(const char *label, const char *value) {
+    FILE *file;
+
+    file = fopen(OPENVN_RENDER_LOG, "a");
+    if (file != 0) {
+        fprintf(file, "%s%s\n", label, value != 0 ? value : "(null)");
+        fclose(file);
+    }
+}
+
+static void trace_image(const char *label, const OpenVNILBMImage *image) {
+    FILE *file;
+
+    file = fopen(OPENVN_RENDER_LOG, "a");
+    if (file != 0) {
+        fprintf(
+            file,
+            "%s width=%u height=%u depth=%u palette=%u body=%lu\n",
+            label,
+            image != 0 ? image->width : 0U,
+            image != 0 ? image->height : 0U,
+            image != 0 ? image->depth : 0U,
+            image != 0 ? image->palette_size : 0U,
+            image != 0 ? (unsigned long)image->body_size : 0UL
+        );
+        fclose(file);
     }
 }
 
@@ -37,13 +83,16 @@ static int amiga_open(
 ) {
     OpenVNAmigaGraphicsContext *context;
 
+    trace_reset();
+    trace_message("OPEN begin");
+
     context = (OpenVNAmigaGraphicsContext *)service->context;
     if (context == 0) {
+        trace_message("OPEN failed: context is null");
         return 0;
     }
 
     memset(context, 0, sizeof(*context));
-    context->use_datatypes = config->use_datatypes;
     context->assets = config->assets;
 
     openvn_amiga_display_reset(&context->display);
@@ -55,6 +104,7 @@ static int amiga_open(
     openvn_amiga_bitmap_reset(&context->background_bitmap);
     openvn_amiga_bitmap_reset(&context->character_bitmap);
 
+    trace_message("OPEN display open");
     if (!openvn_amiga_display_open(
             &context->display,
             config->width,
@@ -63,47 +113,30 @@ static int amiga_open(
             config->fullscreen,
             1
         )) {
+        trace_message("OPEN failed: display open");
         return 0;
     }
 
     context->opened = 1;
+    trace_message("OPEN ok");
     return 1;
 }
 
 static void amiga_close(OpenVNGraphicsService *service) {
     OpenVNAmigaGraphicsContext *context;
 
+    trace_message("CLOSE begin");
     context = (OpenVNAmigaGraphicsContext *)service->context;
     if (context == 0) {
+        trace_message("CLOSE skipped: context is null");
         return;
     }
 
-    dispose_object(&context->background_datatype);
-    dispose_object(&context->character_datatype);
     free_classic_background(context);
     free_classic_character(context);
     openvn_amiga_display_close(&context->display);
     context->opened = 0;
-}
-
-static int load_datatype(
-    struct Object **destination,
-    const char *path
-) {
-    dispose_object(destination);
-
-    *destination = NewDTObject(
-        (APTR)path,
-        DTA_SourceType,
-        DTST_FILE,
-        DTA_GroupID,
-        GID_PICTURE,
-        PDTA_Remap,
-        TRUE,
-        TAG_DONE
-    );
-
-    return *destination != 0;
+    trace_message("CLOSE ok");
 }
 
 static int load_classic_bitmap(
@@ -113,30 +146,35 @@ static int load_classic_bitmap(
     OpenVNAmigaBitmap *bitmap,
     int masked
 ) {
+    trace_value("BITMAP path: ", path);
     openvn_amiga_bitmap_free(bitmap);
     openvn_planar_free(planar);
     openvn_ilbm_free(image);
 
+    trace_message("BITMAP ILBM load begin");
     if (!openvn_ilbm_load_file(image, path)) {
+        trace_message("BITMAP failed: ILBM load");
         return 0;
     }
+    trace_image("BITMAP ILBM ok", image);
 
-    if (!openvn_planar_from_chunky(
-            planar,
-            image,
-            masked,
-            0U
-        )) {
+    trace_message("BITMAP planar conversion begin");
+    if (!openvn_planar_from_chunky(planar, image, masked, 0U)) {
+        trace_message("BITMAP failed: planar conversion");
         openvn_ilbm_free(image);
         return 0;
     }
+    trace_message("BITMAP planar conversion ok");
 
+    trace_message("BITMAP Amiga bitmap allocation begin");
     if (!openvn_amiga_bitmap_from_planar(bitmap, planar)) {
+        trace_message("BITMAP failed: Amiga bitmap allocation");
         openvn_planar_free(planar);
         openvn_ilbm_free(image);
         return 0;
     }
 
+    trace_message("BITMAP Amiga bitmap allocation ok");
     return 1;
 }
 
@@ -147,18 +185,18 @@ static int amiga_scene(
     OpenVNAmigaGraphicsContext *context;
     const char *path;
 
+    trace_value("SCENE id: ", background);
     context = (OpenVNAmigaGraphicsContext *)service->context;
     if (context == 0 || !context->opened) {
+        trace_message("SCENE failed: graphics not open");
         return 0;
     }
 
     path = openvn_asset_find_background(context->assets, background);
+    trace_value("SCENE resolved path: ", path);
     if (path == 0) {
+        trace_message("SCENE failed: asset lookup");
         return 0;
-    }
-
-    if (context->use_datatypes) {
-        return load_datatype(&context->background_datatype, path);
     }
 
     if (!load_classic_bitmap(
@@ -168,21 +206,32 @@ static int amiga_scene(
             &context->background_bitmap,
             0
         )) {
+        trace_message("SCENE failed: bitmap load");
         return 0;
     }
 
+    trace_message("SCENE palette conversion begin");
     if (!openvn_palette_from_ilbm(
             &context->background_palette,
             context->background_ilbm.palette,
             context->background_ilbm.palette_size
         )) {
+        trace_message("SCENE failed: palette conversion");
+        return 0;
+    }
+    trace_message("SCENE palette conversion ok");
+
+    trace_message("SCENE palette upload begin");
+    if (!openvn_amiga_display_load_palette(
+            &context->display,
+            context->background_palette.colors
+        )) {
+        trace_message("SCENE failed: palette upload");
         return 0;
     }
 
-    return openvn_amiga_display_load_palette(
-        &context->display,
-        context->background_palette.colors
-    );
+    trace_message("SCENE ok");
+    return 1;
 }
 
 static int amiga_show(
@@ -193,33 +242,35 @@ static int amiga_show(
     OpenVNAmigaGraphicsContext *context;
     const char *path;
 
+    trace_value("SHOW character: ", character);
+    trace_value("SHOW pose: ", pose);
     context = (OpenVNAmigaGraphicsContext *)service->context;
     if (context == 0 || !context->opened) {
+        trace_message("SHOW failed: graphics not open");
         return 0;
     }
 
-    path = openvn_asset_find_character(
-        context->assets,
-        character,
-        pose
-    );
+    path = openvn_asset_find_character(context->assets, character, pose);
+    trace_value("SHOW resolved path: ", path);
     if (path == 0) {
+        trace_message("SHOW failed: asset lookup");
         return 0;
     }
 
     context->character_visible = 1;
-
-    if (context->use_datatypes) {
-        return load_datatype(&context->character_datatype, path);
+    if (!load_classic_bitmap(
+            path,
+            &context->character_ilbm,
+            &context->character_planar,
+            &context->character_bitmap,
+            1
+        )) {
+        trace_message("SHOW failed: bitmap load");
+        return 0;
     }
 
-    return load_classic_bitmap(
-        path,
-        &context->character_ilbm,
-        &context->character_planar,
-        &context->character_bitmap,
-        1
-    );
+    trace_message("SHOW ok");
+    return 1;
 }
 
 static int amiga_hide(
@@ -228,77 +279,39 @@ static int amiga_hide(
 ) {
     OpenVNAmigaGraphicsContext *context;
 
-    (void)character;
-
+    trace_value("HIDE character: ", character);
     context = (OpenVNAmigaGraphicsContext *)service->context;
     if (context == 0 || !context->opened) {
+        trace_message("HIDE failed: graphics not open");
         return 0;
     }
 
-    dispose_object(&context->character_datatype);
     free_classic_character(context);
     context->character_visible = 0;
+    trace_message("HIDE ok");
     return 1;
 }
 
-static int present_datatypes(
-    OpenVNAmigaGraphicsContext *context
-) {
-    struct RastPort *rastport;
-
-    rastport = openvn_amiga_display_draw_rastport(
-        &context->display
-    );
-    if (rastport == 0) {
-        return 0;
-    }
-
-    if (context->background_datatype != 0) {
-        DrawDTObject(
-            rastport,
-            context->background_datatype,
-            0,
-            0,
-            context->display.window->Width,
-            context->display.window->Height,
-            0,
-            0,
-            0
-        );
-    }
-
-    if (context->character_visible &&
-        context->character_datatype != 0) {
-        DrawDTObject(
-            rastport,
-            context->character_datatype,
-            0,
-            0,
-            context->display.window->Width,
-            context->display.window->Height,
-            0,
-            0,
-            0
-        );
-    }
-
-    return openvn_amiga_display_present(&context->display);
-}
-
-static int present_classic(
-    OpenVNAmigaGraphicsContext *context
-) {
+static int amiga_present(OpenVNGraphicsService *service) {
+    OpenVNAmigaGraphicsContext *context;
     struct RastPort *rastport;
     int x;
     int y;
 
-    rastport = openvn_amiga_display_draw_rastport(
-        &context->display
-    );
-    if (rastport == 0) {
+    trace_message("PRESENT begin");
+    context = (OpenVNAmigaGraphicsContext *)service->context;
+    if (context == 0 || !context->opened || context->display.window == 0) {
+        trace_message("PRESENT failed: graphics/window unavailable");
         return 0;
     }
 
+    rastport = openvn_amiga_display_draw_rastport(&context->display);
+    if (rastport == 0) {
+        trace_message("PRESENT failed: draw RastPort unavailable");
+        return 0;
+    }
+
+    trace_message("PRESENT background blit begin");
     if (!openvn_amiga_bitmap_blit(
             &context->background_bitmap,
             rastport,
@@ -306,20 +319,19 @@ static int present_classic(
             0,
             0
         )) {
+        trace_message("PRESENT failed: background blit");
         return 0;
     }
+    trace_message("PRESENT background blit ok");
 
     if (context->character_visible &&
         context->character_bitmap.bitmap != 0) {
-        x = (
-            (int)context->display.window->Width -
-            (int)context->character_bitmap.width
-        ) / 2;
-        y = (
-            (int)context->display.window->Height -
-            (int)context->character_bitmap.height
-        );
+        x = ((int)context->display.window->Width -
+             (int)context->character_bitmap.width) / 2;
+        y = ((int)context->display.window->Height -
+             (int)context->character_bitmap.height);
 
+        trace_message("PRESENT character blit begin");
         if (!openvn_amiga_bitmap_blit(
                 &context->character_bitmap,
                 rastport,
@@ -327,27 +339,20 @@ static int present_classic(
                 y,
                 1
             )) {
+            trace_message("PRESENT failed: character blit");
             return 0;
         }
+        trace_message("PRESENT character blit ok");
     }
 
-    return openvn_amiga_display_present(&context->display);
-}
-
-static int amiga_present(OpenVNGraphicsService *service) {
-    OpenVNAmigaGraphicsContext *context;
-
-    context = (OpenVNAmigaGraphicsContext *)service->context;
-    if (context == 0 || !context->opened ||
-        context->display.window == 0) {
+    trace_message("PRESENT display swap begin");
+    if (!openvn_amiga_display_present(&context->display)) {
+        trace_message("PRESENT failed: display swap");
         return 0;
     }
 
-    if (context->use_datatypes) {
-        return present_datatypes(context);
-    }
-
-    return present_classic(context);
+    trace_message("PRESENT ok");
+    return 1;
 }
 
 static const OpenVNGraphicsVTable AMIGA_VTABLE = {

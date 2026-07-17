@@ -1,14 +1,19 @@
-# OpenVN
+# M6 PR1h — Amiga SDK linker support
 
-OpenVN is an open, runtime-independent visual novel toolchain.
+Fixes the final m68k link errors:
 
-## Ren'Py asset export
+- `undefined reference to DrawDTObject`
+- missing prototype warning for `CreatePort`
 
-```bash
-uv run --project compiler openvn export examples/demo   --backend renpy   --output build/renpy-demo   --clean
+Changes:
+
+1. Adds `<clib/alib_protos.h>` to `main_amiga.c`.
+2. Links the Amiga executable with `amiga.lib` through CMake's `amiga`
+   library name.
+
+Apply:
+
+```sh
+python3 scripts/apply-m6-pr1h.py
+./scripts/build-m68k-demo-player.sh
 ```
-
-The generated project includes script, image and audio declarations plus
-copied assets.
-
-The Amiga runtime remains ARexx-first and native-C-based, without ACE.

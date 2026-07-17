@@ -10,6 +10,7 @@ from .backends.renpy import export_renpy_project
 from .compiler import compile_project
 from .doctor import run_doctor
 from .errors import OpenVNError
+from .fsuae import package_fsuae
 from .project import load_project
 from .validator import validate_project
 from .version import __version__
@@ -40,6 +41,13 @@ def build_parser() -> argparse.ArgumentParser:
     export.add_argument("--profile")
     export.add_argument("--output", type=Path, required=True)
     export.add_argument("--clean", action="store_true")
+
+    fsuae = subparsers.add_parser("package-fsuae")
+    fsuae.add_argument("project", type=Path)
+    fsuae.add_argument("--output", type=Path)
+    fsuae.add_argument("--player", type=Path)
+    fsuae.add_argument("--toolchain-file", type=Path)
+    fsuae.add_argument("--clean", action="store_true")
 
     dump = subparsers.add_parser("dump")
     dump.add_argument("project", type=Path)
@@ -124,6 +132,33 @@ def main(argv: list[str] | None = None) -> int:
                 json.dumps(summary, indent=2) + "\n", encoding="utf-8"
             )
             print(output)
+            return 0
+
+        if args.command == "package-fsuae":
+            repository = _repository_root(args.project)
+            project = load_project(args.project)
+            build_output = project.root / "dist"
+            amiga_output = build_output / "amiga-ocs"
+            if not (amiga_output / "manifest.json").is_file():
+                story_path = compile_project(project.root, strict=True)
+                profile = load_amiga_profile(repository / "profiles" / "amiga-ocs.yaml")
+                export_amiga_package(
+                    project_root=project.root,
+                    story_path=story_path,
+                    output_dir=amiga_output,
+                    profile=profile,
+                    clean=True,
+                )
+            output = (args.output or (build_output / "fs-uae")).resolve()
+            packaged = package_fsuae(
+                repository=repository,
+                amiga_package=amiga_output,
+                output_dir=output,
+                player=args.player,
+                toolchain_file=args.toolchain_file,
+                clean=args.clean,
+            )
+            print(packaged)
             return 0
 
         if args.command == "export":

@@ -31,16 +31,76 @@ void openvn_planar_free(OpenVNPlanarBitmap *bitmap) {
     openvn_planar_reset(bitmap);
 }
 
+static void convert_byte_group(
+    OpenVNPlanarBitmap *bitmap,
+    const OpenVNILBMImage *image,
+    unsigned int y,
+    unsigned int byte_index,
+    unsigned int create_mask,
+    unsigned int transparent_index
+) {
+    unsigned char plane_bytes[8];
+    unsigned char mask_byte;
+    unsigned int bit_index;
+    unsigned int plane;
+    unsigned int x;
+    size_t source_row;
+    size_t destination_offset;
+
+    memset(plane_bytes, 0, sizeof(plane_bytes));
+    mask_byte = 0U;
+    source_row = (size_t)y * (size_t)image->width;
+    destination_offset =
+        (size_t)y * (size_t)bitmap->bytes_per_row + byte_index;
+
+    for (bit_index = 0U; bit_index < 8U; bit_index++) {
+        unsigned int pixel;
+        unsigned char output_bit;
+
+        x = byte_index * 8U + bit_index;
+        if (x >= image->width) {
+            break;
+        }
+
+        pixel = image->body[source_row + x];
+        output_bit = (unsigned char)(0x80U >> bit_index);
+
+        /*
+         * Build one complete destination byte in registers before touching
+         * the plane buffers. This avoids the old per-pixel read/modify/write
+         * loop, which is prohibitively slow on a 68000.
+         */
+        for (plane = 0U; plane < bitmap->depth; plane++) {
+            if ((pixel & (1U << plane)) != 0U) {
+                plane_bytes[plane] |= output_bit;
+            }
+        }
+
+        if (create_mask && pixel != transparent_index) {
+            mask_byte |= output_bit;
+        }
+    }
+
+    for (plane = 0U; plane < bitmap->depth; plane++) {
+        bitmap->planes[plane][destination_offset] = plane_bytes[plane];
+    }
+
+    if (bitmap->mask != 0) {
+        bitmap->mask[destination_offset] = mask_byte;
+    }
+}
+
 int openvn_planar_from_chunky(
     OpenVNPlanarBitmap *bitmap,
     const OpenVNILBMImage *image,
     int create_mask,
     unsigned int transparent_index
 ) {
-    unsigned int x;
     unsigned int y;
+    unsigned int byte_index;
     unsigned int plane;
     unsigned int bytes_per_row;
+    unsigned int source_bytes_per_row;
     size_t plane_size;
     size_t expected_pixels;
 
@@ -58,6 +118,7 @@ int openvn_planar_from_chunky(
     openvn_planar_reset(bitmap);
 
     bytes_per_row = padded_bytes_per_row(image->width);
+    source_bytes_per_row = (image->width + 7U) / 8U;
     plane_size = (size_t)bytes_per_row * (size_t)image->height;
 
     bitmap->planes = (unsigned char **)calloc(
@@ -94,22 +155,17 @@ int openvn_planar_from_chunky(
     }
 
     for (y = 0U; y < image->height; y++) {
-        for (x = 0U; x < image->width; x++) {
-            unsigned int pixel = image->body[
-                (size_t)y * image->width + x
-            ];
-            size_t offset = (size_t)y * bytes_per_row + (x / 8U);
-            unsigned char bit = (unsigned char)(0x80U >> (x & 7U));
-
-            for (plane = 0U; plane < bitmap->depth; plane++) {
-                if ((pixel & (1U << plane)) != 0U) {
-                    bitmap->planes[plane][offset] |= bit;
-                }
-            }
-
-            if (bitmap->mask != 0 && pixel != transparent_index) {
-                bitmap->mask[offset] |= bit;
-            }
+        for (byte_index = 0U;
+             byte_index < source_bytes_per_row;
+             byte_index++) {
+            convert_byte_group(
+                bitmap,
+                image,
+                y,
+                byte_index,
+                create_mask != 0,
+                transparent_index
+            );
         }
     }
 

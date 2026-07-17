@@ -1,0 +1,350 @@
+=== Git status ===
+ M README.md
+ M compiler/src/openvn/cli.py
+ M runtimes/amiga-native/CMakeLists.txt
+ M runtimes/amiga-native/include/openvn_graphics_amiga.h
+ M runtimes/amiga-native/src/graphics_amiga.c
+ M runtimes/amiga-native/src/main_amiga.c
+ M runtimes/amiga-native/src/player_state.c
+?? .m7-pr1-backup-20260717-145509/
+?? collect-openvn-amiga-render-debug.sh
+?? compiler/src/openvn/fsuae.py
+?? compiler/tests/test_fsuae_package.py
+?? docs/design/fs-uae-runnable-demo.md
+?? openvn-amiga-render-debug/
+?? openvn-m7-pr2-story-runtime-diagnostics.zip
+?? openvn-pr1o-datatypes-diagnostic.txt
+?? scripts/apply-m6-pr1f.py
+?? scripts/apply-m6-pr1g.py
+?? scripts/apply-m6-pr1h.py
+?? scripts/apply-m6-pr1i.py
+?? scripts/apply-m6-pr1j.py
+?? scripts/apply-m6-pr1k.py
+?? scripts/apply-m6-pr1m.py
+?? scripts/apply-m6-pr1n.py
+?? scripts/apply-m6-pr1p.py
+?? scripts/apply-m6-pr1q.py
+?? scripts/apply-m6-pr1r.py
+?? scripts/build-m68k-demo-player.sh
+?? scripts/run-m6-pr1o-diagnostic.sh
+
+=== Relevant source files ===
+runtimes/amiga-native/CMakeLists.txt
+runtimes/amiga-native/Makefile
+runtimes/amiga-native/README.md
+runtimes/amiga-native/cmake/m68k-amigaos.cmake.example
+runtimes/amiga-native/include/openvn_8svx.h
+runtimes/amiga-native/include/openvn_assets_runtime.h
+runtimes/amiga-native/include/openvn_audio.h
+runtimes/amiga-native/include/openvn_audio_amiga.h
+runtimes/amiga-native/include/openvn_audio_host.h
+runtimes/amiga-native/include/openvn_bitmap_amiga.h
+runtimes/amiga-native/include/openvn_dispatch.h
+runtimes/amiga-native/include/openvn_display_amiga.h
+runtimes/amiga-native/include/openvn_graphics.h
+runtimes/amiga-native/include/openvn_graphics_amiga.h
+runtimes/amiga-native/include/openvn_graphics_host.h
+runtimes/amiga-native/include/openvn_image.h
+runtimes/amiga-native/include/openvn_mod.h
+runtimes/amiga-native/include/openvn_mod_player.h
+runtimes/amiga-native/include/openvn_palette.h
+runtimes/amiga-native/include/openvn_paula.h
+runtimes/amiga-native/include/openvn_planar.h
+runtimes/amiga-native/include/openvn_player.h
+runtimes/amiga-native/include/openvn_story.h
+runtimes/amiga-native/src/assets_runtime.c
+runtimes/amiga-native/src/audio.c
+runtimes/amiga-native/src/audio_8svx.c
+runtimes/amiga-native/src/audio_amiga.c
+runtimes/amiga-native/src/audio_host.c
+runtimes/amiga-native/src/audio_mod.c
+runtimes/amiga-native/src/audio_mod_player.c
+runtimes/amiga-native/src/audio_paula.c
+runtimes/amiga-native/src/bitmap_amiga.c
+runtimes/amiga-native/src/dispatch.c
+runtimes/amiga-native/src/display_amiga.c
+runtimes/amiga-native/src/graphics.c
+runtimes/amiga-native/src/graphics_amiga.c
+runtimes/amiga-native/src/graphics_host.c
+runtimes/amiga-native/src/image_ilbm.c
+runtimes/amiga-native/src/main_amiga.c
+runtimes/amiga-native/src/main_host.c
+runtimes/amiga-native/src/palette.c
+runtimes/amiga-native/src/planar.c
+runtimes/amiga-native/src/player.c
+runtimes/amiga-native/src/player_state.c
+runtimes/amiga-native/src/story.c
+runtimes/amiga-native/tests/assets.generated.c
+runtimes/amiga-native/tests/assets.generated.h
+runtimes/amiga-native/tests/fixtures/erik_neutral.iff
+runtimes/amiga-native/tests/fixtures/lighthouse_storm.iff
+runtimes/amiga-native/tests/fixtures/storm.mod
+runtimes/amiga-native/tests/fixtures/thunder.8svx
+runtimes/amiga-native/tests/minimal-story.json
+runtimes/amiga-native/tests/story.generated.c
+runtimes/amiga-native/tests/story.generated.h
+runtimes/amiga-native/tests/test_8svx.c
+runtimes/amiga-native/tests/test_assets_runtime.c
+runtimes/amiga-native/tests/test_audio.c
+runtimes/amiga-native/tests/test_dispatch.c
+runtimes/amiga-native/tests/test_graphics.c
+runtimes/amiga-native/tests/test_image.c
+runtimes/amiga-native/tests/test_mod.c
+runtimes/amiga-native/tests/test_mod_effects.c
+runtimes/amiga-native/tests/test_mod_player.c
+runtimes/amiga-native/tests/test_palette.c
+runtimes/amiga-native/tests/test_paula.c
+runtimes/amiga-native/tests/test_planar.c
+runtimes/amiga-native/tests/test_player_audio.c
+runtimes/amiga-native/tests/test_story.c
+
+=== Graphics/story call sites ===
+runtimes/amiga-native/src/player_state.c:6:#include "openvn_graphics_amiga.h"
+runtimes/amiga-native/src/player_state.c:8:#define openvn_platform_graphics_init openvn_graphics_amiga_init
+runtimes/amiga-native/src/player_state.c:13:#include "openvn_graphics_host.h"
+runtimes/amiga-native/src/player_state.c:15:#define openvn_platform_graphics_init openvn_graphics_host_init
+runtimes/amiga-native/src/player_state.c:25:static OpenVNGraphicsService g_graphics;
+runtimes/amiga-native/src/player_state.c:26:static OpenVNPlatformGraphicsContext g_graphics_context;
+runtimes/amiga-native/src/player_state.c:44:    OpenVNGraphicsConfig graphics_config;
+runtimes/amiga-native/src/player_state.c:53:    openvn_platform_graphics_init(&g_graphics, &g_graphics_context);
+runtimes/amiga-native/src/player_state.c:56:    if (g_graphics.vtable == 0 || g_graphics.vtable->open == 0) {
+runtimes/amiga-native/src/player_state.c:57:        set_last_error("graphics backend not registered");
+runtimes/amiga-native/src/player_state.c:66:    graphics_config.width = 320U;
+runtimes/amiga-native/src/player_state.c:67:    graphics_config.height = 256U;
+runtimes/amiga-native/src/player_state.c:68:    graphics_config.depth = 5U;
+runtimes/amiga-native/src/player_state.c:69:    graphics_config.use_datatypes = 0;
+runtimes/amiga-native/src/player_state.c:70:    graphics_config.fullscreen = 0;
+runtimes/amiga-native/src/player_state.c:71:    graphics_config.assets = &OPENVN_GENERATED_ASSETS;
+runtimes/amiga-native/src/player_state.c:77:    set_last_error("graphics open failed");
+runtimes/amiga-native/src/player_state.c:78:    if (!openvn_graphics_open(&g_graphics, &graphics_config)) {
+runtimes/amiga-native/src/player_state.c:84:        openvn_graphics_close(&g_graphics);
+runtimes/amiga-native/src/player_state.c:89:    openvn_player_init(&g_player, &g_graphics, &g_audio);
+runtimes/amiga-native/src/player_state.c:92:        openvn_graphics_close(&g_graphics);
+runtimes/amiga-native/src/player_state.c:100:        openvn_graphics_close(&g_graphics);
+runtimes/amiga-native/src/player_state.c:108:        openvn_graphics_close(&g_graphics);
+runtimes/amiga-native/src/player_state.c:120:        openvn_graphics_close(&g_graphics);
+runtimes/amiga-native/src/player_state.c:156:            openvn_player_init(&g_player, &g_graphics, &g_audio);
+runtimes/amiga-native/src/player_state.c:183:            return openvn_graphics_scene(&g_graphics, request->argument1) &&
+runtimes/amiga-native/src/player_state.c:184:                   openvn_graphics_present(&g_graphics);
+runtimes/amiga-native/src/player_state.c:186:            return openvn_graphics_show(
+runtimes/amiga-native/src/player_state.c:187:                       &g_graphics,
+runtimes/amiga-native/src/player_state.c:191:                   openvn_graphics_present(&g_graphics);
+runtimes/amiga-native/src/player_state.c:193:            return openvn_graphics_hide(&g_graphics, request->argument1) &&
+runtimes/amiga-native/src/player_state.c:194:                   openvn_graphics_present(&g_graphics);
+runtimes/amiga-native/src/player_state.c:206:            openvn_graphics_close(&g_graphics);
+runtimes/amiga-native/src/story.c:58:int openvn_story_start(OpenVNStoryState *state) {
+runtimes/amiga-native/src/graphics.c:1:#include "openvn_graphics.h"
+runtimes/amiga-native/src/graphics.c:3:int openvn_graphics_open(
+runtimes/amiga-native/src/graphics.c:15:void openvn_graphics_close(OpenVNGraphicsService *service) {
+runtimes/amiga-native/src/graphics.c:22:int openvn_graphics_scene(
+runtimes/amiga-native/src/graphics.c:24:    const char *background
+runtimes/amiga-native/src/graphics.c:27:        service->vtable->scene == 0 || background == 0) {
+runtimes/amiga-native/src/graphics.c:31:    return service->vtable->scene(service, background);
+runtimes/amiga-native/src/graphics.c:34:int openvn_graphics_show(
+runtimes/amiga-native/src/graphics.c:47:int openvn_graphics_hide(
+runtimes/amiga-native/src/graphics.c:59:int openvn_graphics_present(OpenVNGraphicsService *service) {
+runtimes/amiga-native/src/graphics.c:61:        service->vtable->present == 0) {
+runtimes/amiga-native/src/graphics.c:65:    return service->vtable->present(service);
+runtimes/amiga-native/src/graphics_amiga.c:1:#include "openvn_graphics_amiga.h"
+runtimes/amiga-native/src/graphics_amiga.c:9:static void free_classic_background(
+runtimes/amiga-native/src/graphics_amiga.c:12:    openvn_amiga_bitmap_free(&context->background_bitmap);
+runtimes/amiga-native/src/graphics_amiga.c:13:    openvn_planar_free(&context->background_planar);
+runtimes/amiga-native/src/graphics_amiga.c:14:    openvn_ilbm_free(&context->background_ilbm);
+runtimes/amiga-native/src/graphics_amiga.c:15:    openvn_palette_reset(&context->background_palette);
+runtimes/amiga-native/src/graphics_amiga.c:41:    openvn_palette_reset(&context->background_palette);
+runtimes/amiga-native/src/graphics_amiga.c:42:    openvn_ilbm_reset(&context->background_ilbm);
+runtimes/amiga-native/src/graphics_amiga.c:44:    openvn_planar_reset(&context->background_planar);
+runtimes/amiga-native/src/graphics_amiga.c:46:    openvn_amiga_bitmap_reset(&context->background_bitmap);
+runtimes/amiga-native/src/graphics_amiga.c:72:    free_classic_background(context);
+runtimes/amiga-native/src/graphics_amiga.c:80:    OpenVNILBMImage *image,
+runtimes/amiga-native/src/graphics_amiga.c:87:    openvn_ilbm_free(image);
+runtimes/amiga-native/src/graphics_amiga.c:89:    if (!openvn_ilbm_load_file(image, path)) {
+runtimes/amiga-native/src/graphics_amiga.c:93:    if (!openvn_planar_from_chunky(planar, image, masked, 0U)) {
+runtimes/amiga-native/src/graphics_amiga.c:94:        openvn_ilbm_free(image);
+runtimes/amiga-native/src/graphics_amiga.c:100:        openvn_ilbm_free(image);
+runtimes/amiga-native/src/graphics_amiga.c:107:static int amiga_scene(
+runtimes/amiga-native/src/graphics_amiga.c:109:    const char *background
+runtimes/amiga-native/src/graphics_amiga.c:119:    path = openvn_asset_find_background(context->assets, background);
+runtimes/amiga-native/src/graphics_amiga.c:122:            &context->background_ilbm,
+runtimes/amiga-native/src/graphics_amiga.c:123:            &context->background_planar,
+runtimes/amiga-native/src/graphics_amiga.c:124:            &context->background_bitmap,
+runtimes/amiga-native/src/graphics_amiga.c:131:            &context->background_palette,
+runtimes/amiga-native/src/graphics_amiga.c:132:            context->background_ilbm.palette,
+runtimes/amiga-native/src/graphics_amiga.c:133:            context->background_ilbm.palette_size
+runtimes/amiga-native/src/graphics_amiga.c:140:        context->background_palette.colors
+runtimes/amiga-native/src/graphics_amiga.c:189:static int amiga_present(OpenVNGraphicsService *service) {
+runtimes/amiga-native/src/graphics_amiga.c:205:    if (!openvn_amiga_bitmap_blit(
+runtimes/amiga-native/src/graphics_amiga.c:206:            &context->background_bitmap,
+runtimes/amiga-native/src/graphics_amiga.c:222:        if (!openvn_amiga_bitmap_blit(
+runtimes/amiga-native/src/graphics_amiga.c:233:    return openvn_amiga_display_present(&context->display);
+runtimes/amiga-native/src/graphics_amiga.c:239:    amiga_scene,
+runtimes/amiga-native/src/graphics_amiga.c:242:    amiga_present
+runtimes/amiga-native/src/graphics_amiga.c:245:void openvn_graphics_amiga_init(
+runtimes/amiga-native/src/graphics_host.c:1:#include "openvn_graphics_host.h"
+runtimes/amiga-native/src/graphics_host.c:21:    openvn_ilbm_reset(&context->background_image);
+runtimes/amiga-native/src/graphics_host.c:22:    openvn_ilbm_reset(&context->character_image);
+runtimes/amiga-native/src/graphics_host.c:39:        openvn_ilbm_free(&context->background_image);
+runtimes/amiga-native/src/graphics_host.c:40:        openvn_ilbm_free(&context->character_image);
+runtimes/amiga-native/src/graphics_host.c:46:static int host_scene(
+runtimes/amiga-native/src/graphics_host.c:48:    const char *background
+runtimes/amiga-native/src/graphics_host.c:58:    path = openvn_asset_find_background(context->assets, background);
+runtimes/amiga-native/src/graphics_host.c:63:    snprintf(context->scene, sizeof(context->scene), "%s", background);
+runtimes/amiga-native/src/graphics_host.c:64:    snprintf(context->scene_path, sizeof(context->scene_path), "%s", path);
+runtimes/amiga-native/src/graphics_host.c:67:        openvn_ilbm_free(&context->background_image);
+runtimes/amiga-native/src/graphics_host.c:68:        if (!openvn_ilbm_load_file(&context->background_image, path)) {
+runtimes/amiga-native/src/graphics_host.c:73:            "GRAPHICS LOAD ILBM %s %u %u %u\n",
+runtimes/amiga-native/src/graphics_host.c:75:            context->background_image.width,
+runtimes/amiga-native/src/graphics_host.c:76:            context->background_image.height,
+runtimes/amiga-native/src/graphics_host.c:77:            context->background_image.depth
+runtimes/amiga-native/src/graphics_host.c:83:    printf("GRAPHICS SCENE %s\n", background);
+runtimes/amiga-native/src/graphics_host.c:119:        openvn_ilbm_free(&context->character_image);
+runtimes/amiga-native/src/graphics_host.c:120:        if (!openvn_ilbm_load_file(&context->character_image, path)) {
+runtimes/amiga-native/src/graphics_host.c:125:            "GRAPHICS LOAD ILBM %s %u %u %u\n",
+runtimes/amiga-native/src/graphics_host.c:127:            context->character_image.width,
+runtimes/amiga-native/src/graphics_host.c:128:            context->character_image.height,
+runtimes/amiga-native/src/graphics_host.c:129:            context->character_image.depth
+runtimes/amiga-native/src/graphics_host.c:151:        openvn_ilbm_free(&context->character_image);
+runtimes/amiga-native/src/graphics_host.c:161:static int host_present(OpenVNGraphicsService *service) {
+runtimes/amiga-native/src/graphics_host.c:169:    context->present_count++;
+runtimes/amiga-native/src/graphics_host.c:170:    printf("GRAPHICS PRESENT %u\n", context->present_count);
+runtimes/amiga-native/src/graphics_host.c:177:    host_scene,
+runtimes/amiga-native/src/graphics_host.c:180:    host_present
+runtimes/amiga-native/src/graphics_host.c:183:void openvn_graphics_host_init(
+runtimes/amiga-native/src/player.c:14:            return openvn_graphics_scene(
+runtimes/amiga-native/src/player.c:15:                       player->graphics,
+runtimes/amiga-native/src/player.c:18:                   openvn_graphics_present(player->graphics);
+runtimes/amiga-native/src/player.c:20:            return openvn_graphics_show(
+runtimes/amiga-native/src/player.c:21:                       player->graphics,
+runtimes/amiga-native/src/player.c:25:                   openvn_graphics_present(player->graphics);
+runtimes/amiga-native/src/player.c:27:            return openvn_graphics_hide(
+runtimes/amiga-native/src/player.c:28:                       player->graphics,
+runtimes/amiga-native/src/player.c:31:                   openvn_graphics_present(player->graphics);
+runtimes/amiga-native/src/player.c:46:    OpenVNGraphicsService *graphics,
+runtimes/amiga-native/src/player.c:54:    player->graphics = graphics;
+runtimes/amiga-native/src/player.c:59:    if (player == 0 || !openvn_story_start(&player->story)) {
+runtimes/amiga-native/src/assets_runtime.c:26:const char *openvn_asset_find_background(
+runtimes/amiga-native/src/assets_runtime.c:35:        table->backgrounds,
+runtimes/amiga-native/src/assets_runtime.c:36:        table->background_count,
+runtimes/amiga-native/src/image_ilbm.c:1:#include "openvn_image.h"
+runtimes/amiga-native/src/image_ilbm.c:61:void openvn_ilbm_reset(OpenVNILBMImage *image) {
+runtimes/amiga-native/src/image_ilbm.c:62:    if (image != 0) {
+runtimes/amiga-native/src/image_ilbm.c:63:        memset(image, 0, sizeof(*image));
+runtimes/amiga-native/src/image_ilbm.c:67:void openvn_ilbm_free(OpenVNILBMImage *image) {
+runtimes/amiga-native/src/image_ilbm.c:68:    if (image == 0) {
+runtimes/amiga-native/src/image_ilbm.c:72:    free(image->palette);
+runtimes/amiga-native/src/image_ilbm.c:73:    free(image->body);
+runtimes/amiga-native/src/image_ilbm.c:74:    openvn_ilbm_reset(image);
+runtimes/amiga-native/src/image_ilbm.c:78:    OpenVNILBMImage *image,
+runtimes/amiga-native/src/image_ilbm.c:87:    if (image == 0 || path == 0) {
+runtimes/amiga-native/src/image_ilbm.c:91:    openvn_ilbm_reset(image);
+runtimes/amiga-native/src/image_ilbm.c:99:        memcmp(data + 8U, "ILBM", 4U) != 0) {
+runtimes/amiga-native/src/image_ilbm.c:115:            openvn_ilbm_free(image);
+runtimes/amiga-native/src/image_ilbm.c:122:                openvn_ilbm_free(image);
+runtimes/amiga-native/src/image_ilbm.c:127:            image->width = read_u16_be(data + payload);
+runtimes/amiga-native/src/image_ilbm.c:128:            image->height = read_u16_be(data + payload + 2U);
+runtimes/amiga-native/src/image_ilbm.c:129:            image->depth = data[payload + 8U];
+runtimes/amiga-native/src/image_ilbm.c:132:            image->palette = (unsigned char *)malloc((size_t)chunk_size);
+runtimes/amiga-native/src/image_ilbm.c:133:            if (image->palette == 0) {
+runtimes/amiga-native/src/image_ilbm.c:134:                openvn_ilbm_free(image);
+runtimes/amiga-native/src/image_ilbm.c:139:            memcpy(image->palette, data + payload, (size_t)chunk_size);
+runtimes/amiga-native/src/image_ilbm.c:140:            image->palette_size = (unsigned int)chunk_size;
+runtimes/amiga-native/src/image_ilbm.c:142:            image->body = (unsigned char *)malloc((size_t)chunk_size);
+runtimes/amiga-native/src/image_ilbm.c:143:            if (image->body == 0) {
+runtimes/amiga-native/src/image_ilbm.c:144:                openvn_ilbm_free(image);
+runtimes/amiga-native/src/image_ilbm.c:149:            memcpy(image->body, data + payload, (size_t)chunk_size);
+runtimes/amiga-native/src/image_ilbm.c:150:            image->body_size = (size_t)chunk_size;
+runtimes/amiga-native/src/image_ilbm.c:160:        image->width == 0U ||
+runtimes/amiga-native/src/image_ilbm.c:161:        image->height == 0U ||
+runtimes/amiga-native/src/image_ilbm.c:162:        image->depth == 0U) {
+runtimes/amiga-native/src/image_ilbm.c:163:        openvn_ilbm_free(image);
+runtimes/amiga-native/src/bitmap_amiga.c:6:#include <graphics/gfx.h>
+runtimes/amiga-native/src/bitmap_amiga.c:7:#include <graphics/rastport.h>
+runtimes/amiga-native/src/bitmap_amiga.c:9:#include <proto/graphics.h>
+runtimes/amiga-native/src/bitmap_amiga.c:111:int openvn_amiga_bitmap_blit(
+runtimes/amiga-native/src/planar.c:36:    const OpenVNILBMImage *image,
+runtimes/amiga-native/src/planar.c:47:    if (bitmap == 0 || image == 0 || image->body == 0 ||
+runtimes/amiga-native/src/planar.c:48:        image->width == 0U || image->height == 0U ||
+runtimes/amiga-native/src/planar.c:49:        image->depth == 0U || image->depth > 8U) {
+runtimes/amiga-native/src/planar.c:53:    expected_pixels = (size_t)image->width * (size_t)image->height;
+runtimes/amiga-native/src/planar.c:54:    if (image->body_size < expected_pixels) {
+runtimes/amiga-native/src/planar.c:60:    bytes_per_row = padded_bytes_per_row(image->width);
+runtimes/amiga-native/src/planar.c:61:    plane_size = (size_t)bytes_per_row * (size_t)image->height;
+runtimes/amiga-native/src/planar.c:64:        image->depth,
+runtimes/amiga-native/src/planar.c:71:    bitmap->width = image->width;
+runtimes/amiga-native/src/planar.c:72:    bitmap->height = image->height;
+runtimes/amiga-native/src/planar.c:73:    bitmap->depth = image->depth;
+runtimes/amiga-native/src/planar.c:96:    for (y = 0U; y < image->height; y++) {
+runtimes/amiga-native/src/planar.c:97:        for (x = 0U; x < image->width; x++) {
+runtimes/amiga-native/src/planar.c:98:            unsigned int pixel = image->body[
+runtimes/amiga-native/src/planar.c:99:                (size_t)y * image->width + x
+runtimes/amiga-native/src/display_amiga.c:6:#include <graphics/displayinfo.h>
+runtimes/amiga-native/src/display_amiga.c:9:#include <proto/graphics.h>
+runtimes/amiga-native/src/display_amiga.c:197:int openvn_amiga_display_present(OpenVNAmigaDisplay *display) {
+runtimes/amiga-native/include/openvn_story.h:62:int openvn_story_start(OpenVNStoryState *state);
+runtimes/amiga-native/include/openvn_graphics.h:23:    int (*scene)(
+runtimes/amiga-native/include/openvn_graphics.h:25:        const char *background
+runtimes/amiga-native/include/openvn_graphics.h:36:    int (*present)(OpenVNGraphicsService *service);
+runtimes/amiga-native/include/openvn_graphics.h:44:int openvn_graphics_open(
+runtimes/amiga-native/include/openvn_graphics.h:48:void openvn_graphics_close(OpenVNGraphicsService *service);
+runtimes/amiga-native/include/openvn_graphics.h:49:int openvn_graphics_scene(
+runtimes/amiga-native/include/openvn_graphics.h:51:    const char *background
+runtimes/amiga-native/include/openvn_graphics.h:53:int openvn_graphics_show(
+runtimes/amiga-native/include/openvn_graphics.h:58:int openvn_graphics_hide(
+runtimes/amiga-native/include/openvn_graphics.h:62:int openvn_graphics_present(OpenVNGraphicsService *service);
+runtimes/amiga-native/include/openvn_graphics_amiga.h:6:#include "openvn_graphics.h"
+runtimes/amiga-native/include/openvn_graphics_amiga.h:7:#include "openvn_image.h"
+runtimes/amiga-native/include/openvn_graphics_amiga.h:18:    OpenVNILBMImage background_ilbm;
+runtimes/amiga-native/include/openvn_graphics_amiga.h:19:    OpenVNILBMImage character_ilbm;
+runtimes/amiga-native/include/openvn_graphics_amiga.h:20:    OpenVNPlanarBitmap background_planar;
+runtimes/amiga-native/include/openvn_graphics_amiga.h:22:    OpenVNAmigaBitmap background_bitmap;
+runtimes/amiga-native/include/openvn_graphics_amiga.h:24:    OpenVNPalette background_palette;
+runtimes/amiga-native/include/openvn_graphics_amiga.h:30:void openvn_graphics_amiga_init(
+runtimes/amiga-native/include/openvn_graphics_host.h:4:#include "openvn_graphics.h"
+runtimes/amiga-native/include/openvn_graphics_host.h:5:#include "openvn_image.h"
+runtimes/amiga-native/include/openvn_graphics_host.h:10:    unsigned int present_count;
+runtimes/amiga-native/include/openvn_graphics_host.h:12:    OpenVNILBMImage background_image;
+runtimes/amiga-native/include/openvn_graphics_host.h:13:    OpenVNILBMImage character_image;
+runtimes/amiga-native/include/openvn_graphics_host.h:14:    char scene[256];
+runtimes/amiga-native/include/openvn_graphics_host.h:17:    char scene_path[512];
+runtimes/amiga-native/include/openvn_graphics_host.h:21:void openvn_graphics_host_init(
+runtimes/amiga-native/include/openvn_player.h:5:#include "openvn_graphics.h"
+runtimes/amiga-native/include/openvn_player.h:10:    OpenVNGraphicsService *graphics;
+runtimes/amiga-native/include/openvn_player.h:16:    OpenVNGraphicsService *graphics,
+runtimes/amiga-native/include/openvn_assets_runtime.h:12:    const OpenVNAssetEntry *backgrounds;
+runtimes/amiga-native/include/openvn_assets_runtime.h:13:    size_t background_count;
+runtimes/amiga-native/include/openvn_assets_runtime.h:22:const char *openvn_asset_find_background(
+runtimes/amiga-native/include/openvn_image.h:8:    OPENVN_IMAGE_ILBM,
+runtimes/amiga-native/include/openvn_image.h:12:typedef struct OpenVNILBMImage {
+runtimes/amiga-native/include/openvn_image.h:20:} OpenVNILBMImage;
+runtimes/amiga-native/include/openvn_image.h:22:void openvn_ilbm_reset(OpenVNILBMImage *image);
+runtimes/amiga-native/include/openvn_image.h:23:void openvn_ilbm_free(OpenVNILBMImage *image);
+runtimes/amiga-native/include/openvn_image.h:25:    OpenVNILBMImage *image,
+runtimes/amiga-native/include/openvn_bitmap_amiga.h:27:int openvn_amiga_bitmap_blit(
+runtimes/amiga-native/include/openvn_planar.h:6:#include "openvn_image.h"
+runtimes/amiga-native/include/openvn_planar.h:23:    const OpenVNILBMImage *image,
+runtimes/amiga-native/include/openvn_display_amiga.h:41:int openvn_amiga_display_present(OpenVNAmigaDisplay *display);
+
+=== Generated asset paths ===
+examples/demo/dist/amiga-ocs/story/assets.generated.c:4:    {"room", "assets/backgrounds/room.iff"}
+examples/demo/dist/amiga-ocs/story/assets.generated.c:8:    {"alice.neutral", "assets/characters/alice_neutral.iff"}
+examples/demo/dist/amiga-ocs/manifest.json:28:      "packaged": "backgrounds/room.iff",
+examples/demo/dist/amiga-ocs/manifest.json:36:      "packaged": "characters/alice_neutral.iff",
+examples/demo/dist/fs-uae/harddrive/OpenVN/story/assets.generated.c:4:    {"room", "assets/backgrounds/room.iff"}
+examples/demo/dist/fs-uae/harddrive/OpenVN/story/assets.generated.c:8:    {"alice.neutral", "assets/characters/alice_neutral.iff"}
+examples/demo/dist/fs-uae/harddrive/OpenVN/manifest.json:28:      "packaged": "backgrounds/room.iff",
+examples/demo/dist/fs-uae/harddrive/OpenVN/manifest.json:36:      "packaged": "characters/alice_neutral.iff",
+
+=== Packaged files ===
+examples/demo/dist/fs-uae/harddrive/OpenVN/assets/backgrounds/room.iff
+examples/demo/dist/fs-uae/harddrive/OpenVN/assets/characters/alice_neutral.iff
+examples/demo/dist/fs-uae/harddrive/OpenVN/assets/music/intro.mod
+examples/demo/dist/fs-uae/harddrive/OpenVN/assets/sfx/click.8svx
+examples/demo/dist/fs-uae/harddrive/OpenVN/manifest.json
+examples/demo/dist/fs-uae/harddrive/OpenVN/runtime/README.txt
+examples/demo/dist/fs-uae/harddrive/OpenVN/runtime/openvn-player
+examples/demo/dist/fs-uae/harddrive/OpenVN/story/assets.generated.c
+examples/demo/dist/fs-uae/harddrive/OpenVN/story/assets.generated.h
+examples/demo/dist/fs-uae/harddrive/OpenVN/story/main.rexx
+examples/demo/dist/fs-uae/harddrive/OpenVN/story/story.generated.c
+examples/demo/dist/fs-uae/harddrive/OpenVN/story/story.generated.h
+examples/demo/dist/fs-uae/harddrive/OpenVN/story/story.openvn.json

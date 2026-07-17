@@ -1,0 +1,121 @@
+=== compiler ===
+m68k-amigaos-gcc (GCC) 6.5.0b 260602123145
+Copyright (C) 2017 Free Software Foundation, Inc.
+
+=== relevant source includes and calls ===
+8:#include <proto/datatypes.h>
+10:#include <inline/datatypes.h>
+261:        DrawDTObjectA(
+275:        DrawDTObjectA(
+
+=== proto/datatypes.h ===
+/* Automatically generated header (sfdc 1.11f)! Do not edit! */
+
+#ifndef PROTO_DATATYPES_H
+#define PROTO_DATATYPES_H
+
+#include <clib/datatypes_protos.h>
+
+#ifndef _NO_INLINE
+# if defined(__GNUC__)
+#  ifdef __AROS__
+#   include <defines/datatypes.h>
+#  else
+#   include <inline/datatypes.h>
+#  endif
+# else
+#  include <pragmas/datatypes_pragmas.h>
+# endif
+#endif /* _NO_INLINE */
+
+#ifdef __amigaos4__
+# include <interfaces/datatypes.h>
+# ifndef __NOGLOBALIFACE__
+   extern struct DataTypesIFace *IDataTypes;
+# endif /* __NOGLOBALIFACE__*/
+#endif /* !__amigaos4__ */
+#ifndef __NOLIBBASE__
+  extern struct Library *
+# ifdef __CONSTLIBBASEDECL__
+   __CONSTLIBBASEDECL__
+# endif /* __CONSTLIBBASEDECL__ */
+  DataTypesBase;
+#endif /* !__NOLIBBASE__ */
+
+#endif /* !PROTO_DATATYPES_H */
+
+=== definitions mentioning DrawDTObject in inline header ===
+
+=== preprocessor macros after includes ===
+#define DATATYPES_BASE_NAME DataTypesBase
+#define _INLINE_DATATYPES_H 
+#define __GNUC_STDC_INLINE__ 1
+#define __INLINE_MACROS_H 
+#define __INLINE_STUB_H 
+#define __NO_INLINE__ 1
+#define __USE_INLINE__ 1
+
+
+=== probe compile command ===
+/opt/amiga/bin/m68k-amigaos-gcc -D__USE_INLINE__ -O0 -S /tmp/openvn-pr1o-datatypes/probe.c -o /tmp/openvn-pr1o-datatypes/probe.s
+
+/tmp/openvn-pr1o-datatypes/probe.c: In function 'openvn_probe':
+/tmp/openvn-pr1o-datatypes/probe.c:15:12: warning: implicit declaration of function 'DrawDTObjectA' [-Wimplicit-function-declaration]
+     return DrawDTObjectA(
+            ^~~~~~~~~~~~~
+/tmp/openvn-pr1o-datatypes/probe.c: In function 'openvn_probe':
+/tmp/openvn-pr1o-datatypes/probe.c:15:12: warning: implicit declaration of function 'DrawDTObjectA' [-Wimplicit-function-declaration]
+     return DrawDTObjectA(
+            ^~~~~~~~~~~~~
+assembly status: 0
+object status: 0
+
+=== probe assembly ===
+#NO_APP
+	.text
+	.align	2
+	.globl	_openvn_probe
+_openvn_probe:
+	link.w a5,#0
+	clr.l -(sp)
+	clr.l -(sp)
+	pea 200.w
+	pea 320.w
+	clr.l -(sp)
+	clr.l -(sp)
+	move.l (16,a5),-(sp)
+	clr.l -(sp)
+	move.l (12,a5),-(sp)
+	move.l (8,a5),-(sp)
+	jsr _DrawDTObjectA
+	lea (40,sp),sp
+	unlk a5
+	rts
+
+=== undefined symbols in probe object ===
+         U _DrawDTObjectA
+
+=== project object undefined symbols ===
+         U _DataTypesBase
+         U _DrawDTObjectA
+         U _memset
+         U _openvn_amiga_bitmap_blit
+         U _openvn_amiga_bitmap_free
+         U _openvn_amiga_bitmap_from_planar
+         U _openvn_amiga_bitmap_reset
+         U _openvn_amiga_display_close
+         U _openvn_amiga_display_draw_rastport
+         U _openvn_amiga_display_load_palette
+         U _openvn_amiga_display_open
+         U _openvn_amiga_display_present
+         U _openvn_amiga_display_reset
+         U _openvn_asset_find_background
+         U _openvn_asset_find_character
+         U _openvn_ilbm_free
+         U _openvn_ilbm_load_file
+         U _openvn_ilbm_reset
+         U _openvn_palette_from_ilbm
+         U _openvn_palette_reset
+         U _openvn_planar_free
+         U _openvn_planar_from_chunky
+         U _openvn_planar_reset
