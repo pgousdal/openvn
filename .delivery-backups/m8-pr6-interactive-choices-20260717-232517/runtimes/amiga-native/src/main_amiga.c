@@ -1,18 +1,15 @@
 #include "openvn_dispatch.h"
 #include "openvn_story.h"
-#include "openvn_graphics_amiga.h"
 
 #ifdef __AMIGA__
 
 #include <proto/dos.h>
-#include <stdio.h>
 
 extern void openvn_state_reset(void);
 extern int openvn_dispatch_request(const OpenVNRequest *request);
 extern int openvn_state_update(void);
 extern const OpenVNStoryState *openvn_state_story(void);
 extern const char *openvn_state_last_error(void);
-extern OpenVNGraphicsService *openvn_state_graphics(void);
 
 static int dispatch_simple(OpenVNCommand command) {
     OpenVNRequest request;
@@ -23,29 +20,12 @@ static int dispatch_simple(OpenVNCommand command) {
     return openvn_dispatch_request(&request);
 }
 
-static int choose_interactive(void) {
+static int choose_first(void) {
     OpenVNRequest request;
-    size_t selected;
-    int written;
-
-    selected = 0U;
-    if (!openvn_graphics_amiga_wait_choice(
-            openvn_state_graphics(),
-            &selected
-        )) {
-        return 0;
-    }
 
     request.command = OPENVN_CMD_CHOOSE;
-    written = snprintf(
-        request.argument1,
-        sizeof(request.argument1),
-        "%lu",
-        (unsigned long)selected
-    );
-    if (written <= 0 || (size_t)written >= sizeof(request.argument1)) {
-        return 0;
-    }
+    request.argument1[0] = '0';
+    request.argument1[1] = '\0';
     request.argument2[0] = '\0';
     return openvn_dispatch_request(&request);
 }
@@ -82,7 +62,7 @@ int main(void) {
         }
 
         if (node->type == OPENVN_NODE_CHOICE) {
-            if (node->option_count == 0U || !choose_interactive()) {
+            if (node->option_count == 0U || !choose_first()) {
                 PutStr("OpenVN: unable to resolve choice.\n");
                 return 20;
             }

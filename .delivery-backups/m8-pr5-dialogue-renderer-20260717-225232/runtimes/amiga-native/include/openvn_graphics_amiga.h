@@ -2,7 +2,6 @@
 #define OPENVN_GRAPHICS_AMIGA_H
 
 #include "openvn_bitmap_amiga.h"
-#include "openvn_dialogue.h"
 #include "openvn_display_amiga.h"
 #include "openvn_graphics.h"
 #include "openvn_image.h"
@@ -30,22 +29,11 @@ typedef struct OpenVNAmigaGraphicsContext {
     OpenVNCharacterAnchor character_anchor;
     unsigned int character_origin_x;
     unsigned int character_origin_y;
-    int dialogue_visible;
-    char dialogue_text[OPENVN_DIALOGUE_MAX_WRAPPED];
-    const OpenVNGeneratedChoice *choice_options;
-    size_t choice_count;
-    size_t choice_selected;
-    int choices_visible;
 } OpenVNAmigaGraphicsContext;
 
 void openvn_graphics_amiga_init(
     OpenVNGraphicsService *service,
     OpenVNAmigaGraphicsContext *context
-);
-
-int openvn_graphics_amiga_wait_choice(
-    OpenVNGraphicsService *service,
-    size_t *selected_index
 );
 
 #endif

@@ -174,32 +174,6 @@ static int host_text(
     return 1;
 }
 
-static int host_choices(
-    OpenVNGraphicsService *service,
-    const OpenVNGeneratedChoice *options,
-    size_t option_count,
-    size_t selected_index
-) {
-    OpenVNHostGraphicsContext *context;
-
-    context = (OpenVNHostGraphicsContext *)service->context;
-    if (context == 0 || !context->opened || options == 0 ||
-        option_count == 0U || selected_index >= option_count) {
-        return 0;
-    }
-
-    context->choice_options = options;
-    context->choice_count = option_count;
-    context->choice_selected = selected_index;
-    context->choices_visible = 1;
-    printf(
-        "GRAPHICS CHOICES %lu SELECTED %lu\n",
-        (unsigned long)option_count,
-        (unsigned long)selected_index
-    );
-    return 1;
-}
-
 static int host_present(OpenVNGraphicsService *service) {
     OpenVNHostGraphicsContext *context;
 
@@ -220,7 +194,6 @@ static const OpenVNGraphicsVTable HOST_VTABLE = {
     host_show,
     host_hide,
     host_text,
-    host_choices,
     host_present
 };
 

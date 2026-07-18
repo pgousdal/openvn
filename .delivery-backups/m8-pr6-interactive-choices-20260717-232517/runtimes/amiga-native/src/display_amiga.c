@@ -118,8 +118,6 @@ int openvn_amiga_display_open(
         fullscreen ? TRUE : FALSE,
         WA_Activate,
         TRUE,
-        WA_IDCMP,
-        IDCMP_RAWKEY | IDCMP_MOUSEBUTTONS,
         TAG_DONE
     );
 

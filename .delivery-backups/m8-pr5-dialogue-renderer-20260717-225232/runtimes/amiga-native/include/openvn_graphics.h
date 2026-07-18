@@ -2,9 +2,6 @@
 #define OPENVN_GRAPHICS_H
 
 #include "openvn_assets_runtime.h"
-#include "openvn_story.h"
-
-#include <stddef.h>
 
 typedef struct OpenVNGraphicsConfig {
     unsigned int width;
@@ -36,16 +33,6 @@ typedef struct OpenVNGraphicsVTable {
         OpenVNGraphicsService *service,
         const char *character
     );
-    int (*text)(
-        OpenVNGraphicsService *service,
-        const char *text
-    );
-    int (*choices)(
-        OpenVNGraphicsService *service,
-        const OpenVNGeneratedChoice *options,
-        size_t option_count,
-        size_t selected_index
-    );
     int (*present)(OpenVNGraphicsService *service);
 } OpenVNGraphicsVTable;
 
@@ -71,16 +58,6 @@ int openvn_graphics_show(
 int openvn_graphics_hide(
     OpenVNGraphicsService *service,
     const char *character
-);
-int openvn_graphics_text(
-    OpenVNGraphicsService *service,
-    const char *text
-);
-int openvn_graphics_choices(
-    OpenVNGraphicsService *service,
-    const OpenVNGeneratedChoice *options,
-    size_t option_count,
-    size_t selected_index
 );
 int openvn_graphics_present(OpenVNGraphicsService *service);
 

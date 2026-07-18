@@ -143,13 +143,6 @@ const OpenVNStoryState *openvn_state_story(void) {
     return &g_player.story;
 }
 
-OpenVNGraphicsService *openvn_state_graphics(void) {
-    if (!ensure_initialized()) {
-        return 0;
-    }
-    return &g_graphics;
-}
-
 int openvn_dispatch_request(const OpenVNRequest *request) {
     char *end;
     long index;

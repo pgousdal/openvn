@@ -56,38 +56,6 @@ int openvn_graphics_hide(
     return service->vtable->hide(service, character);
 }
 
-int openvn_graphics_text(
-    OpenVNGraphicsService *service,
-    const char *text
-) {
-    if (service == 0 || service->vtable == 0 ||
-        service->vtable->text == 0 || text == 0) {
-        return 0;
-    }
-
-    return service->vtable->text(service, text);
-}
-
-int openvn_graphics_choices(
-    OpenVNGraphicsService *service,
-    const OpenVNGeneratedChoice *options,
-    size_t option_count,
-    size_t selected_index
-) {
-    if (service == 0 || service->vtable == 0 ||
-        service->vtable->choices == 0 || options == 0 ||
-        option_count == 0U || selected_index >= option_count) {
-        return 0;
-    }
-
-    return service->vtable->choices(
-        service,
-        options,
-        option_count,
-        selected_index
-    );
-}
-
 int openvn_graphics_present(OpenVNGraphicsService *service) {
     if (service == 0 || service->vtable == 0 ||
         service->vtable->present == 0) {

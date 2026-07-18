@@ -16,14 +16,6 @@ static int apply_current(OpenVNPlayer *player) {
                        node->text
                    ) &&
                    openvn_graphics_present(player->graphics);
-        case OPENVN_NODE_CHOICE:
-            return openvn_graphics_choices(
-                       player->graphics,
-                       node->options,
-                       node->option_count,
-                       0U
-                   ) &&
-                   openvn_graphics_present(player->graphics);
         case OPENVN_NODE_SCENE:
             return openvn_graphics_scene(
                        player->graphics,

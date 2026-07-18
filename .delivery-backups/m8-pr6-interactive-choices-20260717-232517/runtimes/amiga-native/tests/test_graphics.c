@@ -9,7 +9,6 @@ int main(void) {
     OpenVNGraphicsService service;
     OpenVNHostGraphicsContext context;
     OpenVNGraphicsConfig config;
-    OpenVNGeneratedChoice choices[2];
 
     openvn_graphics_host_init(&service, &context);
 
@@ -34,15 +33,6 @@ int main(void) {
 
     assert(openvn_graphics_text(&service, "Hello from OpenVN."));
     assert(strcmp(context.dialogue, "Hello from OpenVN.") == 0);
-
-    choices[0].text = "Continue";
-    choices[0].target = "next";
-    choices[1].text = "Finish";
-    choices[1].target = "end";
-    assert(openvn_graphics_choices(&service, choices, 2U, 1U));
-    assert(context.choices_visible);
-    assert(context.choice_count == 2U);
-    assert(context.choice_selected == 1U);
 
     assert(openvn_graphics_present(&service));
     assert(context.present_count == 1U);

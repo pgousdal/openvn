@@ -1,6 +1,4 @@
 #include "openvn_graphics_amiga.h"
-#include "openvn_bitmap_font.h"
-#include "openvn_dialogue.h"
 #include <stddef.h>
 
 #ifdef __AMIGA__
@@ -9,8 +7,6 @@
 #include <string.h>
 
 #include <intuition/intuition.h>
-#include <proto/exec.h>
-#include <proto/intuition.h>
 
 #define OPENVN_RENDER_LOG "openvn-render.log"
 
@@ -301,69 +297,6 @@ static int amiga_hide(
     return 1;
 }
 
-static int amiga_text(
-    OpenVNGraphicsService *service,
-    const char *text
-) {
-    OpenVNAmigaGraphicsContext *context;
-    OpenVNDialogueLayout layout;
-    unsigned int columns;
-
-    trace_value("TEXT: ", text);
-    context = (OpenVNAmigaGraphicsContext *)service->context;
-    if (context == 0 || !context->opened || text == 0) {
-        trace_message("TEXT failed: graphics not open");
-        return 0;
-    }
-
-    openvn_dialogue_layout(
-        (unsigned int)context->display.window->Width,
-        (unsigned int)context->display.window->Height,
-        &layout
-    );
-    columns = (unsigned int)layout.text_width /
-              OPENVN_BITMAP_FONT_ADVANCE;
-
-    if (!openvn_dialogue_wrap(
-            text,
-            columns,
-            context->dialogue_text,
-            sizeof(context->dialogue_text)
-        )) {
-        trace_message("TEXT failed: wrapping");
-        return 0;
-    }
-
-    context->dialogue_visible = 1;
-    context->choices_visible = 0;
-    trace_message("TEXT ok");
-    return 1;
-}
-
-static int amiga_choices(
-    OpenVNGraphicsService *service,
-    const OpenVNGeneratedChoice *options,
-    size_t option_count,
-    size_t selected_index
-) {
-    OpenVNAmigaGraphicsContext *context;
-
-    context = (OpenVNAmigaGraphicsContext *)service->context;
-    if (context == 0 || !context->opened || options == 0 ||
-        option_count == 0U || selected_index >= option_count) {
-        trace_message("CHOICES failed: invalid state");
-        return 0;
-    }
-
-    context->choice_options = options;
-    context->choice_count = option_count;
-    context->choice_selected = selected_index;
-    context->choices_visible = 1;
-    context->dialogue_visible = 0;
-    trace_message("CHOICES ok");
-    return 1;
-}
-
 static int amiga_present(OpenVNGraphicsService *service) {
     OpenVNAmigaGraphicsContext *context;
     struct RastPort *rastport;
@@ -421,103 +354,6 @@ static int amiga_present(OpenVNGraphicsService *service) {
         trace_message("PRESENT character blit ok");
     }
 
-
-    if (context->dialogue_visible) {
-        OpenVNDialogueLayout layout;
-
-        openvn_dialogue_layout(
-            (unsigned int)context->display.window->Width,
-            (unsigned int)context->display.window->Height,
-            &layout
-        );
-
-        trace_message("PRESENT dialogue begin");
-        SetAPen(rastport, 0UL);
-        RectFill(
-            rastport,
-            layout.box_x,
-            layout.box_y,
-            layout.box_x + layout.box_width - 1,
-            layout.box_y + layout.box_height - 1
-        );
-        SetAPen(rastport, 2UL);
-        Move(rastport, layout.box_x, layout.box_y);
-        Draw(rastport, layout.box_x + layout.box_width - 1, layout.box_y);
-        Draw(
-            rastport,
-            layout.box_x + layout.box_width - 1,
-            layout.box_y + layout.box_height - 1
-        );
-        Draw(rastport, layout.box_x, layout.box_y + layout.box_height - 1);
-        Draw(rastport, layout.box_x, layout.box_y);
-        openvn_bitmap_font_draw_amiga(
-            rastport,
-            context->dialogue_text,
-            layout.text_x,
-            layout.text_y,
-            31U
-        );
-        trace_message("PRESENT dialogue ok");
-    }
-
-
-    if (context->choices_visible) {
-        OpenVNDialogueLayout layout;
-        size_t index;
-        int y;
-        char line[192];
-
-        openvn_dialogue_layout(
-            (unsigned int)context->display.window->Width,
-            (unsigned int)context->display.window->Height,
-            &layout
-        );
-
-        trace_message("PRESENT choices begin");
-        SetAPen(rastport, 0UL);
-        RectFill(
-            rastport,
-            layout.box_x,
-            layout.box_y,
-            layout.box_x + layout.box_width - 1,
-            layout.box_y + layout.box_height - 1
-        );
-        SetAPen(rastport, 2UL);
-        Move(rastport, layout.box_x, layout.box_y);
-        Draw(rastport, layout.box_x + layout.box_width - 1, layout.box_y);
-        Draw(
-            rastport,
-            layout.box_x + layout.box_width - 1,
-            layout.box_y + layout.box_height - 1
-        );
-        Draw(rastport, layout.box_x, layout.box_y + layout.box_height - 1);
-        Draw(rastport, layout.box_x, layout.box_y);
-
-        y = layout.text_y;
-        for (index = 0U; index < context->choice_count; ++index) {
-            snprintf(
-                line,
-                sizeof(line),
-                "%c %s",
-                index == context->choice_selected ? '>' : ' ',
-                context->choice_options[index].text
-            );
-            openvn_bitmap_font_draw_amiga(
-                rastport,
-                line,
-                layout.text_x,
-                y,
-                index == context->choice_selected ? 31U : 2U
-            );
-            y += OPENVN_BITMAP_FONT_LINE_HEIGHT;
-            if (y + OPENVN_BITMAP_FONT_LINE_HEIGHT >
-                layout.box_y + layout.box_height) {
-                break;
-            }
-        }
-        trace_message("PRESENT choices ok");
-    }
-
     trace_message("PRESENT display swap begin");
     if (!openvn_amiga_display_present(&context->display)) {
         trace_message("PRESENT failed: display swap");
@@ -534,8 +370,6 @@ static const OpenVNGraphicsVTable AMIGA_VTABLE = {
     amiga_scene,
     amiga_show,
     amiga_hide,
-    amiga_text,
-    amiga_choices,
     amiga_present
 };
 
@@ -547,64 +381,6 @@ void openvn_graphics_amiga_init(
         service->vtable = &AMIGA_VTABLE;
         service->context = context;
     }
-}
-
-
-int openvn_graphics_amiga_wait_choice(
-    OpenVNGraphicsService *service,
-    size_t *selected_index
-) {
-    OpenVNAmigaGraphicsContext *context;
-    struct IntuiMessage *message;
-    ULONG message_class;
-    UWORD code;
-    int done;
-
-    if (service == 0 || selected_index == 0) {
-        return 0;
-    }
-
-    context = (OpenVNAmigaGraphicsContext *)service->context;
-    if (context == 0 || !context->opened || context->display.window == 0 ||
-        !context->choices_visible || context->choice_count == 0U) {
-        return 0;
-    }
-
-    done = 0;
-    while (!done) {
-        WaitPort(context->display.window->UserPort);
-        while ((message = (struct IntuiMessage *)GetMsg(
-                    context->display.window->UserPort
-                )) != 0) {
-            message_class = message->Class;
-            code = message->Code;
-            ReplyMsg((struct Message *)message);
-
-            if (message_class == IDCMP_MOUSEBUTTONS && code == SELECTDOWN) {
-                done = 1;
-            } else if (message_class == IDCMP_RAWKEY && (code & 0x80U) == 0U) {
-                if (code == 0x4cU) {
-                    if (context->choice_selected == 0U) {
-                        context->choice_selected = context->choice_count - 1U;
-                    } else {
-                        --context->choice_selected;
-                    }
-                    openvn_graphics_present(service);
-                } else if (code == 0x4dU) {
-                    context->choice_selected =
-                        (context->choice_selected + 1U) % context->choice_count;
-                    openvn_graphics_present(service);
-                } else if (code == 0x44U || code == 0x40U) {
-                    done = 1;
-                }
-            }
-        }
-    }
-
-    *selected_index = context->choice_selected;
-    context->choices_visible = 0;
-    trace_message("CHOICES selected");
-    return 1;
 }
 
 #endif

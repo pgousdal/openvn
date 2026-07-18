@@ -32,20 +32,11 @@ typedef struct OpenVNAmigaGraphicsContext {
     unsigned int character_origin_y;
     int dialogue_visible;
     char dialogue_text[OPENVN_DIALOGUE_MAX_WRAPPED];
-    const OpenVNGeneratedChoice *choice_options;
-    size_t choice_count;
-    size_t choice_selected;
-    int choices_visible;
 } OpenVNAmigaGraphicsContext;
 
 void openvn_graphics_amiga_init(
     OpenVNGraphicsService *service,
     OpenVNAmigaGraphicsContext *context
-);
-
-int openvn_graphics_amiga_wait_choice(
-    OpenVNGraphicsService *service,
-    size_t *selected_index
 );
 
 #endif

@@ -8,11 +8,6 @@ typedef struct OpenVNHostGraphicsContext {
     int opened;
     int use_datatypes;
     unsigned int present_count;
-    char dialogue[640];
-    const OpenVNGeneratedChoice *choice_options;
-    size_t choice_count;
-    size_t choice_selected;
-    int choices_visible;
     const OpenVNAssetTable *assets;
     OpenVNILBMImage background_image;
     OpenVNILBMImage character_image;

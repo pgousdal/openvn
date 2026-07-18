@@ -32,13 +32,11 @@ get_filename_component(
 
 add_library(openvn_dispatch STATIC
     src/assets_runtime.c
-    src/bitmap_font.c
     src/audio.c
     src/audio_8svx.c
     src/audio_mod.c
     src/audio_mod_player.c
     src/audio_paula.c
-    src/dialogue.c
     src/dispatch.c
     src/graphics.c
     src/image_ilbm.c
@@ -58,7 +56,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "AmigaOS")
         PRIVATE
             src/audio_amiga.c
             src/bitmap_amiga.c
-            src/bitmap_font_amiga.c
             src/display_amiga.c
             src/graphics_amiga.c
     )
@@ -82,9 +79,6 @@ target_include_directories(
 add_executable(openvn-player-host src/main_host.c)
 target_link_libraries(openvn-player-host PRIVATE openvn_dispatch amiga)
 
-add_executable(test-openvn-dialogue tests/test_dialogue.c)
-target_link_libraries(test-openvn-dialogue PRIVATE openvn_dispatch)
-
 add_executable(test-openvn-dispatch tests/test_dispatch.c)
 target_link_libraries(test-openvn-dispatch PRIVATE openvn_dispatch)
 
@@ -97,9 +91,6 @@ target_link_libraries(test-openvn-graphics PRIVATE openvn_dispatch)
 
 add_executable(test-openvn-scene-layout tests/test_scene_layout.c)
 target_link_libraries(test-openvn-scene-layout PRIVATE openvn_dispatch)
-
-add_executable(test-openvn-bitmap-font tests/test_bitmap_font.c)
-target_link_libraries(test-openvn-bitmap-font PRIVATE openvn_dispatch)
 
 add_executable(test-openvn-image tests/test_image.c)
 target_link_libraries(test-openvn-image PRIVATE openvn_dispatch)
@@ -137,12 +128,10 @@ target_link_libraries(test-openvn-mod-effects PRIVATE openvn_dispatch)
 target_link_libraries(test-openvn-paula PRIVATE openvn_dispatch)
 
 enable_testing()
-add_test(NAME dialogue COMMAND test-openvn-dialogue)
 add_test(NAME dispatch COMMAND test-openvn-dispatch)
 add_test(NAME story COMMAND test-openvn-story)
 add_test(NAME graphics COMMAND test-openvn-graphics)
 add_test(NAME scene-layout COMMAND test-openvn-scene-layout)
-add_test(NAME bitmap-font COMMAND test-openvn-bitmap-font)
 set_tests_properties(
     graphics
     PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../..
