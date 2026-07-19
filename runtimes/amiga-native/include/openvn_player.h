@@ -4,6 +4,7 @@
 #include "openvn_audio.h"
 #include "openvn_graphics.h"
 #include "openvn_story.h"
+#include "openvn_variables.h"
 
 typedef struct OpenVNPlayer {
     OpenVNStoryState story;

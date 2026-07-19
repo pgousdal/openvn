@@ -65,3 +65,24 @@ class MusicNode(Node):
 class SoundNode(Node):
     sound: str
     next: str | None = None
+
+
+@dataclass(frozen=True)
+class SetBoolNode(Node):
+    name: str
+    value: bool
+    next: str | None = None
+
+
+@dataclass(frozen=True)
+class SetIntNode(Node):
+    name: str
+    value: int
+    next: str | None = None
+
+
+@dataclass(frozen=True)
+class SetStringNode(Node):
+    name: str
+    value: str
+    next: str | None = None

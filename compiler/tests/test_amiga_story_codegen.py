@@ -65,3 +65,40 @@ def test_generated_story_compiles(tmp_path: Path) -> None:
         ],
         check=True,
     )
+
+
+def test_render_runtime_variable_commands() -> None:
+    variable_document = document()
+    variable_document["nodes"] = [
+        {
+            "id": "bool",
+            "type": "set_bool",
+            "name": "has_key",
+            "value": True,
+            "next": "int",
+        },
+        {
+            "id": "int",
+            "type": "set_int",
+            "name": "score",
+            "value": 10,
+            "next": "string",
+        },
+        {
+            "id": "string",
+            "type": "set_string",
+            "name": "player_name",
+            "value": "Alice",
+            "next": "end",
+        },
+        {"id": "end", "type": "end"},
+    ]
+    variable_document["entry"] = "bool"
+
+    source = render_story_source(variable_document)
+    assert "OPENVN_NODE_SET_BOOL" in source
+    assert '"has_key", "true"' in source
+    assert "OPENVN_NODE_SET_INT" in source
+    assert '"score", "10"' in source
+    assert "OPENVN_NODE_SET_STRING" in source
+    assert '"player_name", "Alice"' in source

@@ -13,7 +13,10 @@ typedef enum OpenVNNodeType {
     OPENVN_NODE_SHOW,
     OPENVN_NODE_HIDE,
     OPENVN_NODE_MUSIC,
-    OPENVN_NODE_SOUND
+    OPENVN_NODE_SOUND,
+    OPENVN_NODE_SET_BOOL,
+    OPENVN_NODE_SET_INT,
+    OPENVN_NODE_SET_STRING
 } OpenVNNodeType;
 
 typedef struct OpenVNGeneratedChoice {

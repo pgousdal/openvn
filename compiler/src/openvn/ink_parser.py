@@ -13,6 +13,9 @@ from .model import (
     JumpNode,
     MusicNode,
     SceneNode,
+    SetBoolNode,
+    SetIntNode,
+    SetStringNode,
     ShowNode,
     SoundNode,
     Story,
@@ -29,6 +32,9 @@ StoryNode = (
     | HideNode
     | MusicNode
     | SoundNode
+    | SetBoolNode
+    | SetIntNode
+    | SetStringNode
 )
 
 
@@ -123,6 +129,33 @@ def _presentation_node(
         return MusicNode(id=node_id, type="music", track=track)
     if name == "sound" and len(parts) == 2:
         return SoundNode(id=node_id, type="sound", sound=parts[1])
+    if name == "set_bool" and len(parts) == 3 and parts[2] in {"true", "false"}:
+        return SetBoolNode(
+            id=node_id,
+            type="set_bool",
+            name=parts[1],
+            value=parts[2] == "true",
+        )
+    if name == "set_int" and len(parts) == 3:
+        try:
+            value = int(parts[2], 10)
+        except ValueError:
+            pass
+        else:
+            if -(2**31) <= value < 2**31:
+                return SetIntNode(
+                    id=node_id,
+                    type="set_int",
+                    name=parts[1],
+                    value=value,
+                )
+    if name == "set_string" and len(parts) >= 3:
+        return SetStringNode(
+            id=node_id,
+            type="set_string",
+            name=parts[1],
+            value=command.split(maxsplit=2)[2],
+        )
 
     raise _source_error(
         f"invalid OpenVN command: {command}",
@@ -147,7 +180,17 @@ def _link_linear_nodes(sections: list[Section]) -> list[StoryNode]:
             next_id = section.nodes[index + 1].id if index + 1 < len(section.nodes) else None
             if isinstance(
                 node,
-                (TextNode, SceneNode, ShowNode, HideNode, MusicNode, SoundNode),
+                (
+                    TextNode,
+                    SceneNode,
+                    ShowNode,
+                    HideNode,
+                    MusicNode,
+                    SoundNode,
+                    SetBoolNode,
+                    SetIntNode,
+                    SetStringNode,
+                ),
             ):
                 linked.append(replace(node, next=next_id))
             else:

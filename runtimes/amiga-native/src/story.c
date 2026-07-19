@@ -105,6 +105,9 @@ int openvn_story_step(OpenVNStoryState *state) {
         case OPENVN_NODE_HIDE:
         case OPENVN_NODE_MUSIC:
         case OPENVN_NODE_SOUND:
+        case OPENVN_NODE_SET_BOOL:
+        case OPENVN_NODE_SET_INT:
+        case OPENVN_NODE_SET_STRING:
             return move_to(state, node->next);
         case OPENVN_NODE_JUMP:
             return move_to(state, node->target);
@@ -163,6 +166,9 @@ const char *openvn_story_status(const OpenVNStoryState *state) {
         case OPENVN_NODE_HIDE: return "HIDE";
         case OPENVN_NODE_MUSIC: return "MUSIC";
         case OPENVN_NODE_SOUND: return "SOUND";
+        case OPENVN_NODE_SET_BOOL: return "SET_BOOL";
+        case OPENVN_NODE_SET_INT: return "SET_INT";
+        case OPENVN_NODE_SET_STRING: return "SET_STRING";
         default: return "INVALID";
     }
 }

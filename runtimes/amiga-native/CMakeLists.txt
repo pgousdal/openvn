@@ -48,6 +48,7 @@ add_library(openvn_dispatch STATIC
     src/player_state.c
     src/scene_layout.c
     src/story.c
+    src/variables.c
     "${OPENVN_GENERATED_STORY_SOURCE}"
     "${OPENVN_GENERATED_ASSETS_SOURCE}"
 )
@@ -80,13 +81,16 @@ target_include_directories(
 )
 
 add_executable(openvn-player-host src/main_host.c)
-target_link_libraries(openvn-player-host PRIVATE openvn_dispatch amiga)
+target_link_libraries(openvn-player-host PRIVATE openvn_dispatch)
 
 add_executable(test-openvn-dialogue tests/test_dialogue.c)
 target_link_libraries(test-openvn-dialogue PRIVATE openvn_dispatch)
 
 add_executable(test-openvn-dispatch tests/test_dispatch.c)
 target_link_libraries(test-openvn-dispatch PRIVATE openvn_dispatch)
+
+add_executable(test-openvn-variables tests/test_variables.c)
+target_link_libraries(test-openvn-variables PRIVATE openvn_dispatch)
 
 add_executable(test-openvn-story tests/test_story.c)
 target_include_directories(test-openvn-story PRIVATE tests)
@@ -139,6 +143,7 @@ target_link_libraries(test-openvn-paula PRIVATE openvn_dispatch)
 enable_testing()
 add_test(NAME dialogue COMMAND test-openvn-dialogue)
 add_test(NAME dispatch COMMAND test-openvn-dispatch)
+add_test(NAME variables COMMAND test-openvn-variables)
 add_test(NAME story COMMAND test-openvn-story)
 add_test(NAME graphics COMMAND test-openvn-graphics)
 add_test(NAME scene-layout COMMAND test-openvn-scene-layout)

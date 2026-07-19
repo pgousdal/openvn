@@ -16,6 +16,9 @@ _NODE_TYPES = {
     "hide": "OPENVN_NODE_HIDE",
     "music": "OPENVN_NODE_MUSIC",
     "sound": "OPENVN_NODE_SOUND",
+    "set_bool": "OPENVN_NODE_SET_BOOL",
+    "set_int": "OPENVN_NODE_SET_INT",
+    "set_string": "OPENVN_NODE_SET_STRING",
 }
 
 
@@ -93,6 +96,13 @@ def render_story_source(document: dict[str, Any]) -> str:
             argument1 = str(node.get("track") or "")
         elif node_type == "sound":
             argument1 = str(node.get("sound", ""))
+        elif node_type in {"set_bool", "set_int", "set_string"}:
+            argument1 = str(node.get("name", ""))
+            value = node.get("value", "")
+            if isinstance(value, bool):
+                argument2 = "true" if value else "false"
+            else:
+                argument2 = str(value)
 
         node_lines.append(
             "    {"

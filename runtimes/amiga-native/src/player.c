@@ -1,6 +1,9 @@
 #include "openvn_player.h"
 #include "story.generated.h"
 
+#include <errno.h>
+#include <stdlib.h>
+
 static int apply_current(OpenVNPlayer *player) {
     const OpenVNGeneratedNode *node;
 
@@ -50,6 +53,28 @@ static int apply_current(OpenVNPlayer *player) {
             return openvn_audio_music(player->audio, node->argument1);
         case OPENVN_NODE_SOUND:
             return openvn_audio_sound(player->audio, node->argument1);
+        case OPENVN_NODE_SET_BOOL:
+            if (node->argument2[0] == 't') {
+                return openvn_set_bool(node->argument1, 1);
+            }
+            if (node->argument2[0] == 'f') {
+                return openvn_set_bool(node->argument1, 0);
+            }
+            return 0;
+        case OPENVN_NODE_SET_INT: {
+            char *end;
+            long value;
+
+            errno = 0;
+            value = strtol(node->argument2, &end, 10);
+            if (errno != 0 || *end != '\0' ||
+                value < INT32_MIN || value > INT32_MAX) {
+                return 0;
+            }
+            return openvn_set_int(node->argument1, (int32_t)value);
+        }
+        case OPENVN_NODE_SET_STRING:
+            return openvn_set_string(node->argument1, node->argument2);
         default:
             return 1;
     }
@@ -65,6 +90,7 @@ void openvn_player_init(
     }
 
     openvn_story_attach(&player->story, &OPENVN_GENERATED_STORY);
+    openvn_variables_reset();
     player->graphics = graphics;
     player->audio = audio;
 }
