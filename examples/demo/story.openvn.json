@@ -29,24 +29,100 @@
     },
     {
       "id": "start-0004",
-      "type": "text",
-      "text": "Alice switches on the old terminal. The OpenVN demo is running on one shared story.",
+      "type": "set_bool",
+      "name": "terminal_online",
+      "value": true,
       "next": "start-0005"
     },
     {
       "id": "start-0005",
-      "type": "sound",
-      "sound": "click",
+      "type": "set_int",
+      "name": "trust",
+      "value": 2,
       "next": "start-0006"
     },
     {
       "id": "start-0006",
-      "type": "text",
-      "text": "The screen asks which path to demonstrate.",
-      "next": "start-0007"
+      "type": "condition",
+      "condition": {
+        "variable_name": "terminal_online",
+        "value_type": "bool",
+        "operator": "bool_true",
+        "bool_value": false,
+        "int_value": 0,
+        "string_value": ""
+      },
+      "true_target": "start-0007",
+      "false_target": "start-0009"
     },
     {
       "id": "start-0007",
+      "type": "text",
+      "text": "The terminal responds.",
+      "next": "start-0008"
+    },
+    {
+      "id": "start-0008",
+      "type": "jump",
+      "target": "start-0010"
+    },
+    {
+      "id": "start-0009",
+      "type": "text",
+      "text": "The terminal remains dark.",
+      "next": "start-0010"
+    },
+    {
+      "id": "start-0010",
+      "type": "condition",
+      "condition": {
+        "variable_name": "trust",
+        "value_type": "int",
+        "operator": ">=",
+        "bool_value": false,
+        "int_value": 2,
+        "string_value": ""
+      },
+      "true_target": "start-0011",
+      "false_target": "start-0013"
+    },
+    {
+      "id": "start-0011",
+      "type": "text",
+      "text": "Alice decides to continue.",
+      "next": "start-0012"
+    },
+    {
+      "id": "start-0012",
+      "type": "jump",
+      "target": "start-0014"
+    },
+    {
+      "id": "start-0013",
+      "type": "text",
+      "text": "Alice steps away.",
+      "next": "start-0014"
+    },
+    {
+      "id": "start-0014",
+      "type": "text",
+      "text": "Alice switches on the old terminal. The OpenVN demo is running on one shared story.",
+      "next": "start-0015"
+    },
+    {
+      "id": "start-0015",
+      "type": "sound",
+      "sound": "click",
+      "next": "start-0016"
+    },
+    {
+      "id": "start-0016",
+      "type": "text",
+      "text": "The screen asks which path to demonstrate.",
+      "next": "start-0017"
+    },
+    {
+      "id": "start-0017",
       "type": "choice",
       "options": [
         {

@@ -16,7 +16,15 @@
 #define OPENVN_VARIABLE_STRING_MAX 127
 #endif
 
+typedef enum OpenVNVariableType {
+    OPENVN_VARIABLE_NONE = 0,
+    OPENVN_VARIABLE_BOOL,
+    OPENVN_VARIABLE_INT,
+    OPENVN_VARIABLE_STRING
+} OpenVNVariableType;
+
 void openvn_variables_reset(void);
+int openvn_variable_type(const char *name, OpenVNVariableType *type);
 int openvn_set_bool(const char *name, int value);
 int openvn_get_bool(const char *name, int *value);
 int openvn_set_int(const char *name, int32_t value);

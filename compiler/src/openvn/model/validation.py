@@ -6,18 +6,32 @@ from openvn.diagnostics import Diagnostic
 
 from .nodes import (
     ChoiceNode,
+    ConditionNode,
     EndNode,
     HideNode,
     JumpNode,
     MusicNode,
     SceneNode,
+    SetBoolNode,
+    SetIntNode,
+    SetStringNode,
     ShowNode,
     SoundNode,
     TextNode,
 )
 from .story import Story
 
-_LINEAR_NODES = (TextNode, SceneNode, ShowNode, HideNode, MusicNode, SoundNode)
+_LINEAR_NODES = (
+    TextNode,
+    SceneNode,
+    ShowNode,
+    HideNode,
+    MusicNode,
+    SoundNode,
+    SetBoolNode,
+    SetIntNode,
+    SetStringNode,
+)
 
 
 def _next_target(node: object) -> str | None:
@@ -61,8 +75,21 @@ def validate_story(story: Story) -> list[Diagnostic]:
                     f"node '{node.id}' has unknown next target: {target}",
                 )
             )
-        elif isinstance(node, JumpNode) and node.target not in known_ids:
+        elif isinstance(node, JumpNode) and node.target and node.target not in known_ids:
             diagnostics.append(Diagnostic("error", "OVN002", f"unknown jump target: {node.target}"))
+        elif isinstance(node, ConditionNode):
+            for branch_name, branch_target in (
+                ("true", node.true_target),
+                ("false", node.false_target),
+            ):
+                if branch_target and branch_target not in known_ids:
+                    diagnostics.append(
+                        Diagnostic(
+                            "error",
+                            "OVN002",
+                            f"unknown {branch_name} condition target: {branch_target}",
+                        )
+                    )
         elif isinstance(node, ChoiceNode):
             if not node.options:
                 diagnostics.append(
@@ -104,7 +131,10 @@ def reachable_node_ids(story: Story) -> set[str]:
         if target is not None:
             pending.append(target)
         elif isinstance(node, JumpNode):
-            pending.append(node.target)
+            if node.target:
+                pending.append(node.target)
+        elif isinstance(node, ConditionNode):
+            pending.extend(target for target in (node.true_target, node.false_target) if target)
         elif isinstance(node, ChoiceNode):
             pending.extend(option.target for option in node.options)
         elif isinstance(node, EndNode):

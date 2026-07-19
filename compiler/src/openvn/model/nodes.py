@@ -86,3 +86,20 @@ class SetStringNode(Node):
     name: str
     value: str
     next: str | None = None
+
+
+@dataclass(frozen=True)
+class Condition:
+    variable_name: str
+    value_type: str
+    operator: str
+    bool_value: bool = False
+    int_value: int = 0
+    string_value: str = ""
+
+
+@dataclass(frozen=True)
+class ConditionNode(Node):
+    condition: Condition
+    true_target: str = ""
+    false_target: str = ""

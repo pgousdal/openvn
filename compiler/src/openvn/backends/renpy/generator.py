@@ -55,7 +55,17 @@ def _validate_document(document: dict[str, Any]) -> None:
     if entry not in known:
         raise OpenVNError(f"unknown story entry: {entry}")
 
-    linear_types = {"text", "scene", "show", "hide", "music", "sound"}
+    linear_types = {
+        "text",
+        "scene",
+        "show",
+        "hide",
+        "music",
+        "sound",
+        "set_bool",
+        "set_int",
+        "set_string",
+    }
     for node in nodes:
         node_type = node.get("type")
         if node_type in linear_types:
@@ -76,6 +86,10 @@ def _validate_document(document: dict[str, Any]) -> None:
                 raise OpenVNError(f"unknown jump target: {target}")
         elif node_type == "end":
             continue
+        elif node_type == "condition":
+            for target_name in ("true_target", "false_target"):
+                if node.get(target_name) not in known:
+                    raise OpenVNError(f"unknown condition target: {node.get(target_name)}")
         else:
             raise OpenVNError(f"unsupported Ren'Py node type: {node_type}")
 
@@ -115,6 +129,39 @@ def _render_node(node: dict[str, Any]) -> list[str]:
     if node_type == "sound":
         lines.append(f"    play sound audio.{node['sound']}")
         return _render_next(lines, node.get("next"))
+
+    if node_type in {"set_bool", "set_int", "set_string"}:
+        value = node["value"]
+        if isinstance(value, bool):
+            rendered_value = "True" if value else "False"
+        elif isinstance(value, str):
+            rendered_value = _quote(value)
+        else:
+            rendered_value = str(value)
+        lines.append(f"    $ {node['name']} = {rendered_value}")
+        return _render_next(lines, node.get("next"))
+
+    if node_type == "condition":
+        condition = node["condition"]
+        variable = condition["variable_name"]
+        operator = condition["operator"]
+        if operator == "bool_true":
+            expression = variable
+        elif operator == "bool_false":
+            expression = f"not {variable}"
+        else:
+            if condition["value_type"] == "bool":
+                literal = "True" if condition["bool_value"] else "False"
+            elif condition["value_type"] == "int":
+                literal = str(condition["int_value"])
+            else:
+                literal = _quote(condition["string_value"])
+            expression = f"{variable} {operator} {literal}"
+        lines.append(f"    if {expression}:")
+        lines.append(f"        jump {_label(node['true_target'])}")
+        lines.append("    else:")
+        lines.append(f"        jump {_label(node['false_target'])}")
+        return lines
 
     if node_type == "choice":
         lines.append("    menu:")

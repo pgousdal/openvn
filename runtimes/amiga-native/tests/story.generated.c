@@ -15,7 +15,10 @@ static const OpenVNGeneratedNode openvn_nodes[] = {
         "",
         "",
         0,
-        0U
+        0U,
+        {0, OPENVN_VARIABLE_NONE, OPENVN_CONDITION_BOOL_TRUE, 0, 0, 0},
+        "",
+        ""
     },
     {
         "choice",
@@ -26,7 +29,10 @@ static const OpenVNGeneratedNode openvn_nodes[] = {
         "",
         "",
         openvn_options_1,
-        2U
+        2U,
+        {0, OPENVN_VARIABLE_NONE, OPENVN_CONDITION_BOOL_TRUE, 0, 0, 0},
+        "",
+        ""
     },
     {
         "scene",
@@ -37,7 +43,10 @@ static const OpenVNGeneratedNode openvn_nodes[] = {
         "lighthouse_storm",
         "",
         0,
-        0U
+        0U,
+        {0, OPENVN_VARIABLE_NONE, OPENVN_CONDITION_BOOL_TRUE, 0, 0, 0},
+        "",
+        ""
     },
     {
         "end",
@@ -48,7 +57,10 @@ static const OpenVNGeneratedNode openvn_nodes[] = {
         "",
         "",
         0,
-        0U
+        0U,
+        {0, OPENVN_VARIABLE_NONE, OPENVN_CONDITION_BOOL_TRUE, 0, 0, 0},
+        "",
+        ""
     }
 };
 

@@ -33,6 +33,7 @@ get_filename_component(
 add_library(openvn_dispatch STATIC
     src/assets_runtime.c
     src/bitmap_font.c
+    src/condition.c
     src/audio.c
     src/audio_8svx.c
     src/audio_mod.c
@@ -92,6 +93,9 @@ target_link_libraries(test-openvn-dispatch PRIVATE openvn_dispatch)
 add_executable(test-openvn-variables tests/test_variables.c)
 target_link_libraries(test-openvn-variables PRIVATE openvn_dispatch)
 
+add_executable(test-openvn-condition tests/test_condition.c)
+target_link_libraries(test-openvn-condition PRIVATE openvn_dispatch)
+
 add_executable(test-openvn-story tests/test_story.c)
 target_include_directories(test-openvn-story PRIVATE tests)
 target_link_libraries(test-openvn-story PRIVATE openvn_dispatch)
@@ -144,6 +148,7 @@ enable_testing()
 add_test(NAME dialogue COMMAND test-openvn-dialogue)
 add_test(NAME dispatch COMMAND test-openvn-dispatch)
 add_test(NAME variables COMMAND test-openvn-variables)
+add_test(NAME condition COMMAND test-openvn-condition)
 add_test(NAME story COMMAND test-openvn-story)
 add_test(NAME graphics COMMAND test-openvn-graphics)
 add_test(NAME scene-layout COMMAND test-openvn-scene-layout)

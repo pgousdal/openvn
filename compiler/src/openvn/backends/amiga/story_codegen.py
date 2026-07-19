@@ -19,6 +19,24 @@ _NODE_TYPES = {
     "set_bool": "OPENVN_NODE_SET_BOOL",
     "set_int": "OPENVN_NODE_SET_INT",
     "set_string": "OPENVN_NODE_SET_STRING",
+    "condition": "OPENVN_NODE_CONDITION",
+}
+
+_VARIABLE_TYPES = {
+    "bool": "OPENVN_VARIABLE_BOOL",
+    "int": "OPENVN_VARIABLE_INT",
+    "string": "OPENVN_VARIABLE_STRING",
+}
+
+_CONDITION_OPERATORS = {
+    "bool_true": "OPENVN_CONDITION_BOOL_TRUE",
+    "bool_false": "OPENVN_CONDITION_BOOL_FALSE",
+    "==": "OPENVN_CONDITION_EQUAL",
+    "!=": "OPENVN_CONDITION_NOT_EQUAL",
+    "<": "OPENVN_CONDITION_LESS",
+    "<=": "OPENVN_CONDITION_LESS_EQUAL",
+    ">": "OPENVN_CONDITION_GREATER",
+    ">=": "OPENVN_CONDITION_GREATER_EQUAL",
 }
 
 
@@ -84,6 +102,9 @@ def render_story_source(document: dict[str, Any]) -> str:
         target = node.get("target") or ""
         argument1 = ""
         argument2 = ""
+        condition_initializer = "{0, OPENVN_VARIABLE_NONE, OPENVN_CONDITION_BOOL_TRUE, 0, 0, 0}"
+        true_target = ""
+        false_target = ""
 
         if node_type == "scene":
             argument1 = str(node.get("background", ""))
@@ -103,6 +124,26 @@ def render_story_source(document: dict[str, Any]) -> str:
                 argument2 = "true" if value else "false"
             else:
                 argument2 = str(value)
+        elif node_type == "condition":
+            condition = node.get("condition")
+            if not isinstance(condition, dict):
+                raise OpenVNError(f"condition node {node.get('id')} is missing its condition")
+            value_type = condition.get("value_type")
+            operator = condition.get("operator")
+            if value_type not in _VARIABLE_TYPES or operator not in _CONDITION_OPERATORS:
+                raise OpenVNError(f"condition node {node.get('id')} is invalid")
+            condition_initializer = (
+                "{"
+                f"{_c_string(str(condition.get('variable_name', '')))}, "
+                f"{_VARIABLE_TYPES[value_type]}, "
+                f"{_CONDITION_OPERATORS[operator]}, "
+                f"{1 if condition.get('bool_value') else 0}, "
+                f"{int(condition.get('int_value', 0))}, "
+                f"{_c_string(str(condition.get('string_value', '')))}"
+                "}"
+            )
+            true_target = str(node.get("true_target", ""))
+            false_target = str(node.get("false_target", ""))
 
         node_lines.append(
             "    {"
@@ -114,7 +155,10 @@ def render_story_source(document: dict[str, Any]) -> str:
             f"{_c_string(argument1)}, "
             f"{_c_string(argument2)}, "
             f"{options_name}, "
-            f"{option_count}U"
+            f"{option_count}U, "
+            f"{condition_initializer}, "
+            f"{_c_string(true_target)}, "
+            f"{_c_string(false_target)}"
             "}"
         )
 

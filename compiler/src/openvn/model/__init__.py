@@ -1,6 +1,8 @@
 from .nodes import (
     ChoiceNode,
     ChoiceOption,
+    Condition,
+    ConditionNode,
     EndNode,
     HideNode,
     JumpNode,
@@ -18,6 +20,8 @@ from .story import Story
 __all__ = [
     "ChoiceNode",
     "ChoiceOption",
+    "Condition",
+    "ConditionNode",
     "EndNode",
     "HideNode",
     "JumpNode",

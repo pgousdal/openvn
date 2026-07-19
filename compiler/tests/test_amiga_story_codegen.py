@@ -102,3 +102,32 @@ def test_render_runtime_variable_commands() -> None:
     assert '"score", "10"' in source
     assert "OPENVN_NODE_SET_STRING" in source
     assert '"player_name", "Alice"' in source
+
+
+def test_render_condition_node() -> None:
+    condition_document = document()
+    condition_document["nodes"] = [
+        {
+            "id": "condition",
+            "type": "condition",
+            "condition": {
+                "variable_name": "score",
+                "value_type": "int",
+                "operator": ">=",
+                "bool_value": False,
+                "int_value": 10,
+                "string_value": "",
+            },
+            "true_target": "true",
+            "false_target": "false",
+        },
+        {"id": "true", "type": "end"},
+        {"id": "false", "type": "end"},
+    ]
+    condition_document["entry"] = "condition"
+
+    source = render_story_source(condition_document)
+    assert "OPENVN_NODE_CONDITION" in source
+    assert '"score", OPENVN_VARIABLE_INT' in source
+    assert "OPENVN_CONDITION_GREATER_EQUAL" in source
+    assert '10, ""}, "true", "false"' in source

@@ -313,6 +313,90 @@
         }
       ]
     },
+    "setBoolNode": {
+      "allOf": [
+        {"$ref": "#/$defs/baseNode"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "name", "value", "next"],
+          "properties": {
+            "id": {"$ref": "#/$defs/nodeId"},
+            "type": {"const": "set_bool"},
+            "name": {"type": "string", "minLength": 1},
+            "value": {"type": "boolean"},
+            "next": {"$ref": "#/$defs/nullableTarget"}
+          }
+        }
+      ]
+    },
+    "setIntNode": {
+      "allOf": [
+        {"$ref": "#/$defs/baseNode"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "name", "value", "next"],
+          "properties": {
+            "id": {"$ref": "#/$defs/nodeId"},
+            "type": {"const": "set_int"},
+            "name": {"type": "string", "minLength": 1},
+            "value": {"type": "integer", "minimum": -2147483648, "maximum": 2147483647},
+            "next": {"$ref": "#/$defs/nullableTarget"}
+          }
+        }
+      ]
+    },
+    "setStringNode": {
+      "allOf": [
+        {"$ref": "#/$defs/baseNode"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "name", "value", "next"],
+          "properties": {
+            "id": {"$ref": "#/$defs/nodeId"},
+            "type": {"const": "set_string"},
+            "name": {"type": "string", "minLength": 1},
+            "value": {"type": "string"},
+            "next": {"$ref": "#/$defs/nullableTarget"}
+          }
+        }
+      ]
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "variable_name", "value_type", "operator",
+        "bool_value", "int_value", "string_value"
+      ],
+      "properties": {
+        "variable_name": {"type": "string", "minLength": 1},
+        "value_type": {"enum": ["bool", "int", "string"]},
+        "operator": {"enum": ["bool_true", "bool_false", "==", "!=", "<", "<=", ">", ">="]},
+        "bool_value": {"type": "boolean"},
+        "int_value": {"type": "integer", "minimum": -2147483648, "maximum": 2147483647},
+        "string_value": {"type": "string"}
+      }
+    },
+    "conditionNode": {
+      "allOf": [
+        {"$ref": "#/$defs/baseNode"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "type", "condition", "true_target", "false_target"],
+          "properties": {
+            "id": {"$ref": "#/$defs/nodeId"},
+            "type": {"const": "condition"},
+            "condition": {"$ref": "#/$defs/condition"},
+            "true_target": {"$ref": "#/$defs/nodeId"},
+            "false_target": {"$ref": "#/$defs/nodeId"}
+          }
+        }
+      ]
+    },
     "node": {
       "oneOf": [
         {
@@ -341,6 +425,18 @@
         },
         {
           "$ref": "#/$defs/soundNode"
+        },
+        {
+          "$ref": "#/$defs/setBoolNode"
+        },
+        {
+          "$ref": "#/$defs/setIntNode"
+        },
+        {
+          "$ref": "#/$defs/setStringNode"
+        },
+        {
+          "$ref": "#/$defs/conditionNode"
         }
       ]
     }

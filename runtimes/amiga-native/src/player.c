@@ -2,6 +2,7 @@
 #include "story.generated.h"
 
 #include <errno.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 static int apply_current(OpenVNPlayer *player) {
@@ -75,6 +76,20 @@ static int apply_current(OpenVNPlayer *player) {
         }
         case OPENVN_NODE_SET_STRING:
             return openvn_set_string(node->argument1, node->argument2);
+        case OPENVN_NODE_CONDITION: {
+            int result;
+            const char *target;
+
+            if (!openvn_condition_evaluate(&node->condition, &result)) {
+                return 0;
+            }
+            target = result ? node->true_target : node->false_target;
+            if (target == 0) return 0;
+            printf("BRANCH target = %s\n", target[0] == '\0' ? "END" : target);
+            if (!openvn_story_branch(&player->story, result)) return 0;
+            if (player->story.ended) return 1;
+            return apply_current(player);
+        }
         default:
             return 1;
     }

@@ -3,13 +3,6 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef enum OpenVNVariableType {
-    OPENVN_VARIABLE_UNUSED = 0,
-    OPENVN_VARIABLE_BOOL,
-    OPENVN_VARIABLE_INT,
-    OPENVN_VARIABLE_STRING
-} OpenVNVariableType;
-
 typedef struct OpenVNVariable {
     char name[OPENVN_VARIABLE_NAME_MAX + 1];
     OpenVNVariableType type;
@@ -57,6 +50,15 @@ static OpenVNVariable *variable_for_set(const char *name) {
 void openvn_variables_reset(void) {
     memset(variables, 0, sizeof(variables));
     variable_count = 0U;
+}
+
+int openvn_variable_type(const char *name, OpenVNVariableType *type) {
+    int index;
+
+    index = find_variable(name);
+    if (index < 0 || type == 0) return 0;
+    *type = variables[index].type;
+    return 1;
 }
 
 int openvn_set_bool(const char *name, int value) {

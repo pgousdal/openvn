@@ -41,3 +41,62 @@ Ink sources create assignments with OpenVN commands:
 
 The compiler emits `SET_BOOL`, `SET_INT`, and `SET_STRING` story nodes, which the
 native player executes when reached.
+
+## Conditions and Branching
+
+Conditions compare one named runtime variable with one literal of the same type.
+No coercion is performed: a missing variable, type mismatch, or invalid operator
+causes evaluation to fail.
+
+Supported forms are:
+
+- bool: direct `flag`, negated `not flag`, `==`, and `!=` with `true` or `false`;
+- int32: `==`, `!=`, `<`, `<=`, `>`, and `>=` with a signed 32-bit literal;
+- string: `==` and `!=` with a quoted UTF-8 string literal.
+
+The evaluator API is declared in `openvn_condition.h`:
+
+```c
+int openvn_condition_evaluate(
+    const OpenVNCondition *condition,
+    int *result
+);
+```
+
+It returns zero for invalid input, an unknown variable, a type mismatch, or an
+operator that is not valid for the variable type. On failure, the output value
+and variable store are unchanged.
+
+Conditions use the existing OpenVN command syntax in Ink sources:
+
+```ink
+#openvn set_bool terminal_online true
+#openvn set_int trust 2
+#openvn set_string player_name "Alice"
+
+#openvn if terminal_online
+The terminal responds.
+#openvn else
+The terminal remains dark.
+#openvn end
+
+#openvn if trust >= 2
+Alice decides to continue.
+#openvn end
+```
+
+`else` is optional, and blocks may be nested. The compiler emits explicit true
+and false node IDs and a deterministic jump around an else body. It reports
+malformed blocks and literals with source locations.
+
+Successful evaluation logs diagnostics such as:
+
+```text
+CONDITION trust >= 2
+CONDITION result = true
+BRANCH target = start-0011
+```
+
+Errors identify unknown variables, type mismatches, and invalid operators. The
+current implementation intentionally has no arithmetic expressions, precedence,
+implicit conversion, call/return, persistence, or general-purpose scripting.

@@ -109,6 +109,8 @@ int openvn_story_step(OpenVNStoryState *state) {
         case OPENVN_NODE_SET_INT:
         case OPENVN_NODE_SET_STRING:
             return move_to(state, node->next);
+        case OPENVN_NODE_CONDITION:
+            return 0;
         case OPENVN_NODE_JUMP:
             return move_to(state, node->target);
         case OPENVN_NODE_END:
@@ -134,6 +136,14 @@ int openvn_story_choose(OpenVNStoryState *state, size_t index) {
     }
 
     return move_to(state, node->options[index].target);
+}
+
+int openvn_story_branch(OpenVNStoryState *state, int result) {
+    const OpenVNGeneratedNode *node;
+
+    node = openvn_story_current(state);
+    if (node == 0 || node->type != OPENVN_NODE_CONDITION) return 0;
+    return move_to(state, result ? node->true_target : node->false_target);
 }
 
 const char *openvn_story_status(const OpenVNStoryState *state) {
@@ -169,6 +179,7 @@ const char *openvn_story_status(const OpenVNStoryState *state) {
         case OPENVN_NODE_SET_BOOL: return "SET_BOOL";
         case OPENVN_NODE_SET_INT: return "SET_INT";
         case OPENVN_NODE_SET_STRING: return "SET_STRING";
+        case OPENVN_NODE_CONDITION: return "CONDITION";
         default: return "INVALID";
     }
 }

@@ -3,6 +3,8 @@
 
 #include <stddef.h>
 
+#include "openvn_condition.h"
+
 typedef enum OpenVNNodeType {
     OPENVN_NODE_INVALID = 0,
     OPENVN_NODE_TEXT,
@@ -16,7 +18,8 @@ typedef enum OpenVNNodeType {
     OPENVN_NODE_SOUND,
     OPENVN_NODE_SET_BOOL,
     OPENVN_NODE_SET_INT,
-    OPENVN_NODE_SET_STRING
+    OPENVN_NODE_SET_STRING,
+    OPENVN_NODE_CONDITION
 } OpenVNNodeType;
 
 typedef struct OpenVNGeneratedChoice {
@@ -34,6 +37,9 @@ typedef struct OpenVNGeneratedNode {
     const char *argument2;
     const OpenVNGeneratedChoice *options;
     size_t option_count;
+    OpenVNCondition condition;
+    const char *true_target;
+    const char *false_target;
 } OpenVNGeneratedNode;
 
 typedef struct OpenVNGeneratedStory {
@@ -65,6 +71,7 @@ const OpenVNGeneratedNode *openvn_story_current(
 int openvn_story_start(OpenVNStoryState *state);
 int openvn_story_step(OpenVNStoryState *state);
 int openvn_story_choose(OpenVNStoryState *state, size_t index);
+int openvn_story_branch(OpenVNStoryState *state, int result);
 const char *openvn_story_status(const OpenVNStoryState *state);
 
 #endif
