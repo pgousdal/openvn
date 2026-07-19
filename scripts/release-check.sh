@@ -15,9 +15,15 @@ if [[ -z "$UV_BIN" ]]; then
     exit 1
 fi
 
+PYTEST_OUTPUT=""
+FAILED_TESTS_FILE=""
+UNEXPECTED_TESTS_FILE=""
 FAILED_STEP=""
+
 cleanup() {
-    rm -f "${PYTEST_OUTPUT:-}" "${FAILED_TESTS_FILE:-}" "${UNEXPECTED_TESTS_FILE:-}"
+    [[ -n "$PYTEST_OUTPUT" ]] && rm -f "$PYTEST_OUTPUT"
+    [[ -n "$FAILED_TESTS_FILE" ]] && rm -f "$FAILED_TESTS_FILE"
+    [[ -n "$UNEXPECTED_TESTS_FILE" ]] && rm -f "$UNEXPECTED_TESTS_FILE"
 }
 trap cleanup EXIT
 
@@ -34,8 +40,11 @@ heading() {
     printf '\n[%s/9] %s\n' "$1" "$2"
 }
 
-run_host_uv() {
-    env PATH="$HOST_PATH" "$UV_BIN" run --project "$COMPILER_DIR" "$@"
+run_compiler_uv() {
+    (
+        cd "$COMPILER_DIR"
+        env PATH="$HOST_PATH" "$UV_BIN" run "$@"
+    )
 }
 
 echo
@@ -51,12 +60,15 @@ heading 1 "Repository hygiene"
 
 FAILED_STEP="Python formatting"
 heading 2 "Python formatting"
-env PATH="$HOST_PATH" "$UV_BIN" sync --project "$COMPILER_DIR" --all-extras
-run_host_uv ruff format --check .
+(
+    cd "$COMPILER_DIR"
+    env PATH="$HOST_PATH" "$UV_BIN" sync --all-extras
+)
+run_compiler_uv ruff format --check .
 
 FAILED_STEP="Python lint"
 heading 3 "Python lint"
-run_host_uv ruff check .
+run_compiler_uv ruff check .
 
 FAILED_STEP="Python test suite"
 heading 4 "Full Python test suite with known-baseline validation"
@@ -65,11 +77,17 @@ PYTEST_OUTPUT="$(mktemp)"
 FAILED_TESTS_FILE="$(mktemp)"
 UNEXPECTED_TESTS_FILE="$(mktemp)"
 
-set +e
-env PATH="$HOST_PATH" "$UV_BIN" run --project "$COMPILER_DIR" \
-    pytest "$COMPILER_DIR/tests" -q 2>&1 | tee "$PYTEST_OUTPUT"
-pytest_status=${PIPESTATUS[0]}
-set -e
+# pytest is expected to return non-zero while known baseline failures remain.
+# Keep the pipeline inside an if-condition so ERR traps do not abort before
+# the exact failing node IDs can be compared with the approved baseline.
+if (
+    cd "$COMPILER_DIR"
+    env PATH="$HOST_PATH" "$UV_BIN" run pytest -q
+) 2>&1 | tee "$PYTEST_OUTPUT"; then
+    pytest_status=0
+else
+    pytest_status=${PIPESTATUS[0]}
+fi
 
 if [[ "$pytest_status" -ne 0 ]]; then
     sed -n 's/^FAILED \(.*::[^ ]*\).*/\1/p' "$PYTEST_OUTPUT" \
@@ -80,8 +98,6 @@ if [[ "$pytest_status" -ne 0 ]]; then
         "tests/test_amiga_image_loading.py::test_amiga_adapter_uses_datatypes_rendering"
         "tests/test_amiga_planar_rendering.py::test_amiga_planar_adapter_uses_native_graphics_api"
         "tests/test_amiga_real_mod_playback.py::test_real_mod_playback_event_loop_contract"
-        "tests/test_amiga_runtime_skeleton.py::test_host_player_protocol"
-        "tests/test_amiga_story_execution.py::test_host_story_protocol"
     )
 
     : >"$UNEXPECTED_TESTS_FILE"
