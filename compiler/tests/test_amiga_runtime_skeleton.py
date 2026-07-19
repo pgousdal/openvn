@@ -92,22 +92,29 @@ def test_host_player_protocol(tmp_path: Path) -> None:
             "MUSIC storm\n"
             "SOUND thunder\n"
             "RUN\n"
+            "STEP\n"
             "QUIT\n"
         ),
         text=True,
         capture_output=True,
         check=True,
+        cwd=REPOSITORY,
     )
 
-    assert process.stdout.splitlines() == [
-        "GRAPHICS OPEN 640 256 8 DATATYPES",
+    lines = process.stdout.splitlines()
+    assert process.returncode == 0
+    assert "ERROR FAILED" not in process.stdout
+    assert lines[:2] == [
+        "GRAPHICS OPEN 320 256 5 NATIVE",
         "AUDIO OPEN 8000 4",
+    ]
+    assert lines[2:] == [
         "OK LOAD",
-        "GRAPHICS LOAD DATATYPE runtimes/amiga-native/tests/fixtures/lighthouse_storm.iff",
+        ("GRAPHICS LOAD ILBM runtimes/amiga-native/tests/fixtures/lighthouse_storm.iff 16 16 1"),
         "GRAPHICS SCENE lighthouse_storm",
         "GRAPHICS PRESENT 1",
         "OK SCENE",
-        "GRAPHICS LOAD DATATYPE runtimes/amiga-native/tests/fixtures/erik_neutral.iff",
+        ("GRAPHICS LOAD ILBM runtimes/amiga-native/tests/fixtures/erik_neutral.iff 8 16 1"),
         "GRAPHICS SHOW erik neutral",
         "GRAPHICS PRESENT 2",
         "OK SHOW",
@@ -115,10 +122,19 @@ def test_host_player_protocol(tmp_path: Path) -> None:
         "OK MUSIC",
         ("AUDIO SOUND thunder runtimes/amiga-native/tests/fixtures/thunder.8svx 8000 32"),
         "OK SOUND",
+        "GRAPHICS TEXT Hello from OpenVN.",
+        "GRAPHICS PRESENT 3",
         "OK RUN",
         "STATUS TEXT",
         "TEXT Hello from OpenVN.",
+        "GRAPHICS CHOICES 2 SELECTED 0",
+        "GRAPHICS PRESENT 4",
+        "OK STEP",
+        "STATUS CHOICE",
+        "CHOICE 0 Continue",
+        "CHOICE 1 Finish",
         "AUDIO CLOSE",
         "GRAPHICS CLOSE",
         "OK QUIT",
     ]
+    assert "GRAPHICS SCENE lighthouse_storm" in lines

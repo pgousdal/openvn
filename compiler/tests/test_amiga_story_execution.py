@@ -71,11 +71,44 @@ def test_host_story_protocol(tmp_path: Path) -> None:
         text=True,
         capture_output=True,
         check=True,
+        cwd=REPOSITORY,
     )
 
-    output = process.stdout
-    assert "TEXT Hello from OpenVN." in output
-    assert "CHOICE 0 Continue" in output
-    assert "CHOICE 1 Finish" in output
-    assert "SCENE lighthouse_storm" in output
-    assert "STATUS ENDED" in output
+    lines = process.stdout.splitlines()
+    assert process.returncode == 0
+    assert "ERROR FAILED" not in process.stdout
+    assert lines[:2] == [
+        "GRAPHICS OPEN 320 256 5 NATIVE",
+        "AUDIO OPEN 8000 4",
+    ]
+    assert lines[2:] == [
+        "OK LOAD",
+        "GRAPHICS TEXT Hello from OpenVN.",
+        "GRAPHICS PRESENT 1",
+        "OK RUN",
+        "STATUS TEXT",
+        "TEXT Hello from OpenVN.",
+        "GRAPHICS CHOICES 2 SELECTED 0",
+        "GRAPHICS PRESENT 2",
+        "OK STEP",
+        "STATUS CHOICE",
+        "CHOICE 0 Continue",
+        "CHOICE 1 Finish",
+        ("GRAPHICS LOAD ILBM runtimes/amiga-native/tests/fixtures/lighthouse_storm.iff 16 16 1"),
+        "GRAPHICS SCENE lighthouse_storm",
+        "GRAPHICS PRESENT 3",
+        "OK CHOOSE",
+        "STATUS SCENE",
+        "SCENE lighthouse_storm",
+        "OK STEP",
+        "STATUS END",
+        "OK STEP",
+        "STATUS ENDED",
+        "OK STATUS",
+        "STATUS ENDED",
+        "AUDIO CLOSE",
+        "GRAPHICS CLOSE",
+        "OK QUIT",
+    ]
+    assert "GRAPHICS SCENE lighthouse_storm" in lines
+    assert "STATUS ENDED" in lines
