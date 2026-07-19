@@ -1,6 +1,6 @@
 #include "openvn_bitmap_font.h"
 
-#include <assert.h>
+#include "test_check.h"
 #include <stdio.h>
 #include <string.h>
 
@@ -23,18 +23,18 @@ static void test_measure_single_line(void) {
     OpenVNBitmapFontMetrics metrics;
 
     openvn_bitmap_font_measure("Anna", &metrics);
-    assert(metrics.width == 32U);
-    assert(metrics.height == 14U);
-    assert(metrics.lines == 1U);
+    OPENVN_TEST_CHECK(metrics.width == 32U);
+    OPENVN_TEST_CHECK(metrics.height == 14U);
+    OPENVN_TEST_CHECK(metrics.lines == 1U);
 }
 
 static void test_measure_multiple_lines(void) {
     OpenVNBitmapFontMetrics metrics;
 
     openvn_bitmap_font_measure("Anna\nHello", &metrics);
-    assert(metrics.width == 40U);
-    assert(metrics.height == 28U);
-    assert(metrics.lines == 2U);
+    OPENVN_TEST_CHECK(metrics.width == 40U);
+    OPENVN_TEST_CHECK(metrics.height == 28U);
+    OPENVN_TEST_CHECK(metrics.lines == 2U);
 }
 
 static void test_draw_produces_pixels_and_newline(void) {
@@ -54,8 +54,8 @@ static void test_draw_produces_pixels_and_newline(void) {
         &capture
     );
 
-    assert(pixels > 0);
-    assert(pixels == capture.count);
+    OPENVN_TEST_CHECK(pixels > 0);
+    OPENVN_TEST_CHECK(pixels == capture.count);
 
     first_line = 0;
     second_line = 0;
@@ -71,8 +71,8 @@ static void test_draw_produces_pixels_and_newline(void) {
         }
     }
 
-    assert(first_line);
-    assert(second_line);
+    OPENVN_TEST_CHECK(first_line);
+    OPENVN_TEST_CHECK(second_line);
 }
 
 static void test_unknown_character_uses_fallback(void) {
@@ -89,8 +89,8 @@ static void test_unknown_character_uses_fallback(void) {
             unknown_pixels += openvn_bitmap_font_glyph_pixel(1U, x, y);
         }
     }
-    assert(question_pixels > 0);
-    assert(question_pixels == unknown_pixels);
+    OPENVN_TEST_CHECK(question_pixels > 0);
+    OPENVN_TEST_CHECK(question_pixels == unknown_pixels);
 }
 
 int main(void) {

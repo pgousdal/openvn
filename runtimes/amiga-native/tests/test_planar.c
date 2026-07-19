@@ -1,12 +1,12 @@
 #include "openvn_image.h"
 #include "openvn_planar.h"
 
-#include <assert.h>
+#include "test_check.h"
 #include <string.h>
 
 static void test_basic_pixels_and_mask(void) {
-    OpenVNILBMImage image;
-    OpenVNPlanarBitmap bitmap;
+    OpenVNILBMImage image = {0};
+    OpenVNPlanarBitmap bitmap = {0};
     unsigned char pixels[] = {
         0U, 1U, 2U, 3U,
         3U, 2U, 1U, 0U
@@ -20,29 +20,29 @@ static void test_basic_pixels_and_mask(void) {
     image.body = pixels;
     image.body_size = sizeof(pixels);
 
-    assert(openvn_planar_from_chunky(&bitmap, &image, 1, 0U));
+    OPENVN_TEST_CHECK(openvn_planar_from_chunky(&bitmap, &image, 1, 0U));
 
-    assert(bitmap.bytes_per_row == 2U);
-    assert(bitmap.plane_size == 4U);
+    OPENVN_TEST_CHECK(bitmap.bytes_per_row == 2U);
+    OPENVN_TEST_CHECK(bitmap.plane_size == 4U);
 
-    assert(openvn_planar_pixel(&bitmap, 0U, 0U) == 0U);
-    assert(openvn_planar_pixel(&bitmap, 1U, 0U) == 1U);
-    assert(openvn_planar_pixel(&bitmap, 2U, 0U) == 2U);
-    assert(openvn_planar_pixel(&bitmap, 3U, 0U) == 3U);
-    assert(openvn_planar_pixel(&bitmap, 0U, 1U) == 3U);
-    assert(openvn_planar_pixel(&bitmap, 3U, 1U) == 0U);
+    OPENVN_TEST_CHECK(openvn_planar_pixel(&bitmap, 0U, 0U) == 0U);
+    OPENVN_TEST_CHECK(openvn_planar_pixel(&bitmap, 1U, 0U) == 1U);
+    OPENVN_TEST_CHECK(openvn_planar_pixel(&bitmap, 2U, 0U) == 2U);
+    OPENVN_TEST_CHECK(openvn_planar_pixel(&bitmap, 3U, 0U) == 3U);
+    OPENVN_TEST_CHECK(openvn_planar_pixel(&bitmap, 0U, 1U) == 3U);
+    OPENVN_TEST_CHECK(openvn_planar_pixel(&bitmap, 3U, 1U) == 0U);
 
-    assert(!openvn_planar_mask_pixel(&bitmap, 0U, 0U));
-    assert(openvn_planar_mask_pixel(&bitmap, 1U, 0U));
-    assert(openvn_planar_mask_pixel(&bitmap, 2U, 0U));
-    assert(openvn_planar_mask_pixel(&bitmap, 3U, 0U));
+    OPENVN_TEST_CHECK(!openvn_planar_mask_pixel(&bitmap, 0U, 0U));
+    OPENVN_TEST_CHECK(openvn_planar_mask_pixel(&bitmap, 1U, 0U));
+    OPENVN_TEST_CHECK(openvn_planar_mask_pixel(&bitmap, 2U, 0U));
+    OPENVN_TEST_CHECK(openvn_planar_mask_pixel(&bitmap, 3U, 0U));
 
     openvn_planar_free(&bitmap);
 }
 
 static void test_crosses_byte_and_word_boundaries(void) {
-    OpenVNILBMImage image;
-    OpenVNPlanarBitmap bitmap;
+    OpenVNILBMImage image = {0};
+    OpenVNPlanarBitmap bitmap = {0};
     unsigned char pixels[17];
     unsigned int x;
 
@@ -58,11 +58,11 @@ static void test_crosses_byte_and_word_boundaries(void) {
     image.body = pixels;
     image.body_size = sizeof(pixels);
 
-    assert(openvn_planar_from_chunky(&bitmap, &image, 0, 0U));
-    assert(bitmap.bytes_per_row == 4U);
+    OPENVN_TEST_CHECK(openvn_planar_from_chunky(&bitmap, &image, 0, 0U));
+    OPENVN_TEST_CHECK(bitmap.bytes_per_row == 4U);
 
     for (x = 0U; x < 17U; x++) {
-        assert(openvn_planar_pixel(&bitmap, x, 0U) == (x & 7U));
+        OPENVN_TEST_CHECK(openvn_planar_pixel(&bitmap, x, 0U) == (x & 7U));
     }
 
     openvn_planar_free(&bitmap);

@@ -1,7 +1,7 @@
 #include "openvn_condition.h"
 #include "openvn_story.h"
 
-#include <assert.h>
+#include "test_check.h"
 #include <limits.h>
 #include <string.h>
 
@@ -24,21 +24,21 @@ static void test_bool_conditions(void) {
     int result;
 
     openvn_variables_reset();
-    assert(openvn_set_bool("flag", 1));
+    OPENVN_TEST_CHECK(openvn_set_bool("flag", 1));
 
     value = condition(
         "flag",
         OPENVN_VARIABLE_BOOL,
         OPENVN_CONDITION_BOOL_TRUE
     );
-    assert(openvn_condition_evaluate(&value, &result) && result);
+    OPENVN_TEST_CHECK(openvn_condition_evaluate(&value, &result) && result);
     value.operator = OPENVN_CONDITION_BOOL_FALSE;
-    assert(openvn_condition_evaluate(&value, &result) && !result);
+    OPENVN_TEST_CHECK(openvn_condition_evaluate(&value, &result) && !result);
     value.operator = OPENVN_CONDITION_EQUAL;
     value.bool_value = 1;
-    assert(openvn_condition_evaluate(&value, &result) && result);
+    OPENVN_TEST_CHECK(openvn_condition_evaluate(&value, &result) && result);
     value.operator = OPENVN_CONDITION_NOT_EQUAL;
-    assert(openvn_condition_evaluate(&value, &result) && !result);
+    OPENVN_TEST_CHECK(openvn_condition_evaluate(&value, &result) && !result);
 }
 
 static void test_int_conditions(void) {
@@ -56,22 +56,22 @@ static void test_int_conditions(void) {
     size_t index;
 
     openvn_variables_reset();
-    assert(openvn_set_int("score", 10));
+    OPENVN_TEST_CHECK(openvn_set_int("score", 10));
     value = condition("score", OPENVN_VARIABLE_INT, OPENVN_CONDITION_EQUAL);
     value.int_value = 10;
     for (index = 0U; index < sizeof(operators) / sizeof(operators[0]); index++) {
         value.operator = operators[index];
-        assert(openvn_condition_evaluate(&value, &result));
-        assert(result == expected[index]);
+        OPENVN_TEST_CHECK(openvn_condition_evaluate(&value, &result));
+        OPENVN_TEST_CHECK(result == expected[index]);
     }
 
-    assert(openvn_set_int("score", INT32_MIN));
+    OPENVN_TEST_CHECK(openvn_set_int("score", INT32_MIN));
     value.operator = OPENVN_CONDITION_EQUAL;
     value.int_value = INT32_MIN;
-    assert(openvn_condition_evaluate(&value, &result) && result);
-    assert(openvn_set_int("score", INT32_MAX));
+    OPENVN_TEST_CHECK(openvn_condition_evaluate(&value, &result) && result);
+    OPENVN_TEST_CHECK(openvn_set_int("score", INT32_MAX));
     value.int_value = INT32_MAX;
-    assert(openvn_condition_evaluate(&value, &result) && result);
+    OPENVN_TEST_CHECK(openvn_condition_evaluate(&value, &result) && result);
 }
 
 static void test_string_conditions(void) {
@@ -79,16 +79,16 @@ static void test_string_conditions(void) {
     int result;
 
     openvn_variables_reset();
-    assert(openvn_set_string("player_name", "Alice"));
+    OPENVN_TEST_CHECK(openvn_set_string("player_name", "Alice"));
     value = condition(
         "player_name",
         OPENVN_VARIABLE_STRING,
         OPENVN_CONDITION_EQUAL
     );
     value.string_value = "Alice";
-    assert(openvn_condition_evaluate(&value, &result) && result);
+    OPENVN_TEST_CHECK(openvn_condition_evaluate(&value, &result) && result);
     value.operator = OPENVN_CONDITION_NOT_EQUAL;
-    assert(openvn_condition_evaluate(&value, &result) && !result);
+    OPENVN_TEST_CHECK(openvn_condition_evaluate(&value, &result) && !result);
 }
 
 static void test_errors_do_not_mutate_store(void) {
@@ -97,20 +97,20 @@ static void test_errors_do_not_mutate_store(void) {
     int result;
 
     openvn_variables_reset();
-    assert(openvn_set_int("score", 10));
+    OPENVN_TEST_CHECK(openvn_set_int("score", 10));
     result = 7;
     value = condition("missing", OPENVN_VARIABLE_INT, OPENVN_CONDITION_EQUAL);
-    assert(!openvn_condition_evaluate(&value, &result));
-    assert(result == 7);
+    OPENVN_TEST_CHECK(!openvn_condition_evaluate(&value, &result));
+    OPENVN_TEST_CHECK(result == 7);
     value = condition("score", OPENVN_VARIABLE_BOOL, OPENVN_CONDITION_EQUAL);
-    assert(!openvn_condition_evaluate(&value, &result));
+    OPENVN_TEST_CHECK(!openvn_condition_evaluate(&value, &result));
     value = condition(
         "score",
         OPENVN_VARIABLE_INT,
         (OpenVNConditionOperator)99
     );
-    assert(!openvn_condition_evaluate(&value, &result));
-    assert(openvn_get_int("score", &stored) && stored == 10);
+    OPENVN_TEST_CHECK(!openvn_condition_evaluate(&value, &result));
+    OPENVN_TEST_CHECK(openvn_get_int("score", &stored) && stored == 10);
 }
 
 static void test_branch_selection(void) {
@@ -138,15 +138,15 @@ static void test_branch_selection(void) {
     story.nodes = nodes;
     story.node_count = 5U;
 
-    assert(openvn_story_attach(&state, &story));
-    assert(openvn_story_start(&state));
-    assert(openvn_story_branch(&state, 1));
-    assert(strcmp(openvn_story_current(&state)->id, "true") == 0);
-    assert(openvn_story_branch(&state, 0));
-    assert(strcmp(openvn_story_current(&state)->id, "nested-false") == 0);
-    assert(openvn_story_start(&state));
-    assert(openvn_story_branch(&state, 0));
-    assert(strcmp(openvn_story_current(&state)->id, "false") == 0);
+    OPENVN_TEST_CHECK(openvn_story_attach(&state, &story));
+    OPENVN_TEST_CHECK(openvn_story_start(&state));
+    OPENVN_TEST_CHECK(openvn_story_branch(&state, 1));
+    OPENVN_TEST_CHECK(strcmp(openvn_story_current(&state)->id, "true") == 0);
+    OPENVN_TEST_CHECK(openvn_story_branch(&state, 0));
+    OPENVN_TEST_CHECK(strcmp(openvn_story_current(&state)->id, "nested-false") == 0);
+    OPENVN_TEST_CHECK(openvn_story_start(&state));
+    OPENVN_TEST_CHECK(openvn_story_branch(&state, 0));
+    OPENVN_TEST_CHECK(strcmp(openvn_story_current(&state)->id, "false") == 0);
 }
 
 int main(void) {

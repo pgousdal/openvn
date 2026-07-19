@@ -1,7 +1,7 @@
 #include "assets.generated.h"
 #include "openvn_assets_runtime.h"
 
-#include <assert.h>
+#include "test_check.h"
 #include <string.h>
 
 int main(void) {
@@ -18,13 +18,13 @@ int main(void) {
         "neutral"
     );
 
-    assert(background != 0);
-    assert(character != 0);
-    assert(strcmp(
+    OPENVN_TEST_CHECK(background != 0);
+    OPENVN_TEST_CHECK(character != 0);
+    OPENVN_TEST_CHECK(strcmp(
         background,
         "runtimes/amiga-native/tests/fixtures/lighthouse_storm.iff"
     ) == 0);
-    assert(strcmp(
+    OPENVN_TEST_CHECK(strcmp(
         character,
         "runtimes/amiga-native/tests/fixtures/erik_neutral.iff"
     ) == 0);

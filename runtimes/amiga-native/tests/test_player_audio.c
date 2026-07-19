@@ -2,7 +2,7 @@
 #include "openvn_graphics.h"
 #include "openvn_player.h"
 
-#include <assert.h>
+#include "test_check.h"
 
 static int update_count;
 
@@ -65,8 +65,8 @@ int main(void) {
     audio.context = 0;
     openvn_player_init(&player, (OpenVNGraphicsService *)0, &audio);
 
-    assert(openvn_player_signal_mask(&player) == 0x20UL);
-    assert(openvn_player_update(&player));
-    assert(update_count == 1);
+    OPENVN_TEST_CHECK(openvn_player_signal_mask(&player) == 0x20UL);
+    OPENVN_TEST_CHECK(openvn_player_update(&player));
+    OPENVN_TEST_CHECK(update_count == 1);
     return 0;
 }

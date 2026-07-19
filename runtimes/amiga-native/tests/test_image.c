@@ -1,17 +1,17 @@
 #include "openvn_image.h"
 
-#include <assert.h>
+#include "test_check.h"
 
 int main(int argc, char **argv) {
-    OpenVNILBMImage image;
+    OpenVNILBMImage image = {0};
 
-    assert(argc == 2);
-    assert(openvn_ilbm_load_file(&image, argv[1]));
-    assert(image.width == 16U);
-    assert(image.height == 16U);
-    assert(image.depth == 1U);
-    assert(image.palette_size == 6U);
-    assert(image.body_size > 0U);
+    OPENVN_TEST_CHECK(argc == 2);
+    OPENVN_TEST_CHECK(openvn_ilbm_load_file(&image, argv[1]));
+    OPENVN_TEST_CHECK(image.width == 16U);
+    OPENVN_TEST_CHECK(image.height == 16U);
+    OPENVN_TEST_CHECK(image.depth == 1U);
+    OPENVN_TEST_CHECK(image.palette_size == 6U);
+    OPENVN_TEST_CHECK(image.body_size > 0U);
 
     openvn_ilbm_free(&image);
     return 0;

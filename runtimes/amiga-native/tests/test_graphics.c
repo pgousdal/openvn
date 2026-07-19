@@ -2,14 +2,14 @@
 #include "openvn_graphics.h"
 #include "openvn_graphics_host.h"
 
-#include <assert.h>
+#include "test_check.h"
 #include <string.h>
 
 int main(void) {
-    OpenVNGraphicsService service;
-    OpenVNHostGraphicsContext context;
-    OpenVNGraphicsConfig config;
-    OpenVNGeneratedChoice choices[2];
+    OpenVNGraphicsService service = {0};
+    OpenVNHostGraphicsContext context = {0};
+    OpenVNGraphicsConfig config = {0};
+    OpenVNGeneratedChoice choices[2] = {{0}};
 
     openvn_graphics_host_init(&service, &context);
 
@@ -20,38 +20,38 @@ int main(void) {
     config.fullscreen = 1;
     config.assets = &OPENVN_GENERATED_ASSETS;
 
-    assert(openvn_graphics_open(&service, &config));
-    assert(context.opened);
+    OPENVN_TEST_CHECK(openvn_graphics_open(&service, &config));
+    OPENVN_TEST_CHECK(context.opened);
 
-    assert(openvn_graphics_scene(&service, "lighthouse_storm"));
-    assert(strcmp(context.scene, "lighthouse_storm") == 0);
-    assert(context.background_image.width == 16U);
+    OPENVN_TEST_CHECK(openvn_graphics_scene(&service, "lighthouse_storm"));
+    OPENVN_TEST_CHECK(strcmp(context.scene, "lighthouse_storm") == 0);
+    OPENVN_TEST_CHECK(context.background_image.width == 16U);
 
-    assert(openvn_graphics_show(&service, "erik", "neutral"));
-    assert(strcmp(context.character, "erik") == 0);
-    assert(strcmp(context.pose, "neutral") == 0);
-    assert(context.character_image.width == 8U);
+    OPENVN_TEST_CHECK(openvn_graphics_show(&service, "erik", "neutral"));
+    OPENVN_TEST_CHECK(strcmp(context.character, "erik") == 0);
+    OPENVN_TEST_CHECK(strcmp(context.pose, "neutral") == 0);
+    OPENVN_TEST_CHECK(context.character_image.width == 8U);
 
-    assert(openvn_graphics_text(&service, "Hello from OpenVN."));
-    assert(strcmp(context.dialogue, "Hello from OpenVN.") == 0);
+    OPENVN_TEST_CHECK(openvn_graphics_text(&service, "Hello from OpenVN."));
+    OPENVN_TEST_CHECK(strcmp(context.dialogue, "Hello from OpenVN.") == 0);
 
     choices[0].text = "Continue";
     choices[0].target = "next";
     choices[1].text = "Finish";
     choices[1].target = "end";
-    assert(openvn_graphics_choices(&service, choices, 2U, 1U));
-    assert(context.choices_visible);
-    assert(context.choice_count == 2U);
-    assert(context.choice_selected == 1U);
+    OPENVN_TEST_CHECK(openvn_graphics_choices(&service, choices, 2U, 1U));
+    OPENVN_TEST_CHECK(context.choices_visible);
+    OPENVN_TEST_CHECK(context.choice_count == 2U);
+    OPENVN_TEST_CHECK(context.choice_selected == 1U);
 
-    assert(openvn_graphics_present(&service));
-    assert(context.present_count == 1U);
+    OPENVN_TEST_CHECK(openvn_graphics_present(&service));
+    OPENVN_TEST_CHECK(context.present_count == 1U);
 
-    assert(openvn_graphics_hide(&service, "erik"));
-    assert(context.character[0] == '\0');
+    OPENVN_TEST_CHECK(openvn_graphics_hide(&service, "erik"));
+    OPENVN_TEST_CHECK(context.character[0] == '\0');
 
     openvn_graphics_close(&service);
-    assert(!context.opened);
+    OPENVN_TEST_CHECK(!context.opened);
 
     return 0;
 }

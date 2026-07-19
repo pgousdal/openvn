@@ -1,6 +1,6 @@
 #include "openvn_paula.h"
 
-#include <assert.h>
+#include "test_check.h"
 #include <string.h>
 
 int main(void) {
@@ -27,7 +27,7 @@ int main(void) {
     for (channel = 0U; channel < OPENVN_MOD_CHANNELS; channel++) {
         notes[channel].sample = 1U;
         notes[channel].period = (unsigned short)(428U + channel * 16U);
-        assert(openvn_paula_trigger_note(
+        OPENVN_TEST_CHECK(openvn_paula_trigger_note(
             &mixer,
             channel,
             &module,
@@ -37,32 +37,32 @@ int main(void) {
 
     for (channel = 0U; channel < OPENVN_MOD_CHANNELS; channel++) {
         voice = openvn_paula_voice(&mixer, channel);
-        assert(voice != 0);
-        assert(voice->active);
-        assert(voice->data == sample_data);
-        assert(voice->length == sizeof(sample_data));
-        assert(voice->loop_data == sample_data + 4);
-        assert(voice->loop_length == 8UL);
-        assert(voice->period == 428U + channel * 16U);
-        assert(voice->volume == 48U);
-        assert(voice->generation == 1UL);
+        OPENVN_TEST_CHECK(voice != 0);
+        OPENVN_TEST_CHECK(voice->active);
+        OPENVN_TEST_CHECK(voice->data == sample_data);
+        OPENVN_TEST_CHECK(voice->length == sizeof(sample_data));
+        OPENVN_TEST_CHECK(voice->loop_data == sample_data + 4);
+        OPENVN_TEST_CHECK(voice->loop_length == 8UL);
+        OPENVN_TEST_CHECK(voice->period == 428U + channel * 16U);
+        OPENVN_TEST_CHECK(voice->volume == 48U);
+        OPENVN_TEST_CHECK(voice->generation == 1UL);
     }
 
     notes[0].period = 214U;
-    assert(openvn_paula_trigger_note(&mixer, 0U, &module, &notes[0]));
+    OPENVN_TEST_CHECK(openvn_paula_trigger_note(&mixer, 0U, &module, &notes[0]));
     voice = openvn_paula_voice(&mixer, 0U);
-    assert(voice->generation == 2UL);
-    assert(voice->period == 214U);
+    OPENVN_TEST_CHECK(voice->generation == 2UL);
+    OPENVN_TEST_CHECK(voice->period == 214U);
 
     state.period = 320U;
     state.volume = 24U;
-    assert(openvn_paula_apply_channel_state(&mixer, 0U, &state));
+    OPENVN_TEST_CHECK(openvn_paula_apply_channel_state(&mixer, 0U, &state));
     voice = openvn_paula_voice(&mixer, 0U);
-    assert(voice->period == 320U);
-    assert(voice->volume == 24U);
-    assert(voice->generation == 2UL);
+    OPENVN_TEST_CHECK(voice->period == 320U);
+    OPENVN_TEST_CHECK(voice->volume == 24U);
+    OPENVN_TEST_CHECK(voice->generation == 2UL);
 
-    assert(!openvn_paula_trigger_note(
+    OPENVN_TEST_CHECK(!openvn_paula_trigger_note(
         &mixer,
         OPENVN_MOD_CHANNELS,
         &module,
