@@ -76,6 +76,7 @@ def _startup_sequence() -> str:
         ]
     )
 
+
 def _fsuae_config() -> str:
     return "\n".join(
         [

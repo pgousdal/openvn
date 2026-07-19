@@ -54,11 +54,7 @@ def export_amiga_package(
     music_files = _music_paths(manifest)
     shared_palette = None
     if profile.id != "amiga-rtg":
-        png_files = [
-            source
-            for source in manifest.all_files()
-            if source.suffix.lower() == ".png"
-        ]
+        png_files = [source for source in manifest.all_files() if source.suffix.lower() == ".png"]
         if png_files:
             colors = profile.graphics.get("colors")
             if not isinstance(colors, int) or isinstance(colors, bool):
