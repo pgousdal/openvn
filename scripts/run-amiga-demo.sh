@@ -40,6 +40,10 @@ grep -q '^runtime/openvn-player$' "$STARTUP" || \
 
 "$FS_UAE" "$CONFIG" \
     "--kickstart-file=$KICKSTART" \
+    "--floppy-drive-count=0" \
+    "--floppy-drive-volume=0" \
+    "--floppy-drive-volume-empty=0" \
+    "--uae-sound-output=exact" \
     "--hard-drive-0=$SYSTEM_COPY" \
     "--hard-drive-0-label=SYSTEM" \
     "--hard-drive-1=$PACKAGE_DIR" \

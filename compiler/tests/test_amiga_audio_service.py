@@ -27,7 +27,18 @@ def test_amiga_audio_adapter_uses_audio_device() -> None:
     assert "OpenDevice" in source
     assert "CreateIORequest" in source
     assert "CMD_WRITE" in source
-    assert "SendIO" in source
+    assert "BeginIO" in source
+    assert "ADIOF_PERVOL" in source
+    assert "MEMF_CHIP | MEMF_PUBLIC" in source
+    assert "SendIO((struct IORequest *)request)" not in source
+    assert "SendIO((struct IORequest *)loop_request)" not in source
     assert "AbortIO" in source
     assert "CloseDevice" in source
     assert "ACE" not in source
+
+    sound_body = source.split("static int amiga_sound", maxsplit=1)[1].split(
+        "static int amiga_stop_music", maxsplit=1
+    )[0]
+    assert "openvn_mod_player_stop" not in sound_body
+    assert "stop_timer" not in sound_body
+    assert "stop_all_channels" not in sound_body

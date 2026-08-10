@@ -59,3 +59,19 @@ def test_demo_is_the_native_m6_integration_fixture() -> None:
 
     manifest = (PROJECT / "assets/manifest.yaml").read_text(encoding="utf-8")
     assert "music/intro.mod" in manifest
+
+
+def test_demo_mod_contains_audible_repeating_melody() -> None:
+    module = (PROJECT / "assets" / "music" / "intro.mod").read_bytes()
+
+    assert module[1080:1084] == b"M.K."
+    assert module[950] == 1
+    sample_length = int.from_bytes(module[42:44], "big") * 2
+    loop_length = int.from_bytes(module[48:50], "big") * 2
+    assert sample_length >= 64
+    assert loop_length == sample_length
+
+    pattern = module[1084 : 1084 + 1024]
+    note_events = [pattern[offset : offset + 4] for offset in range(0, 1024, 4)]
+    audible_notes = [event for event in note_events if event[0] & 0x0F or event[1]]
+    assert len(audible_notes) >= 8

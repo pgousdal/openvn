@@ -22,6 +22,10 @@ typedef struct OpenVNAmigaAudioContext {
     OpenVN8SVXSample sample;
     OpenVNMODPlayer mod_player;
     OpenVNPaulaMixer paula;
+    unsigned char *music_host_data[OPENVN_MOD_SAMPLE_COUNT];
+    unsigned char *music_chip_data[OPENVN_MOD_SAMPLE_COUNT];
+    unsigned char *sound_chip_data;
+    unsigned long sound_chip_size;
     unsigned char channel_masks[OPENVN_MOD_CHANNELS];
     unsigned long voice_generations[OPENVN_MOD_CHANNELS];
     int channel_pending[OPENVN_MOD_CHANNELS];
@@ -29,6 +33,8 @@ typedef struct OpenVNAmigaAudioContext {
     int opened;
     int sound_pending;
     int timer_pending;
+    unsigned int diagnostic_ticks;
+    unsigned int diagnostic_voices;
 } OpenVNAmigaAudioContext;
 
 void openvn_audio_amiga_init(

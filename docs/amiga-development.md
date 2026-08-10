@@ -170,7 +170,11 @@ OPENVN_FS_UAE_SYSTEM_DIR=/path/to/amiga-os-3.x-system \
 The launcher copies the supplied system directory to a temporary writable
 directory, boots it as DH0, mounts the generated OpenVN package as DH1, and
 removes the temporary copy after FS-UAE exits. Proprietary files never enter
-the repository or generated package.
+the repository or generated package. It sets `floppy_drive_count=0`,
+`floppy_drive_volume=0` and `floppy_drive_volume_empty=0`, so mechanical drive
+effects cannot be mistaken for application audio, while
+`uae_sound_output=exact` keeps emulated Paula output enabled. The demo boots
+entirely from the two directory-backed hard drives.
 
 Repeat this checklist for both choices:
 

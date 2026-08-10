@@ -18,7 +18,11 @@ int main(int argc, char **argv) {
     OPENVN_TEST_CHECK(note->sample == 1U);
     OPENVN_TEST_CHECK(note->period == 428U);
 
-    for (tick = 0U; tick < 6U; tick++) {
+    OPENVN_TEST_CHECK(openvn_mod_player_tick(&player));
+    OPENVN_TEST_CHECK(player.channels[0].triggered);
+    OPENVN_TEST_CHECK(player.channels[0].period == 428U);
+
+    for (tick = 1U; tick < 6U; tick++) {
         OPENVN_TEST_CHECK(openvn_mod_player_tick(&player));
     }
 

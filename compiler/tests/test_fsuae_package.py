@@ -79,3 +79,12 @@ def test_clean_packaging_removes_stale_generated_files(tmp_path: Path) -> None:
     )
 
     assert not stale.exists()
+
+
+def test_launcher_disables_drive_noise_but_keeps_paula_audio() -> None:
+    launcher = (REPOSITORY / "scripts" / "run-amiga-demo.sh").read_text(encoding="utf-8")
+
+    assert '"--floppy-drive-count=0"' in launcher
+    assert '"--floppy-drive-volume=0"' in launcher
+    assert '"--floppy-drive-volume-empty=0"' in launcher
+    assert '"--uae-sound-output=exact"' in launcher

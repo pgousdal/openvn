@@ -6,10 +6,11 @@ Story Format, and exported to target backends. The primary hardware target is
 the Commodore Amiga; a Ren'Py backend is also maintained.
 
 OpenVN is under active development. The current milestone is
-[M7 — Save/Load](ROADMAP.md). The M6 native Amiga vertical slice is complete:
-the canonical demo has been cross-built and validated under FS-UAE with OCS
-graphics, interaction, deterministic branching, both endings and four-channel
-MOD playback. Save/Load is not implemented.
+[M6 — Native Amiga Runtime Completion](docs/M6.md). The canonical demo has been
+cross-built and its OCS graphics, interaction, deterministic branching and both
+endings validated under FS-UAE. Native MOD/Paula output is demonstrated; final
+explicit audio-quality and post-choice listening acceptance remains the sole M6
+blocker. Save/Load is not implemented.
 
 ## Architecture
 
@@ -109,10 +110,11 @@ OPENVN_FS_UAE_SYSTEM_DIR=/path/to/amiga-os-3.x-system \
 
 ## Status and roadmap
 
-M6 is complete, including native validation of the canonical Amiga demo with
-graphics, interaction, branching and MOD playback. M7 — Save/Load is the active
-milestone. See [`ROADMAP.md`](ROADMAP.md) for milestone status and
-[`docs/M6.md`](docs/M6.md) for the completed M6 validation record.
+M6 remains active. Native graphics, interaction, branching and both canonical
+endings are validated, and real MOD/Paula output is demonstrated. Final human
+audio-quality acceptance remains. M7 — Save/Load is planned and has not
+started. See [`ROADMAP.md`](ROADMAP.md) and [`docs/M6.md`](docs/M6.md) for
+status and validation evidence.
 
 ## Current limitations
 
