@@ -42,3 +42,16 @@ DH0:OpenVN/runtime/openvn-player
 It must not require `Assign`, `Run`, `Wait`, `RX`, or other external commands.
 Optional ARexx integration belongs inside the runtime and must not be part of
 the bootstrap contract.
+
+## Launch and manual validation
+
+The target build and ROM requirements are documented in
+[`../amiga-development.md`](../amiga-development.md). Once the package exists:
+
+```sh
+fs-uae examples/demo/dist/fs-uae/OpenVNDemo.fs-uae
+```
+
+FS-UAE requires a legally obtained Kickstart ROM configured outside the
+repository. Package creation is automated; graphics, interactive branching and
+continuous MOD playback are currently a repeatable manual validation gate.

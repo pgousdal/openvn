@@ -4,6 +4,7 @@
 #openvn show alice neutral
 #openvn set_bool terminal_online true
 #openvn set_int trust 2
+#openvn set_string route "demo"
 #openvn if terminal_online
 The terminal responds.
 #openvn else
@@ -13,6 +14,11 @@ The terminal remains dark.
 Alice decides to continue.
 #openvn else
 Alice steps away.
+#openvn end
+#openvn if route == "demo"
+The route marker is deterministic.
+#openvn else
+The route marker changed unexpectedly.
 #openvn end
 Alice switches on the old terminal. The OpenVN demo is running on one shared story.
 #openvn sound click

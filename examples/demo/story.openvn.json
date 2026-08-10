@@ -43,6 +43,13 @@
     },
     {
       "id": "start-0006",
+      "type": "set_string",
+      "name": "route",
+      "value": "demo",
+      "next": "start-0007"
+    },
+    {
+      "id": "start-0007",
       "type": "condition",
       "condition": {
         "variable_name": "terminal_online",
@@ -52,28 +59,28 @@
         "int_value": 0,
         "string_value": ""
       },
-      "true_target": "start-0007",
-      "false_target": "start-0009"
-    },
-    {
-      "id": "start-0007",
-      "type": "text",
-      "text": "The terminal responds.",
-      "next": "start-0008"
+      "true_target": "start-0008",
+      "false_target": "start-0010"
     },
     {
       "id": "start-0008",
-      "type": "jump",
-      "target": "start-0010"
+      "type": "text",
+      "text": "The terminal responds.",
+      "next": "start-0009"
     },
     {
       "id": "start-0009",
-      "type": "text",
-      "text": "The terminal remains dark.",
-      "next": "start-0010"
+      "type": "jump",
+      "target": "start-0011"
     },
     {
       "id": "start-0010",
+      "type": "text",
+      "text": "The terminal remains dark.",
+      "next": "start-0011"
+    },
+    {
+      "id": "start-0011",
       "type": "condition",
       "condition": {
         "variable_name": "trust",
@@ -83,46 +90,77 @@
         "int_value": 2,
         "string_value": ""
       },
-      "true_target": "start-0011",
-      "false_target": "start-0013"
-    },
-    {
-      "id": "start-0011",
-      "type": "text",
-      "text": "Alice decides to continue.",
-      "next": "start-0012"
+      "true_target": "start-0012",
+      "false_target": "start-0014"
     },
     {
       "id": "start-0012",
-      "type": "jump",
-      "target": "start-0014"
+      "type": "text",
+      "text": "Alice decides to continue.",
+      "next": "start-0013"
     },
     {
       "id": "start-0013",
-      "type": "text",
-      "text": "Alice steps away.",
-      "next": "start-0014"
+      "type": "jump",
+      "target": "start-0015"
     },
     {
       "id": "start-0014",
       "type": "text",
-      "text": "Alice switches on the old terminal. The OpenVN demo is running on one shared story.",
+      "text": "Alice steps away.",
       "next": "start-0015"
     },
     {
       "id": "start-0015",
-      "type": "sound",
-      "sound": "click",
-      "next": "start-0016"
+      "type": "condition",
+      "condition": {
+        "variable_name": "route",
+        "value_type": "string",
+        "operator": "==",
+        "bool_value": false,
+        "int_value": 0,
+        "string_value": "demo"
+      },
+      "true_target": "start-0016",
+      "false_target": "start-0018"
     },
     {
       "id": "start-0016",
       "type": "text",
-      "text": "The screen asks which path to demonstrate.",
+      "text": "The route marker is deterministic.",
       "next": "start-0017"
     },
     {
       "id": "start-0017",
+      "type": "jump",
+      "target": "start-0019"
+    },
+    {
+      "id": "start-0018",
+      "type": "text",
+      "text": "The route marker changed unexpectedly.",
+      "next": "start-0019"
+    },
+    {
+      "id": "start-0019",
+      "type": "text",
+      "text": "Alice switches on the old terminal. The OpenVN demo is running on one shared story.",
+      "next": "start-0020"
+    },
+    {
+      "id": "start-0020",
+      "type": "sound",
+      "sound": "click",
+      "next": "start-0021"
+    },
+    {
+      "id": "start-0021",
+      "type": "text",
+      "text": "The screen asks which path to demonstrate.",
+      "next": "start-0022"
+    },
+    {
+      "id": "start-0022",
       "type": "choice",
       "options": [
         {

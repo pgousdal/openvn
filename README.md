@@ -42,6 +42,9 @@ graphics and audio contracts; host adapters make those contracts testable.
   Amiga CMake toolchain file (the build script defaults are documented below)
 - FS-UAE and a legally obtained Kickstart ROM to run the packaged demo
 
+Exact Amiga GCC/NDK layouts and configuration variables are documented in
+[`docs/amiga-development.md`](docs/amiga-development.md).
+
 Install development dependencies:
 
 ```sh
@@ -54,15 +57,19 @@ uv sync --project compiler --all-extras
 uv run --project compiler ruff format --check .
 uv run --project compiler ruff check .
 uv run --project compiler pytest -q
-cmake -S runtimes/amiga-native -B build/host -DOPENVN_BUILD_TESTS=ON
+cmake -S runtimes/amiga-native -B build/host
 cmake --build build/host --parallel
 ctest --test-dir build/host --output-on-failure
 ./scripts/release-check.sh
 ```
 
-`release-check.sh` also performs repository hygiene checks and the m68k Amiga
-build. Override `OPENVN_TOOLCHAIN_FILE` and `OPENVN_TOOLCHAIN_PATH` when the
-toolchain is not at `~/Projects/AmigaCMakeCrossToolchains/` and `/opt/amiga`.
+`release-check.sh` is the full host-and-Amiga release gate. It accepts explicit
+`OPENVN_CMAKE`, `OPENVN_CTEST`, `OPENVN_AMIGA_GCC`, `OPENVN_AMIGA_SDK` and
+`OPENVN_AMIGA_TOOLCHAIN_FILE` settings; it does not depend on a particular user
+home directory and does not download target tools.
+
+Use `./scripts/release-check.sh --host-only` for the explicitly labeled host
+gate. It is not a substitute for the default full release check.
 
 ## Quick start
 

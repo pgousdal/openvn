@@ -49,6 +49,7 @@ def test_demo_is_the_native_m6_integration_fixture() -> None:
         "choice",
         "set_bool",
         "set_int",
+        "set_string",
         "condition",
         "jump",
         "music",
