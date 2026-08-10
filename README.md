@@ -6,11 +6,10 @@ Story Format, and exported to target backends. The primary hardware target is
 the Commodore Amiga; a Ren'Py backend is also maintained.
 
 OpenVN is under active development. The current milestone is
-[M6 — Native Amiga Runtime Completion](docs/M6.md). The compiler, static Amiga
-story/asset generation, host-testable runtime core, OCS graphics path,
-interactive choices, deterministic variables and conditions, and four-channel
-MOD playback exist. Native execution still requires validation with an Amiga
-cross-toolchain and on an emulator or machine; Save/Load is not implemented.
+[M7 — Save/Load](ROADMAP.md). The M6 native Amiga vertical slice is complete:
+the canonical demo has been cross-built and validated under FS-UAE with OCS
+graphics, interaction, deterministic branching, both endings and four-channel
+MOD playback. Save/Load is not implemented.
 
 ## Architecture
 
@@ -110,10 +109,10 @@ OPENVN_FS_UAE_SYSTEM_DIR=/path/to/amiga-os-3.x-system \
 
 ## Status and roadmap
 
-M6 is focused only on completing and validating a small real native Amiga
-visual novel with graphics, interaction, branching and MOD playback. See
-[`ROADMAP.md`](ROADMAP.md) for milestone status and [`docs/M6.md`](docs/M6.md)
-for the exact completion gate. M7 is reserved for Save/Load after M6 is green.
+M6 is complete, including native validation of the canonical Amiga demo with
+graphics, interaction, branching and MOD playback. M7 — Save/Load is the active
+milestone. See [`ROADMAP.md`](ROADMAP.md) for milestone status and
+[`docs/M6.md`](docs/M6.md) for the completed M6 validation record.
 
 ## Current limitations
 
