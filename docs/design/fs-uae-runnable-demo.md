@@ -21,10 +21,9 @@ The generated directory contains:
 OpenVNDemo.fs-uae
 harddrive/
   S/Startup-Sequence
-  OpenVN/
-    runtime/openvn-player
-    story/
-    assets/
+  runtime/openvn-player
+  story/
+  assets/
 package.json
 README.txt
 ```
@@ -32,11 +31,12 @@ README.txt
 ## Minimal bootstrap
 
 A directory-backed hard drive may not contain an AmigaOS `C:` command
-directory. The generated `Startup-Sequence` therefore invokes the player by
-absolute Amiga path:
+directory. The OpenVN package therefore occupies the volume root, where its
+relative asset paths resolve, and `Startup-Sequence` invokes the player
+directly:
 
 ```text
-DH0:OpenVN/runtime/openvn-player
+runtime/openvn-player
 ```
 
 It must not require `Assign`, `Run`, `Wait`, `RX`, or other external commands.
@@ -49,9 +49,18 @@ The target build and ROM requirements are documented in
 [`../amiga-development.md`](../amiga-development.md). Once the package exists:
 
 ```sh
-fs-uae examples/demo/dist/fs-uae/OpenVNDemo.fs-uae
+OPENVN_FS_UAE_KICKSTART=/path/to/amiga-os-3.x.rom \
+OPENVN_FS_UAE_SYSTEM_DIR=/path/to/amiga-os-3.x-system \
+./scripts/run-amiga-demo.sh
 ```
 
 FS-UAE requires a legally obtained Kickstart ROM configured outside the
-repository. Package creation is automated; graphics, interactive branching and
-continuous MOD playback are currently a repeatable manual validation gate.
+repository. OpenVN requires AmigaOS 3.x APIs; the launcher deliberately rejects
+implicit ROM selection because the A500 model default may be Kickstart 1.3.
+It makes a temporary writable copy of the explicitly supplied system directory,
+boots that complete installation as DH0, and mounts the generated package as
+DH1. The temporary startup launches OpenVN before Workbench; it is deleted when
+FS-UAE exits. ROM and system files remain outside the generated package and
+repository.
+Package creation is automated; graphics, interactive branching and continuous
+MOD playback remain a repeatable manual validation gate.

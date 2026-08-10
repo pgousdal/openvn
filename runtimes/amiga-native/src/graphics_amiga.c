@@ -10,6 +10,7 @@
 
 #include <datatypes/datatypes.h>
 #include <datatypes/datatypesclass.h>
+#include <datatypes/pictureclass.h>
 #include <intuition/intuition.h>
 #include <proto/datatypes.h>
 #include <proto/exec.h>
@@ -17,14 +18,14 @@
 
 #define OPENVN_RENDER_LOG "openvn-render.log"
 
-static void dispose_datatype(struct Object **object) {
+static void dispose_datatype(Object **object) {
     if (object != 0 && *object != 0) {
         DisposeDTObject(*object);
         *object = 0;
     }
 }
 
-static int load_datatype(struct Object **destination, const char *path) {
+static int load_datatype(Object **destination, const char *path) {
     dispose_datatype(destination);
     *destination = NewDTObject(
         (APTR)path,

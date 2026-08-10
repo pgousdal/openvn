@@ -40,7 +40,8 @@ graphics and audio contracts; host adapters make those contracts testable.
 - a C compiler, CMake 3.16+ and CTest for host runtime tests
 - for native builds, an `m68k-amigaos-gcc` toolchain, Amiga NDK headers and an
   Amiga CMake toolchain file (the build script defaults are documented below)
-- FS-UAE and a legally obtained Kickstart ROM to run the packaged demo
+- FS-UAE, a legally obtained AmigaOS 3.x Kickstart ROM, and a legal OS3 system
+  directory to run the packaged demo
 
 Exact Amiga GCC/NDK layouts and configuration variables are documented in
 [`docs/amiga-development.md`](docs/amiga-development.md).
@@ -87,6 +88,14 @@ uv run --project compiler openvn build examples/demo --clean
 The final command cross-builds the player and creates an FS-UAE package under
 `examples/demo/dist/fs-uae`. Compiler output under an example is generated and
 should not be committed.
+
+Launch it with explicit, external legal OS media:
+
+```sh
+OPENVN_FS_UAE_KICKSTART=/path/to/amiga-os-3.x.rom \
+OPENVN_FS_UAE_SYSTEM_DIR=/path/to/amiga-os-3.x-system \
+./scripts/run-amiga-demo.sh
+```
 
 ## Repository layout
 

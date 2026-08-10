@@ -35,25 +35,23 @@ def test_packages_vertical_slice_for_fsuae(tmp_path: Path) -> None:
     summary = json.loads((output / "package.json").read_text(encoding="utf-8"))
 
     assert summary["format"] == "openvn-fsuae-package"
-    assert summary["version"] == "0.2"
+    assert summary["version"] == "0.3"
     assert summary["startup_mode"] == "direct-player"
     assert (output / "OpenVNDemo.fs-uae").is_file()
     assert (output / "harddrive/S/Startup-Sequence").is_file()
-    assert (output / "harddrive/OpenVN/runtime/openvn-player").read_bytes() == (
+    assert (output / "harddrive/runtime/openvn-player").read_bytes() == (
         b"Amiga executable fixture\n"
     )
-    assert (output / "harddrive/OpenVN/assets/music/intro.mod").is_file()
-    assert (output / "harddrive/OpenVN/story/main.rexx").is_file()
+    assert (output / "harddrive/assets/music/intro.mod").is_file()
+    assert (output / "harddrive/story/main.rexx").is_file()
 
 
 def test_startup_sequence_requires_no_external_c_commands(tmp_path: Path) -> None:
     output = _package(tmp_path)
     startup = (output / "harddrive/S/Startup-Sequence").read_text(encoding="ascii")
 
-    assert "CD DH0:OpenVN" in startup
+    assert "CD " not in startup
     assert "runtime/openvn-player" in startup
-    assert "DH0:OpenVN/runtime/openvn-player" not in startup
-    assert "C:Assign" not in startup
     assert "C:Run" not in startup
     assert "C:Wait" not in startup
     assert "C:RX" not in startup

@@ -78,6 +78,7 @@ def test_repository_provides_reproducible_amiga_toolchain_entrypoints() -> None:
         REPOSITORY / "runtimes/amiga-native/cmake/m68k-amigaos-gcc.cmake",
         REPOSITORY / "scripts/build-m68k-demo-player.sh",
         REPOSITORY / "scripts/verify-amiga-artifacts.sh",
+        REPOSITORY / "scripts/run-amiga-demo.sh",
         REPOSITORY / "docs/amiga-development.md",
     ]
     assert all(path.is_file() for path in expected)
@@ -86,5 +87,7 @@ def test_repository_provides_reproducible_amiga_toolchain_entrypoints() -> None:
     assert "OPENVN_AMIGA_GCC" in build_script
     assert "OPENVN_AMIGA_SDK" in build_script
     assert "OPENVN_AMIGA_TOOLCHAIN_FILE" in build_script
+    assert "OPENVN_AMIGA_TARGET_FLAGS" in build_script
+    assert "-m68000 -msoft-float -noixemul" in build_script
     assert "SDK/header probe failed" in build_script
     assert "linker/library probe failed" in build_script

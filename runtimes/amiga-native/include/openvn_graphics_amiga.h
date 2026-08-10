@@ -12,15 +12,15 @@
 
 #ifdef __AMIGA__
 
-struct Object;
+#include <intuition/classusr.h>
 
 typedef struct OpenVNAmigaGraphicsContext {
     OpenVNAmigaDisplay display;
     const OpenVNAssetTable *assets;
 
     int use_datatypes;
-    struct Object *background_datatype;
-    struct Object *character_datatype;
+    Object *background_datatype;
+    Object *character_datatype;
 
     OpenVNILBMImage background_ilbm;
     OpenVNILBMImage character_ilbm;

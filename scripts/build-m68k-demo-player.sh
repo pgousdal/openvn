@@ -5,6 +5,7 @@ REPO="${OPENVN_REPO:-$PWD}"
 DEMO="${OPENVN_DEMO:-$REPO/examples/demo}"
 BUILD_DIR="${OPENVN_AMIGA_BUILD_DIR:-$REPO/build/amiga-demo-player}"
 PLAYER_OUT="${OPENVN_PLAYER_OUT:-$REPO/dist/openvn-player-m68k-amigaos}"
+TARGET_FLAGS="${OPENVN_AMIGA_TARGET_FLAGS:--m68000 -msoft-float -noixemul}"
 
 fail() { printf 'error: %s\n' "$*" >&2; exit 1; }
 find_command() {
@@ -88,15 +89,16 @@ printf '%s\n' \
     'int main(void) { return 0; }' >"$CHECK_DIR/probe.c"
 
 PROBE_ARGS=()
+read -r -a TARGET_FLAG_ARGS <<<"$TARGET_FLAGS"
 [[ -n "$SDK_INCLUDE" ]] && PROBE_ARGS+=("-I$SDK_INCLUDE")
 [[ -n "$SDK_LIBRARY" ]] && PROBE_ARGS+=("-L$SDK_LIBRARY")
-if ! "$AMIGA_GCC" "${PROBE_ARGS[@]}" -D__AMIGA__ -D__USE_INLINE__ \
+if ! "$AMIGA_GCC" "${TARGET_FLAG_ARGS[@]}" "${PROBE_ARGS[@]}" -D__AMIGA__ -D__USE_INLINE__ \
     -fsyntax-only "$CHECK_DIR/probe.c" >"$CHECK_DIR/headers.log" 2>&1; then
     printf 'error: Amiga SDK/header probe failed:\n' >&2
     sed 's/^/  /' "$CHECK_DIR/headers.log" >&2
     fail "supply compatible NDK headers through the GCC sysroot or OPENVN_AMIGA_SDK"
 fi
-if ! "$AMIGA_GCC" "${PROBE_ARGS[@]}" -D__AMIGA__ -D__USE_INLINE__ \
+if ! "$AMIGA_GCC" "${TARGET_FLAG_ARGS[@]}" "${PROBE_ARGS[@]}" -D__AMIGA__ -D__USE_INLINE__ \
     "$CHECK_DIR/probe.c" -lamiga -o "$CHECK_DIR/probe" >"$CHECK_DIR/link.log" 2>&1; then
     printf 'error: Amiga linker/library probe failed:\n' >&2
     sed 's/^/  /' "$CHECK_DIR/link.log" >&2
@@ -110,6 +112,7 @@ printf '  assembler: %s\n' "$AMIGA_AS"
 printf '  linker: %s\n' "$AMIGA_LD"
 printf '  toolchain file: %s\n' "$TOOLCHAIN_FILE"
 printf '  SDK/NDK: %s\n' "${AMIGA_SDK:-compiler-integrated}"
+printf '  target flags: %s\n' "$TARGET_FLAGS"
 
 printf '[1/4] Building OpenVN demo packages\n'
 "$UV_BIN" run --project "$REPO/compiler" openvn build "$DEMO" --clean
@@ -137,6 +140,7 @@ export OPENVN_AMIGA_GCC="$AMIGA_GCC"
     -DCMAKE_TOOLCHAIN_FILE="$TOOLCHAIN_FILE" \
     -DCMAKE_C_COMPILER="$AMIGA_GCC" \
     -DOPENVN_AMIGA_SDK="$AMIGA_SDK" \
+    -DOPENVN_AMIGA_TARGET_FLAGS="$TARGET_FLAGS" \
     -DOPENVN_GENERATED_STORY_SOURCE="$STORY" \
     -DOPENVN_GENERATED_ASSETS_SOURCE="$ASSETS" \
     -DCMAKE_BUILD_TYPE=Release
@@ -157,8 +161,8 @@ printf '[4/4] Packaging runnable FS-UAE demo\n'
     --player "$PLAYER_OUT" \
     --clean
 
-OPENVN_PLAYER="$DEMO/dist/fs-uae/harddrive/OpenVN/runtime/openvn-player" \
-OPENVN_AMIGA_PACKAGE="$DEMO/dist/fs-uae/harddrive/OpenVN" \
+OPENVN_PLAYER="$DEMO/dist/fs-uae/harddrive/runtime/openvn-player" \
+OPENVN_AMIGA_PACKAGE="$DEMO/dist/fs-uae/harddrive" \
     "$REPO/scripts/verify-amiga-artifacts.sh"
 
 printf '\nDone.\n'

@@ -1,9 +1,21 @@
 # Amiga development and validation
 
-OpenVN's validated native target is classic m68k AmigaOS using a Bebbo-style
-`m68k-amigaos-gcc` toolchain. Repository diagnostics record GCC 6.5.0b as the
-last compiler known to have produced the player. Newer compatible releases may
-work, but must pass the compiler/header/link probe and the complete target gate.
+OpenVN's validated build target is classic 68000 AmigaOS using a Bebbo-style
+`m68k-amigaos-gcc` toolchain. The tested configuration is GCC 6.5.0b build
+20260731 from `stefanreinauer/amiga-gcc`, OCI digest
+`sha256:fa6e66d487fbfdbc78073943a817cd04398165b70a84fcf7b3be4c66269b3e8a`.
+It produced and linked the canonical player on 2026-08-10. Newer compatible
+releases may work, but must pass the compiler/header/link probe and complete
+target gate; 6.5.0b is the tested configuration, not a proven minimum.
+The image identifies upstream branch `amiga6`, GCC version `6.5.0b`, compiler
+build date `20260731`, and image creation time 2026-08-08. It does not embed an
+upstream Git commit, so the immutable OCI digest—not a guessed commit—is the
+exact tested distribution revision.
+
+The image packages the upstream AmigaPorts/Bebbo GCC sources and an integrated
+SDK. GCC/binutils are free software under their upstream licenses; Amiga SDK
+components can have separate redistribution terms. Keep the extracted prefix
+external and do not redistribute it with OpenVN.
 
 ## Required tools
 
@@ -13,7 +25,8 @@ work, but must pass the compiler/header/link probe and the complete target gate.
 - AmigaOS headers for Exec, DOS, Intuition, Graphics, DataTypes and audio/timer
 - `amiga.lib` or an equivalent `libamiga.a`
 - `file`, `od`, `grep` and other standard POSIX command-line tools
-- FS-UAE 3.x and a legally obtained Kickstart ROM for emulator execution
+- FS-UAE 3.x, a legally obtained AmigaOS 3.x Kickstart ROM, and a legal
+  AmigaOS 3.x system directory for emulator execution
 
 The canonical GCC distribution normally includes compatible headers, startup
 objects and libraries. An external NDK is also supported when it uses one of
@@ -31,6 +44,30 @@ $OPENVN_AMIGA_SDK/lib/libamiga.a
 
 The build does not download a compiler, SDK or ROM.
 
+## Tested toolchain installation
+
+The tested binary distribution can be extracted to any user-writable external
+prefix without installing host packages. Pin the immutable digest shown above,
+create a temporary container, and copy `/opt/amiga-6.5.0b` to a versioned path
+such as `$HOME/.local/openvn/toolchains/amiga-gcc-6.5.0b-20260731`. The
+distribution is relocatable. Docker is only an acquisition mechanism; OpenVN
+invokes the extracted compiler directly.
+
+```sh
+docker pull \
+  stefanreinauer/amiga-gcc@sha256:fa6e66d487fbfdbc78073943a817cd04398165b70a84fcf7b3be4c66269b3e8a
+docker create --name openvn-amiga-gcc-extract \
+  stefanreinauer/amiga-gcc@sha256:fa6e66d487fbfdbc78073943a817cd04398165b70a84fcf7b3be4c66269b3e8a
+docker cp openvn-amiga-gcc-extract:/opt/amiga-6.5.0b \
+  /your/external/toolchains/amiga-gcc-6.5.0b-20260731
+docker rm openvn-amiga-gcc-extract
+```
+
+Developers who prefer a source build can use the upstream
+[`AmigaPorts/m68k-amigaos-gcc`](https://github.com/AmigaPorts/m68k-amigaos-gcc)
+Makefile with an exact checked-out revision and a user-writable `PREFIX`.
+OpenVN does not require `/opt/amiga`.
+
 ## Configuration
 
 The normal configuration variables are:
@@ -39,6 +76,8 @@ The normal configuration variables are:
 - `OPENVN_AMIGA_SDK`: optional external SDK/NDK root
 - `OPENVN_AMIGA_TOOLCHAIN_FILE`: optional CMake toolchain file; defaults to the
   repository's `runtimes/amiga-native/cmake/m68k-amigaos-gcc.cmake`
+- `OPENVN_AMIGA_TARGET_FLAGS`: compiler/linker ABI flags; defaults to
+  `-m68000 -msoft-float -noixemul`
 - `OPENVN_CMAKE`: CMake executable or absolute path
 - `OPENVN_UV`: uv executable or absolute path
 - `OPENVN_AMIGA_BUILD_DIR`: CMake target build directory
@@ -51,8 +90,11 @@ should use the `OPENVN_AMIGA_*` names.
 
 Before compiling OpenVN, the build script verifies CMake and uv, resolves the
 GCC-provided assembler and linker, compiles the required NDK headers, and links
-a probe with `-lamiga`. A missing dependency therefore fails before generated
-project output or the target build is changed.
+a probe with the target ABI and `-lamiga`. The libnix `-noixemul` CRT avoids the
+default newlib executable's runtime dependency on `mathieeedoubbas.library`;
+the explicit CPU/float flags preserve the A500/OCS baseline. A missing
+dependency therefore fails before generated project output or the target build
+is changed.
 
 ## Build and verify the canonical demo
 
@@ -113,14 +155,22 @@ source-to-package gate is `scripts/build-m68k-demo-player.sh`; the default
 
 ## Run with FS-UAE
 
-FS-UAE must be installed separately and configured with a legally obtained
-Kickstart ROM. OpenVN does not distribute or select a proprietary ROM.
+FS-UAE must be installed separately. OpenVN uses AmigaOS 3.x APIs, including
+DataTypes, so both a legally obtained OS3 ROM and a legal OS3 system directory
+are required. OpenVN does not distribute or auto-select either one.
 
 After the target build succeeds:
 
 ```sh
-fs-uae examples/demo/dist/fs-uae/OpenVNDemo.fs-uae
+OPENVN_FS_UAE_KICKSTART=/path/to/amiga-os-3.x.rom \
+OPENVN_FS_UAE_SYSTEM_DIR=/path/to/amiga-os-3.x-system \
+./scripts/run-amiga-demo.sh
 ```
+
+The launcher copies the supplied system directory to a temporary writable
+directory, boots it as DH0, mounts the generated OpenVN package as DH1, and
+removes the temporary copy after FS-UAE exits. Proprietary files never enter
+the repository or generated package.
 
 Repeat this checklist for both choices:
 
