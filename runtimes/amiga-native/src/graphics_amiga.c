@@ -12,11 +12,16 @@
 #include <datatypes/datatypesclass.h>
 #include <datatypes/pictureclass.h>
 #include <intuition/intuition.h>
+#define DATATYPES_BASE_NAME g_openvn_datatypes_library
 #include <proto/datatypes.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
 
 #define OPENVN_RENDER_LOG "openvn-render.log"
+#define OPENVN_TEXT_PEN 2U
+#define OPENVN_SELECTED_TEXT_PEN 1U
+
+struct Library *g_openvn_datatypes_library = 0;
 
 static void dispose_datatype(Object **object) {
     if (object != 0 && *object != 0) {
@@ -159,6 +164,14 @@ static int amiga_open(
     context->assets = config->assets;
     context->use_datatypes = config->use_datatypes;
 
+    if (context->use_datatypes && g_openvn_datatypes_library == 0) {
+        g_openvn_datatypes_library = OpenLibrary("datatypes.library", 39UL);
+        if (g_openvn_datatypes_library == 0) {
+            trace_message("OPEN failed: datatypes.library unavailable");
+            return 0;
+        }
+    }
+
     openvn_amiga_display_reset(&context->display);
     openvn_palette_reset(&context->background_palette);
     openvn_ilbm_reset(&context->background_ilbm);
@@ -179,6 +192,10 @@ static int amiga_open(
             1
         )) {
         trace_message("OPEN failed: display open");
+        if (g_openvn_datatypes_library != 0) {
+            CloseLibrary(g_openvn_datatypes_library);
+            g_openvn_datatypes_library = 0;
+        }
         return 0;
     }
 
@@ -202,6 +219,10 @@ static void amiga_close(OpenVNGraphicsService *service) {
     dispose_datatype(&context->background_datatype);
     dispose_datatype(&context->character_datatype);
     openvn_amiga_display_close(&context->display);
+    if (g_openvn_datatypes_library != 0) {
+        CloseLibrary(g_openvn_datatypes_library);
+        g_openvn_datatypes_library = 0;
+    }
     context->opened = 0;
     trace_message("CLOSE ok");
 }
@@ -560,7 +581,7 @@ static int amiga_present(OpenVNGraphicsService *service) {
             context->dialogue_text,
             layout.text_x,
             layout.text_y,
-            31U
+            OPENVN_TEXT_PEN
         );
         trace_message("PRESENT dialogue ok");
     }
@@ -612,7 +633,9 @@ static int amiga_present(OpenVNGraphicsService *service) {
                 line,
                 layout.text_x,
                 y,
-                index == context->choice_selected ? 31U : 2U
+                index == context->choice_selected
+                    ? OPENVN_SELECTED_TEXT_PEN
+                    : OPENVN_TEXT_PEN
             );
             y += OPENVN_BITMAP_FONT_LINE_HEIGHT;
             if (y + OPENVN_BITMAP_FONT_LINE_HEIGHT >
@@ -712,6 +735,8 @@ int openvn_graphics_amiga_poll_choice(
     struct IntuiMessage *message;
     ULONG message_class;
     UWORD code;
+    WORD mouse_x;
+    WORD mouse_y;
 
     if (service == 0 || selected_index == 0 || selected == 0) {
         return 0;
@@ -728,10 +753,29 @@ int openvn_graphics_amiga_poll_choice(
             )) != 0) {
         message_class = message->Class;
         code = message->Code;
+        mouse_x = message->MouseX;
+        mouse_y = message->MouseY;
         ReplyMsg((struct Message *)message);
 
         if (message_class == IDCMP_MOUSEBUTTONS && code == SELECTDOWN) {
-            *selected = 1;
+            OpenVNDialogueLayout layout;
+            size_t clicked_index;
+
+            openvn_dialogue_layout(
+                (unsigned int)context->display.window->Width,
+                (unsigned int)context->display.window->Height,
+                &layout
+            );
+            if (mouse_x >= layout.box_x &&
+                mouse_x < layout.box_x + layout.box_width &&
+                mouse_y >= layout.text_y) {
+                clicked_index = (size_t)(mouse_y - layout.text_y) /
+                                OPENVN_BITMAP_FONT_LINE_HEIGHT;
+                if (clicked_index < context->choice_count) {
+                    context->choice_selected = clicked_index;
+                    *selected = 1;
+                }
+            }
         } else if (message_class == IDCMP_RAWKEY && (code & 0x80U) == 0U) {
             if (code == 0x4cU) {
                 if (context->choice_selected == 0U) {

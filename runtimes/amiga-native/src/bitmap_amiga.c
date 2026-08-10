@@ -202,74 +202,11 @@ int openvn_amiga_bitmap_blit(
     unsigned int height;
     unsigned int destination_width;
     unsigned int destination_height;
-    unsigned int plane;
-    ULONG plane_size;
 
     if (source == 0 || source->bitmap == 0 ||
         destination == 0 || destination->BitMap == 0) {
         bitmap_trace("AMIGA BLIT failed: invalid input");
         return 0;
-    }
-
-    /*
-     * Full-screen OCS backgrounds have identical source and destination
-     * geometry. Copy their planes directly instead of invoking the hardware
-     * blitter. This avoids the Graphics.library/WaitBlit path that stalls on
-     * the current classic Amiga configuration.
-     */
-    if (!masked &&
-        x == 0 &&
-        y == 0 &&
-        source->width ==
-            (unsigned int)destination->BitMap->BytesPerRow * 8U &&
-        source->height == (unsigned int)destination->BitMap->Rows &&
-        source->bitmap->BytesPerRow == destination->BitMap->BytesPerRow &&
-        source->bitmap->Rows == destination->BitMap->Rows) {
-        unsigned int depth;
-
-        depth = source->depth;
-        if (depth > (unsigned int)destination->BitMap->Depth) {
-            depth = (unsigned int)destination->BitMap->Depth;
-        }
-
-        plane_size =
-            (ULONG)destination->BitMap->BytesPerRow *
-            (ULONG)destination->BitMap->Rows;
-
-        bitmap_trace("AMIGA BLIT direct fullscreen copy begin");
-        bitmap_trace_uint("AMIGA BLIT direct plane count=", depth);
-        bitmap_trace_uint(
-            "AMIGA BLIT direct plane size=",
-            (unsigned int)plane_size
-        );
-
-        for (plane = 0U; plane < depth; plane++) {
-            if (source->bitmap->Planes[plane] == 0 ||
-                destination->BitMap->Planes[plane] == 0) {
-                bitmap_trace_uint(
-                    "AMIGA BLIT failed: null direct plane=",
-                    plane
-                );
-                return 0;
-            }
-
-            bitmap_trace_uint(
-                "AMIGA BLIT direct plane begin=",
-                plane
-            );
-            CopyMem(
-                source->bitmap->Planes[plane],
-                destination->BitMap->Planes[plane],
-                plane_size
-            );
-            bitmap_trace_uint(
-                "AMIGA BLIT direct plane ok=",
-                plane
-            );
-        }
-
-        bitmap_trace("AMIGA BLIT direct fullscreen copy ok");
-        return 1;
     }
 
     source_x = 0;

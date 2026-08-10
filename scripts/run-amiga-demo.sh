@@ -16,8 +16,8 @@ fail() { printf 'error: %s\n' "$*" >&2; exit 1; }
 [[ -n "$SYSTEM_DIR" ]] || fail "set OPENVN_FS_UAE_SYSTEM_DIR to a legal AmigaOS 3.x system directory"
 [[ -f "$SYSTEM_DIR/C/Assign" ]] || fail "AmigaOS system directory has no C/Assign: $SYSTEM_DIR"
 [[ -f "$SYSTEM_DIR/Libs/datatypes.library" ]] || fail "AmigaOS system directory has no Libs/datatypes.library: $SYSTEM_DIR"
-[[ -f "$SYSTEM_DIR/S/Startup-Sequence" ]] || fail "AmigaOS system directory has no S/Startup-Sequence: $SYSTEM_DIR"
 [[ -f "$PACKAGE_DIR/runtime/openvn-player" ]] || fail "generated package has no OpenVN player: $PACKAGE_DIR"
+[[ -f "$PACKAGE_DIR/S/Startup-Sequence" ]] || fail "generated package has no Startup-Sequence: $PACKAGE_DIR"
 command -v "$FS_UAE" >/dev/null 2>&1 || fail "FS-UAE executable was not found: $FS_UAE"
 
 WORK_DIR="$(mktemp -d /tmp/openvn-fsuae-system.XXXXXX)"
@@ -27,12 +27,16 @@ cp -a "$SYSTEM_DIR" "$SYSTEM_COPY"
 chmod -R u+rwX "$SYSTEM_COPY"
 
 STARTUP="$SYSTEM_COPY/S/Startup-Sequence"
+cp "$PACKAGE_DIR/S/Startup-Sequence" "$STARTUP"
 sed -i \
-    '/^C:LoadWB$/i CD DH1:\
-runtime/openvn-player' \
+    '/^runtime\/openvn-player$/i C:MakeDir RAM:T RAM:ENV\
+C:Assign T: RAM:T\
+C:Assign ENV: RAM:ENV\
+C:SetPatch QUIET\
+CD DH1:' \
     "$STARTUP"
 grep -q '^runtime/openvn-player$' "$STARTUP" || \
-    fail "AmigaOS Startup-Sequence has no C:LoadWB insertion point"
+    fail "generated Startup-Sequence does not launch runtime/openvn-player"
 
 "$FS_UAE" "$CONFIG" \
     "--kickstart-file=$KICKSTART" \

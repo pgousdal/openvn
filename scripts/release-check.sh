@@ -70,7 +70,7 @@ heading() {
 run_compiler_uv() {
     (
         cd "$COMPILER_DIR"
-        env PATH="$HOST_PATH" "$UV_BIN" run "$@"
+        env PYTHONDONTWRITEBYTECODE=1 PATH="$HOST_PATH" "$UV_BIN" run "$@"
     )
 }
 
@@ -89,7 +89,7 @@ FAILED_STEP="Python formatting"
 heading 2 "Python formatting"
 (
     cd "$COMPILER_DIR"
-    env PATH="$HOST_PATH" "$UV_BIN" sync --all-extras
+    env PYTHONDONTWRITEBYTECODE=1 PATH="$HOST_PATH" "$UV_BIN" sync --all-extras
 )
 run_compiler_uv ruff format --check .
 

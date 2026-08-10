@@ -24,3 +24,12 @@ def test_amiga_adapter_uses_datatypes_rendering() -> None:
     assert "GID_PICTURE" in source
     assert "openvn_ilbm_load_file" in source
     assert "ACE" not in source
+
+
+def test_datatypes_library_is_only_opened_for_the_optional_backend() -> None:
+    source = (RUNTIME / "src/graphics_amiga.c").read_text(encoding="utf-8")
+
+    assert "DATATYPES_BASE_NAME g_openvn_datatypes_library" in source
+    assert "if (context->use_datatypes && g_openvn_datatypes_library == 0)" in source
+    assert 'OpenLibrary("datatypes.library", 39UL)' in source
+    assert "CloseLibrary(g_openvn_datatypes_library)" in source

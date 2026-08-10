@@ -63,6 +63,7 @@ static int create_buffers(OpenVNAmigaDisplay *display) {
 
     display->visible_index = 0U;
     display->draw_index = 1U;
+    InitRastPort(&display->draw_rastport);
     display->double_buffered = 1;
     return 1;
 }
@@ -191,9 +192,15 @@ struct RastPort *openvn_amiga_display_draw_rastport(
         return display->window->RPort;
     }
 
-    display->window->RPort->BitMap =
+    if (display->swap_pending) {
+        WaitPort(display->safe_port);
+        drain_port(display->safe_port);
+        display->swap_pending = 0;
+    }
+
+    display->draw_rastport.BitMap =
         display->buffers[display->draw_index]->sb_BitMap;
-    return display->window->RPort;
+    return &display->draw_rastport;
 }
 
 int openvn_amiga_display_present(OpenVNAmigaDisplay *display) {
@@ -206,12 +213,6 @@ int openvn_amiga_display_present(OpenVNAmigaDisplay *display) {
     if (!display->double_buffered) {
         WaitBlit();
         return 1;
-    }
-
-    if (display->swap_pending) {
-        WaitPort(display->safe_port);
-        drain_port(display->safe_port);
-        display->swap_pending = 0;
     }
 
     old_visible = display->visible_index;

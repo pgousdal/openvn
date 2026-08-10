@@ -3,11 +3,12 @@
 
 #ifdef __AMIGA__
 
+#include <graphics/rastport.h>
+
 struct Screen;
 struct Window;
 struct ScreenBuffer;
 struct MsgPort;
-struct RastPort;
 
 typedef struct OpenVNAmigaDisplay {
     struct Screen *screen;
@@ -15,6 +16,7 @@ typedef struct OpenVNAmigaDisplay {
     struct ScreenBuffer *buffers[2];
     struct MsgPort *safe_port;
     struct MsgPort *display_port;
+    struct RastPort draw_rastport;
     unsigned int draw_index;
     unsigned int visible_index;
     int double_buffered;
