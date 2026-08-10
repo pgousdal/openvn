@@ -8,11 +8,69 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <datatypes/datatypes.h>
+#include <datatypes/datatypesclass.h>
 #include <intuition/intuition.h>
+#include <proto/datatypes.h>
 #include <proto/exec.h>
 #include <proto/intuition.h>
 
 #define OPENVN_RENDER_LOG "openvn-render.log"
+
+static void dispose_datatype(struct Object **object) {
+    if (object != 0 && *object != 0) {
+        DisposeDTObject(*object);
+        *object = 0;
+    }
+}
+
+static int load_datatype(struct Object **destination, const char *path) {
+    dispose_datatype(destination);
+    *destination = NewDTObject(
+        (APTR)path,
+        DTA_SourceType,
+        DTST_FILE,
+        DTA_GroupID,
+        GID_PICTURE,
+        PDTA_Remap,
+        TRUE,
+        TAG_DONE
+    );
+    return *destination != 0;
+}
+
+/*
+ * Some classic NDKs declare no callable DrawDTObjectA stub. Dispatching its
+ * documented DTM_DRAW message through DoDTMethodA keeps the library-vector
+ * call native and avoids an unresolved external symbol.
+ */
+static ULONG openvn_DrawDTObjectA_compat(
+    struct RastPort *rastport,
+    Object *object,
+    LONG left,
+    LONG top,
+    LONG width,
+    LONG height,
+    LONG top_horiz,
+    LONG top_vert,
+    ULONG flags,
+    struct TagItem *attributes
+) {
+    struct dtDraw draw_message;
+
+    (void)flags;
+    draw_message.MethodID = DTM_DRAW;
+    draw_message.dtd_RPort = rastport;
+    draw_message.dtd_Left = left;
+    draw_message.dtd_Top = top;
+    draw_message.dtd_Width = width;
+    draw_message.dtd_Height = height;
+    draw_message.dtd_TopHoriz = top_horiz;
+    draw_message.dtd_TopVert = top_vert;
+    draw_message.dtd_AttrList = attributes;
+
+    return DoDTMethodA(object, 0, 0, (Msg)&draw_message);
+}
 
 static void trace_reset(void) {
     FILE *file;
@@ -98,6 +156,7 @@ static int amiga_open(
 
     memset(context, 0, sizeof(*context));
     context->assets = config->assets;
+    context->use_datatypes = config->use_datatypes;
 
     openvn_amiga_display_reset(&context->display);
     openvn_palette_reset(&context->background_palette);
@@ -139,6 +198,8 @@ static void amiga_close(OpenVNGraphicsService *service) {
 
     free_classic_background(context);
     free_classic_character(context);
+    dispose_datatype(&context->background_datatype);
+    dispose_datatype(&context->character_datatype);
     openvn_amiga_display_close(&context->display);
     context->opened = 0;
     trace_message("CLOSE ok");
@@ -204,6 +265,10 @@ static int amiga_scene(
         return 0;
     }
 
+    if (context->use_datatypes) {
+        return load_datatype(&context->background_datatype, path);
+    }
+
     if (!load_classic_bitmap(
             path,
             &context->background_ilbm,
@@ -264,6 +329,9 @@ static int amiga_show(
 
     context->character_visible = 1;
     context->character_anchor = OPENVN_ANCHOR_CENTER;
+    if (context->use_datatypes) {
+        return load_datatype(&context->character_datatype, path);
+    }
     if (!load_classic_bitmap(
             path,
             &context->character_ilbm,
@@ -295,7 +363,11 @@ static int amiga_hide(
         return 0;
     }
 
-    free_classic_character(context);
+    if (context->use_datatypes) {
+        dispose_datatype(&context->character_datatype);
+    } else {
+        free_classic_character(context);
+    }
     context->character_visible = 0;
     trace_message("HIDE ok");
     return 1;
@@ -382,6 +454,37 @@ static int amiga_present(OpenVNGraphicsService *service) {
         return 0;
     }
 
+    if (context->use_datatypes) {
+        if (context->background_datatype != 0) {
+            openvn_DrawDTObjectA_compat(
+                rastport,
+                context->background_datatype,
+                0,
+                0,
+                context->display.window->Width,
+                context->display.window->Height,
+                0,
+                0,
+                0,
+                0
+            );
+        }
+        if (context->character_visible && context->character_datatype != 0) {
+            openvn_DrawDTObjectA_compat(
+                rastport,
+                context->character_datatype,
+                0,
+                0,
+                context->display.window->Width,
+                context->display.window->Height,
+                0,
+                0,
+                0,
+                0
+            );
+        }
+    } else {
+
     trace_message("PRESENT background blit begin");
     if (!openvn_amiga_bitmap_blit(
             &context->background_bitmap,
@@ -419,6 +522,7 @@ static int amiga_present(OpenVNGraphicsService *service) {
             return 0;
         }
         trace_message("PRESENT character blit ok");
+    }
     }
 
 
@@ -555,10 +659,7 @@ int openvn_graphics_amiga_wait_choice(
     size_t *selected_index
 ) {
     OpenVNAmigaGraphicsContext *context;
-    struct IntuiMessage *message;
-    ULONG message_class;
-    UWORD code;
-    int done;
+    int selected;
 
     if (service == 0 || selected_index == 0) {
         return 0;
@@ -570,40 +671,89 @@ int openvn_graphics_amiga_wait_choice(
         return 0;
     }
 
-    done = 0;
-    while (!done) {
+    selected = 0;
+    while (!selected) {
         WaitPort(context->display.window->UserPort);
-        while ((message = (struct IntuiMessage *)GetMsg(
-                    context->display.window->UserPort
-                )) != 0) {
-            message_class = message->Class;
-            code = message->Code;
-            ReplyMsg((struct Message *)message);
+        if (!openvn_graphics_amiga_poll_choice(
+                service,
+                selected_index,
+                &selected
+            )) {
+            return 0;
+        }
+    }
 
-            if (message_class == IDCMP_MOUSEBUTTONS && code == SELECTDOWN) {
-                done = 1;
-            } else if (message_class == IDCMP_RAWKEY && (code & 0x80U) == 0U) {
-                if (code == 0x4cU) {
-                    if (context->choice_selected == 0U) {
-                        context->choice_selected = context->choice_count - 1U;
-                    } else {
-                        --context->choice_selected;
-                    }
-                    openvn_graphics_present(service);
-                } else if (code == 0x4dU) {
-                    context->choice_selected =
-                        (context->choice_selected + 1U) % context->choice_count;
-                    openvn_graphics_present(service);
-                } else if (code == 0x44U || code == 0x40U) {
-                    done = 1;
+    return 1;
+}
+
+unsigned long openvn_graphics_amiga_choice_signal_mask(
+    OpenVNGraphicsService *service
+) {
+    OpenVNAmigaGraphicsContext *context;
+
+    if (service == 0) {
+        return 0UL;
+    }
+    context = (OpenVNAmigaGraphicsContext *)service->context;
+    if (context == 0 || context->display.window == 0 ||
+        context->display.window->UserPort == 0) {
+        return 0UL;
+    }
+    return 1UL << context->display.window->UserPort->mp_SigBit;
+}
+
+int openvn_graphics_amiga_poll_choice(
+    OpenVNGraphicsService *service,
+    size_t *selected_index,
+    int *selected
+) {
+    OpenVNAmigaGraphicsContext *context;
+    struct IntuiMessage *message;
+    ULONG message_class;
+    UWORD code;
+
+    if (service == 0 || selected_index == 0 || selected == 0) {
+        return 0;
+    }
+    context = (OpenVNAmigaGraphicsContext *)service->context;
+    if (context == 0 || !context->choices_visible ||
+        context->display.window == 0) {
+        return 0;
+    }
+
+    *selected = 0;
+    while ((message = (struct IntuiMessage *)GetMsg(
+                context->display.window->UserPort
+            )) != 0) {
+        message_class = message->Class;
+        code = message->Code;
+        ReplyMsg((struct Message *)message);
+
+        if (message_class == IDCMP_MOUSEBUTTONS && code == SELECTDOWN) {
+            *selected = 1;
+        } else if (message_class == IDCMP_RAWKEY && (code & 0x80U) == 0U) {
+            if (code == 0x4cU) {
+                if (context->choice_selected == 0U) {
+                    context->choice_selected = context->choice_count - 1U;
+                } else {
+                    --context->choice_selected;
                 }
+                openvn_graphics_present(service);
+            } else if (code == 0x4dU) {
+                context->choice_selected =
+                    (context->choice_selected + 1U) % context->choice_count;
+                openvn_graphics_present(service);
+            } else if (code == 0x44U || code == 0x40U) {
+                *selected = 1;
             }
         }
     }
 
     *selected_index = context->choice_selected;
-    context->choices_visible = 0;
-    trace_message("CHOICES selected");
+    if (*selected) {
+        context->choices_visible = 0;
+        trace_message("CHOICES selected");
+    }
     return 1;
 }
 

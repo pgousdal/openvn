@@ -35,3 +35,26 @@ def test_vertical_slice_builds_both_targets(tmp_path: Path) -> None:
     assert "play music audio.intro" in script
     assert "ENDING: A New Story" in script
     assert "ENDING: The Last Note" in script
+
+
+def test_demo_is_the_native_m6_integration_fixture() -> None:
+    story = json.loads((PROJECT / "story.openvn.json").read_text(encoding="utf-8"))
+    nodes = story["nodes"]
+    node_types = {node["type"] for node in nodes}
+
+    assert {
+        "scene",
+        "show",
+        "text",
+        "choice",
+        "set_bool",
+        "set_int",
+        "condition",
+        "jump",
+        "music",
+    } <= node_types
+    assert sum(node["type"] == "text" for node in nodes) >= 2
+    assert sum(node["type"] == "end" for node in nodes) >= 2
+
+    manifest = (PROJECT / "assets/manifest.yaml").read_text(encoding="utf-8")
+    assert "music/intro.mod" in manifest

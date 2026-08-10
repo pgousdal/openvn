@@ -12,10 +12,15 @@
 
 #ifdef __AMIGA__
 
+struct Object;
 
 typedef struct OpenVNAmigaGraphicsContext {
     OpenVNAmigaDisplay display;
     const OpenVNAssetTable *assets;
+
+    int use_datatypes;
+    struct Object *background_datatype;
+    struct Object *character_datatype;
 
     OpenVNILBMImage background_ilbm;
     OpenVNILBMImage character_ilbm;
@@ -46,6 +51,16 @@ void openvn_graphics_amiga_init(
 int openvn_graphics_amiga_wait_choice(
     OpenVNGraphicsService *service,
     size_t *selected_index
+);
+
+unsigned long openvn_graphics_amiga_choice_signal_mask(
+    OpenVNGraphicsService *service
+);
+
+int openvn_graphics_amiga_poll_choice(
+    OpenVNGraphicsService *service,
+    size_t *selected_index,
+    int *selected
 );
 
 #endif

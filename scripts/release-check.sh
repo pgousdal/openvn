@@ -15,17 +15,7 @@ if [[ -z "$UV_BIN" ]]; then
     exit 1
 fi
 
-PYTEST_OUTPUT=""
-FAILED_TESTS_FILE=""
-UNEXPECTED_TESTS_FILE=""
 FAILED_STEP=""
-
-cleanup() {
-    [[ -n "$PYTEST_OUTPUT" ]] && rm -f "$PYTEST_OUTPUT"
-    [[ -n "$FAILED_TESTS_FILE" ]] && rm -f "$FAILED_TESTS_FILE"
-    [[ -n "$UNEXPECTED_TESTS_FILE" ]] && rm -f "$UNEXPECTED_TESTS_FILE"
-}
-trap cleanup EXIT
 
 on_error() {
     local exit_code=$?
@@ -71,72 +61,8 @@ heading 3 "Python lint"
 run_compiler_uv ruff check .
 
 FAILED_STEP="Python test suite"
-heading 4 "Full Python test suite with known-baseline validation"
-
-PYTEST_OUTPUT="$(mktemp)"
-FAILED_TESTS_FILE="$(mktemp)"
-UNEXPECTED_TESTS_FILE="$(mktemp)"
-
-# pytest is expected to return non-zero while known baseline failures remain.
-# Keep the pipeline inside an if-condition so ERR traps do not abort before
-# the exact failing node IDs can be compared with the approved baseline.
-if (
-    cd "$COMPILER_DIR"
-    env PATH="$HOST_PATH" "$UV_BIN" run pytest -q
-) 2>&1 | tee "$PYTEST_OUTPUT"; then
-    pytest_status=0
-else
-    pytest_status=${PIPESTATUS[0]}
-fi
-
-if [[ "$pytest_status" -ne 0 ]]; then
-    sed -n 's/^FAILED \(.*::[^ ]*\).*/\1/p' "$PYTEST_OUTPUT" \
-        | sort -u >"$FAILED_TESTS_FILE"
-
-    known_failures=(
-        "tests/test_amiga_graphics_service.py::test_amiga_graphics_adapter_uses_os_services"
-        "tests/test_amiga_image_loading.py::test_amiga_adapter_uses_datatypes_rendering"
-        "tests/test_amiga_planar_rendering.py::test_amiga_planar_adapter_uses_native_graphics_api"
-        "tests/test_amiga_real_mod_playback.py::test_real_mod_playback_event_loop_contract"
-    )
-
-    : >"$UNEXPECTED_TESTS_FILE"
-
-    while IFS= read -r failed_test; do
-        [[ -z "$failed_test" ]] && continue
-
-        known=0
-        for expected in "${known_failures[@]}"; do
-            if [[ "$failed_test" == "$expected" ]]; then
-                known=1
-                break
-            fi
-        done
-
-        if [[ "$known" -eq 0 ]]; then
-            printf '%s\n' "$failed_test" >>"$UNEXPECTED_TESTS_FILE"
-        fi
-    done <"$FAILED_TESTS_FILE"
-
-    if [[ -s "$UNEXPECTED_TESTS_FILE" ]]; then
-        echo
-        echo "Unexpected Python test failures:"
-        sed 's/^/  - /' "$UNEXPECTED_TESTS_FILE"
-        exit "$pytest_status"
-    fi
-
-    if [[ ! -s "$FAILED_TESTS_FILE" ]]; then
-        echo
-        echo "pytest failed, but no failing test node IDs could be extracted."
-        exit "$pytest_status"
-    fi
-
-    echo
-    echo "Only known baseline failures remain:"
-    sed 's/^/  - /' "$FAILED_TESTS_FILE"
-else
-    echo "Python test suite passed without baseline failures."
-fi
+heading 4 "Full Python test suite"
+run_compiler_uv pytest -q
 
 FAILED_STEP="host CMake configuration"
 heading 5 "Host runtime configuration"

@@ -38,70 +38,6 @@ static void bitmap_trace_uint(const char *prefix, unsigned int value) {
     fclose(stream);
 }
 
-static struct BitMap *allocate_classic_bitmap(
-    unsigned int width,
-    unsigned int height,
-    unsigned int depth
-) {
-    struct BitMap *bitmap;
-    unsigned int plane;
-
-    bitmap = (struct BitMap *)AllocMem(
-        sizeof(struct BitMap),
-        MEMF_PUBLIC | MEMF_CLEAR
-    );
-    if (bitmap == 0) {
-        return 0;
-    }
-
-    InitBitMap(bitmap, depth, width, height);
-
-    for (plane = 0U; plane < depth; plane++) {
-        bitmap->Planes[plane] = (PLANEPTR)AllocRaster(width, height);
-        if (bitmap->Planes[plane] == 0) {
-            while (plane > 0U) {
-                plane--;
-                FreeRaster(bitmap->Planes[plane], width, height);
-                bitmap->Planes[plane] = 0;
-            }
-
-            FreeMem(bitmap, sizeof(struct BitMap));
-            return 0;
-        }
-
-        BltClear(
-            bitmap->Planes[plane],
-            (ULONG)bitmap->BytesPerRow * (ULONG)bitmap->Rows,
-            0
-        );
-        WaitBlit();
-    }
-
-    return bitmap;
-}
-
-static void free_classic_bitmap(
-    struct BitMap *bitmap,
-    unsigned int width,
-    unsigned int height,
-    unsigned int depth
-) {
-    unsigned int plane;
-
-    if (bitmap == 0) {
-        return;
-    }
-
-    for (plane = 0U; plane < depth; plane++) {
-        if (bitmap->Planes[plane] != 0) {
-            FreeRaster(bitmap->Planes[plane], width, height);
-            bitmap->Planes[plane] = 0;
-        }
-    }
-
-    FreeMem(bitmap, sizeof(struct BitMap));
-}
-
 void openvn_amiga_bitmap_reset(OpenVNAmigaBitmap *bitmap) {
     if (bitmap != 0) {
         memset(bitmap, 0, sizeof(*bitmap));
@@ -114,21 +50,11 @@ void openvn_amiga_bitmap_free(OpenVNAmigaBitmap *bitmap) {
     }
 
     if (bitmap->mask_bitmap != 0) {
-        free_classic_bitmap(
-            bitmap->mask_bitmap,
-            bitmap->width,
-            bitmap->height,
-            1U
-        );
+        FreeBitMap(bitmap->mask_bitmap);
     }
 
     if (bitmap->bitmap != 0) {
-        free_classic_bitmap(
-            bitmap->bitmap,
-            bitmap->width,
-            bitmap->height,
-            bitmap->depth
-        );
+        FreeBitMap(bitmap->bitmap);
     }
 
     openvn_amiga_bitmap_reset(bitmap);
@@ -181,10 +107,12 @@ int openvn_amiga_bitmap_from_planar(
     bitmap_trace_uint("AMIGA BITMAP plane size=", (unsigned int)source->plane_size);
     bitmap_trace("AMIGA BITMAP classic allocation begin");
 
-    destination->bitmap = allocate_classic_bitmap(
+    destination->bitmap = AllocBitMap(
         source->width,
         source->height,
-        source->depth
+        source->depth,
+        BMF_CLEAR,
+        0
     );
 
     bitmap_trace("AMIGA BITMAP classic allocation returned");
@@ -218,10 +146,12 @@ int openvn_amiga_bitmap_from_planar(
     if (source->mask != 0) {
         bitmap_trace("AMIGA BITMAP mask classic allocation begin");
 
-        destination->mask_bitmap = allocate_classic_bitmap(
+        destination->mask_bitmap = AllocBitMap(
             source->width,
             source->height,
-            1U
+            1U,
+            BMF_CLEAR,
+            0
         );
 
         bitmap_trace("AMIGA BITMAP mask classic allocation returned");

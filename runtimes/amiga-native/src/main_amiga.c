@@ -4,12 +4,14 @@
 
 #ifdef __AMIGA__
 
+#include <proto/exec.h>
 #include <proto/dos.h>
 #include <stdio.h>
 
 extern void openvn_state_reset(void);
 extern int openvn_dispatch_request(const OpenVNRequest *request);
 extern int openvn_state_update(void);
+extern unsigned long openvn_state_signal_mask(void);
 extern const OpenVNStoryState *openvn_state_story(void);
 extern const char *openvn_state_last_error(void);
 extern OpenVNGraphicsService *openvn_state_graphics(void);
@@ -25,15 +27,39 @@ static int dispatch_simple(OpenVNCommand command) {
 
 static int choose_interactive(void) {
     OpenVNRequest request;
+    OpenVNGraphicsService *graphics;
     size_t selected;
+    int choice_made;
     int written;
+    ULONG audio_mask;
+    ULONG choice_mask;
+    ULONG wait_mask;
+    ULONG signals;
 
     selected = 0U;
-    if (!openvn_graphics_amiga_wait_choice(
-            openvn_state_graphics(),
-            &selected
-        )) {
+    choice_made = 0;
+    graphics = openvn_state_graphics();
+    choice_mask = openvn_graphics_amiga_choice_signal_mask(graphics);
+    if (choice_mask == 0UL) {
         return 0;
+    }
+
+    while (!choice_made) {
+        audio_mask = openvn_state_signal_mask();
+        wait_mask = choice_mask | audio_mask;
+        signals = Wait(wait_mask);
+
+        if ((signals & audio_mask) != 0UL && !openvn_state_update()) {
+            return 0;
+        }
+        if ((signals & choice_mask) != 0UL &&
+            !openvn_graphics_amiga_poll_choice(
+                graphics,
+                &selected,
+                &choice_made
+            )) {
+            return 0;
+        }
     }
 
     request.command = OPENVN_CMD_CHOOSE;
@@ -91,8 +117,10 @@ int main(void) {
             return 20;
         }
 
-        openvn_state_update();
-        Delay(10);
+        if (!openvn_state_update()) {
+            PutStr("OpenVN: runtime update failed.\n");
+            return 20;
+        }
     }
 
     dispatch_simple(OPENVN_CMD_QUIT);
